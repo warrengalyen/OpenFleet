@@ -13,7 +13,13 @@ public class AssetConfiguration : IEntityTypeConfiguration<Asset>
         builder.Property(a => a.AssetTag).IsRequired().HasMaxLength(50);
         builder.HasIndex(a => a.AssetTag).IsUnique();
         builder.Property(a => a.Type).IsRequired().HasMaxLength(100);
+        builder.Property(a => a.Condition).IsRequired();
         builder.Property(a => a.Status).IsRequired();
+
+        builder.HasOne(a => a.Department)
+            .WithMany()
+            .HasForeignKey(a => a.DepartmentId)
+            .OnDelete(DeleteBehavior.SetNull);
 
         builder.HasOne(a => a.Vehicle)
             .WithMany(v => v.Assets)

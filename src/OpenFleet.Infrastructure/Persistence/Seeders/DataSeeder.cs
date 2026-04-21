@@ -108,22 +108,25 @@ public static class DataSeeder
             new()
             {
                 Id = Guid.Parse("44444444-0000-0000-0000-000000000001"),
-                VIN = "1HGBH41JXMN109186", Make = "Ford", Model = "F-150",
-                Year = 2022, Status = VehicleStatus.Active,
+                VIN = "1HGBH41JXMN109186", LicensePlate = "OPS-001",
+                Make = "Ford", Model = "F-150",
+                Year = 2022, Mileage = 15023, Status = VehicleStatus.Active,
                 DepartmentId = departments[0].Id
             },
             new()
             {
                 Id = Guid.Parse("44444444-0000-0000-0000-000000000002"),
-                VIN = "2T1BURHE0JC043821", Make = "Chevrolet", Model = "Silverado",
-                Year = 2021, Status = VehicleStatus.Active,
+                VIN = "2T1BURHE0JC043821", LicensePlate = "OPS-002",
+                Make = "Chevrolet", Model = "Silverado",
+                Year = 2021, Mileage = 32100, Status = VehicleStatus.Active,
                 DepartmentId = departments[0].Id
             },
             new()
             {
                 Id = Guid.Parse("44444444-0000-0000-0000-000000000003"),
-                VIN = "3VWFE21C04M000001", Make = "Ram", Model = "ProMaster",
-                Year = 2020, Status = VehicleStatus.InMaintenance,
+                VIN = "3VWFE21C04M000001", LicensePlate = "LOG-001",
+                Make = "Ram", Model = "ProMaster",
+                Year = 2020, Mileage = 48750, Status = VehicleStatus.InMaintenance,
                 DepartmentId = departments[2].Id
             }
         };
@@ -172,6 +175,32 @@ public static class DataSeeder
             Notes = "All systems nominal. Tires at 35 PSI."
         };
         await context.Inspections.AddAsync(inspection);
+
+        var assets = new List<Asset>
+        {
+            new()
+            {
+                AssetTag = "ASSET-001",
+                Name = "Hydraulic Lift",
+                Type = "Equipment",
+                Condition = AssetCondition.Good,
+                Status = AssetStatus.InUse,
+                PurchaseDate = DateTime.UtcNow.AddYears(-2),
+                DepartmentId = departments[1].Id
+            },
+            new()
+            {
+                AssetTag = "ASSET-002",
+                Name = "GPS Tracker Unit",
+                Type = "Electronics",
+                Condition = AssetCondition.New,
+                Status = AssetStatus.Available,
+                PurchaseDate = DateTime.UtcNow.AddMonths(-3),
+                DepartmentId = departments[0].Id,
+                VehicleId = vehicles[0].Id
+            }
+        };
+        await context.Assets.AddRangeAsync(assets);
 
         await context.SaveChangesAsync();
         logger.LogInformation("Database seeding complete.");
