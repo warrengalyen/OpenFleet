@@ -5,9 +5,11 @@ namespace OpenFleet.Domain.Entities;
 public class Vehicle : BaseEntity
 {
     public string VIN { get; set; } = string.Empty;
+    public string LicensePlate { get; set; } = string.Empty;
     public string Make { get; set; } = string.Empty;
     public string Model { get; set; } = string.Empty;
     public int Year { get; set; }
+    public int Mileage { get; set; }
     public VehicleStatus Status { get; set; } = VehicleStatus.Active;
     public Guid DepartmentId { get; set; }
 
