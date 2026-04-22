@@ -1,0 +1,6 @@
+@OpenFleet.Api_HostAddress = http://localhost:5085
+
+GET {{OpenFleet.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
