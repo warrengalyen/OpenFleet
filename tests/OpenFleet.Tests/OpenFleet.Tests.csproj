@@ -11,6 +11,8 @@
 
   <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="6.0.0" />
+    <PackageReference Include="FluentValidation" Version="11.*" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.*" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.28" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.*" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="8.0.28" />
@@ -27,6 +29,7 @@
     <ProjectReference Include="..\..\src\OpenFleet.Domain\OpenFleet.Domain.csproj" />
     <ProjectReference Include="..\..\src\OpenFleet.Application\OpenFleet.Application.csproj" />
     <ProjectReference Include="..\..\src\OpenFleet.Infrastructure\OpenFleet.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\src\OpenFleet.Api\OpenFleet.Api.csproj" />
   </ItemGroup>
 
 </Project>

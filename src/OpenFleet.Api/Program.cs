@@ -77,8 +77,15 @@ try
     {
         var db = scope.ServiceProvider.GetRequiredService<OpenFleetDbContext>();
         var seedLogger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
-        await db.Database.MigrateAsync();
-        await DataSeeder.SeedAsync(db, seedLogger);
+        if (db.Database.IsRelational())
+        {
+            await db.Database.MigrateAsync();
+            await DataSeeder.SeedAsync(db, seedLogger);
+        }
+        else
+        {
+            await db.Database.EnsureCreatedAsync();
+        }
     }
 
     app.Run();
@@ -91,3 +98,5 @@ finally
 {
     Log.CloseAndFlush();
 }
+
+public partial class Program { }
