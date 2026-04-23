@@ -8,6 +8,7 @@ public interface IOpenFleetDbContext
     DbSet<Vehicle> Vehicles { get; }
     DbSet<Asset> Assets { get; }
     DbSet<WorkOrder> WorkOrders { get; }
+    DbSet<WorkOrderNote> WorkOrderNotes { get; }
     DbSet<MaintenanceRecord> MaintenanceRecords { get; }
     DbSet<Inspection> Inspections { get; }
     DbSet<Part> Parts { get; }
