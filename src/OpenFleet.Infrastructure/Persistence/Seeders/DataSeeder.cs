@@ -157,6 +157,24 @@ public static class DataSeeder
         await context.WorkOrders.AddRangeAsync(workOrders);
         await context.SaveChangesAsync();
 
+        var notes = new List<WorkOrderNote>
+        {
+            new()
+            {
+                WorkOrderId = workOrders[0].Id,
+                Content = "Oil change completed with synthetic 5W-30. Filter replaced.",
+                AuthorName = "Bob Smith"
+            },
+            new()
+            {
+                WorkOrderId = workOrders[1].Id,
+                Content = "Brake pads worn to 20%. Ordered replacement set from AutoParts Direct.",
+                AuthorName = "Carol Davis"
+            }
+        };
+        await context.WorkOrderNotes.AddRangeAsync(notes);
+        await context.SaveChangesAsync();
+
         var maintenanceRecord = new MaintenanceRecord
         {
             WorkOrderId = workOrders[0].Id,
