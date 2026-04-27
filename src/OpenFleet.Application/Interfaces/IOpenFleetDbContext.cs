@@ -11,6 +11,7 @@ public interface IOpenFleetDbContext
     DbSet<WorkOrderNote> WorkOrderNotes { get; }
     DbSet<MaintenanceRecord> MaintenanceRecords { get; }
     DbSet<Inspection> Inspections { get; }
+    DbSet<MaintenanceSchedule> MaintenanceSchedules { get; }
     DbSet<Part> Parts { get; }
     DbSet<Vendor> Vendors { get; }
     DbSet<Department> Departments { get; }
