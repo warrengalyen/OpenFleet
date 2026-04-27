@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using OpenFleet.Api.Extensions;
 using OpenFleet.Api.Middleware;
+using OpenFleet.Application.Services;
 using OpenFleet.Application.Validators;
 using OpenFleet.Infrastructure.Extensions;
 using OpenFleet.Infrastructure.Persistence;
@@ -28,6 +29,7 @@ try
     builder.Services.AddControllers();
     builder.Services.AddFluentValidationAutoValidation();
     builder.Services.AddValidatorsFromAssemblyContaining<CreateVehicleRequestValidator>();
+    builder.Services.AddScoped<WorkOrderService>();
     builder.Services.AddSwagger();
     builder.Services.AddInfrastructure(builder.Configuration);
 
