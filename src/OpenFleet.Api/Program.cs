@@ -7,6 +7,7 @@ using OpenFleet.Api.Extensions;
 using OpenFleet.Api.Middleware;
 using OpenFleet.Application.Services;
 using OpenFleet.Application.Validators;
+using OpenFleet.Infrastructure.BackgroundServices;
 using OpenFleet.Infrastructure.Extensions;
 using OpenFleet.Infrastructure.Persistence;
 using OpenFleet.Infrastructure.Persistence.Seeders;
@@ -30,6 +31,9 @@ try
     builder.Services.AddFluentValidationAutoValidation();
     builder.Services.AddValidatorsFromAssemblyContaining<CreateVehicleRequestValidator>();
     builder.Services.AddScoped<WorkOrderService>();
+    builder.Services.AddScoped<InspectionService>();
+    builder.Services.AddScoped<MaintenanceScheduleService>();
+    builder.Services.AddHostedService<MaintenanceDueCheckerService>();
     builder.Services.AddSwagger();
     builder.Services.AddInfrastructure(builder.Configuration);
 
