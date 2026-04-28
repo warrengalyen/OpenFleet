@@ -77,10 +77,10 @@ public class VehicleTests
     }
 
     [Fact]
-    public void Inspection_Passed_DefaultsToFalse()
+    public void Inspection_Status_DefaultsToPassed()
     {
         var inspection = new Inspection();
-        Assert.False(inspection.Passed);
+        Assert.Equal(OpenFleet.Domain.Enums.InspectionStatus.Passed, inspection.Status);
     }
 
     [Fact]
