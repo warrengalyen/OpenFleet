@@ -189,7 +189,7 @@ public static class DataSeeder
             VehicleId = vehicles[0].Id,
             InspectorUserId = users[2].Id,
             InspectedAt = DateTime.UtcNow.AddDays(-5),
-            Passed = true,
+            Status = Domain.Enums.InspectionStatus.Passed,
             Notes = "All systems nominal. Tires at 35 PSI."
         };
         await context.Inspections.AddAsync(inspection);
@@ -219,6 +219,30 @@ public static class DataSeeder
             }
         };
         await context.Assets.AddRangeAsync(assets);
+
+        var maintenanceSchedules = new List<MaintenanceSchedule>
+        {
+            new()
+            {
+                Name = "Oil Change",
+                Description = "Change engine oil and filter every 5,000 miles.",
+                VehicleId = vehicles[0].Id,
+                MileageInterval = 5000,
+                LastPerformedAt = DateTime.UtcNow.AddDays(-90),
+                LastPerformedMileage = 10000,
+                IsActive = true
+            },
+            new()
+            {
+                Name = "Annual Inspection",
+                Description = "Full vehicle inspection once per year.",
+                VehicleId = vehicles[1].Id,
+                DayInterval = 365,
+                LastPerformedAt = DateTime.UtcNow.AddDays(-400),
+                IsActive = true
+            }
+        };
+        await context.MaintenanceSchedules.AddRangeAsync(maintenanceSchedules);
 
         await context.SaveChangesAsync();
         logger.LogInformation("Database seeding complete.");

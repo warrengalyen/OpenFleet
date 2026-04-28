@@ -14,6 +14,7 @@ public class OpenFleetDbContext : DbContext, IOpenFleetDbContext
     public DbSet<WorkOrderNote> WorkOrderNotes => Set<WorkOrderNote>();
     public DbSet<MaintenanceRecord> MaintenanceRecords => Set<MaintenanceRecord>();
     public DbSet<Inspection> Inspections => Set<Inspection>();
+    public DbSet<MaintenanceSchedule> MaintenanceSchedules => Set<MaintenanceSchedule>();
     public DbSet<Part> Parts => Set<Part>();
     public DbSet<Vendor> Vendors => Set<Vendor>();
     public DbSet<Department> Departments => Set<Department>();
