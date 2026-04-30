@@ -5,10 +5,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using OpenFleet.Api.Extensions;
 using OpenFleet.Api.Middleware;
+using OpenFleet.Application.Interfaces;
 using OpenFleet.Application.Services;
 using OpenFleet.Application.Validators;
 using OpenFleet.Infrastructure.BackgroundServices;
 using OpenFleet.Infrastructure.Extensions;
+using OpenFleet.Infrastructure.Integrations;
 using OpenFleet.Infrastructure.Persistence;
 using OpenFleet.Infrastructure.Persistence.Seeders;
 using Serilog;
@@ -33,7 +35,13 @@ try
     builder.Services.AddScoped<WorkOrderService>();
     builder.Services.AddScoped<InspectionService>();
     builder.Services.AddScoped<MaintenanceScheduleService>();
+    builder.Services.AddScoped<IntegrationLogService>();
+    builder.Services.AddScoped<IExternalIntegrationConnector, FuelUsageConnector>();
+    builder.Services.AddScoped<IExternalIntegrationConnector, VendorRepairConnector>();
+    builder.Services.AddScoped<IExternalIntegrationConnector, PartsSupplierConnector>();
+    builder.Services.AddScoped<IExternalIntegrationConnector, ExternalAssetConnector>();
     builder.Services.AddHostedService<MaintenanceDueCheckerService>();
+    builder.Services.AddHostedService<IntegrationSyncService>();
     builder.Services.AddSwagger();
     builder.Services.AddInfrastructure(builder.Configuration);
 
