@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using OpenFleet.Domain.Entities;
 using OpenFleet.Domain.Enums;
 using OpenFleet.Infrastructure.Persistence;
+using BcryptNet = BCrypt.Net.BCrypt;
 
 namespace OpenFleet.Infrastructure.Persistence.Seeders;
 
@@ -34,7 +35,9 @@ public static class DataSeeder
                 Id = Guid.Parse("22222222-0000-0000-0000-000000000001"),
                 FirstName = "Alice", LastName = "Johnson",
                 Email = "alice.johnson@openfleet.io",
+                PasswordHash = BcryptNet.HashPassword("Fleet@1234"),
                 Role = UserRole.FleetManager,
+                IsActive = true,
                 DepartmentId = departments[0].Id
             },
             new()
@@ -42,7 +45,9 @@ public static class DataSeeder
                 Id = Guid.Parse("22222222-0000-0000-0000-000000000002"),
                 FirstName = "Bob", LastName = "Smith",
                 Email = "bob.smith@openfleet.io",
+                PasswordHash = BcryptNet.HashPassword("Fleet@1234"),
                 Role = UserRole.Technician,
+                IsActive = true,
                 DepartmentId = departments[1].Id
             },
             new()
@@ -50,8 +55,20 @@ public static class DataSeeder
                 Id = Guid.Parse("22222222-0000-0000-0000-000000000003"),
                 FirstName = "Carol", LastName = "Davis",
                 Email = "carol.davis@openfleet.io",
+                PasswordHash = BcryptNet.HashPassword("Fleet@1234"),
                 Role = UserRole.Supervisor,
+                IsActive = true,
                 DepartmentId = departments[1].Id
+            },
+            new()
+            {
+                Id = Guid.Parse("22222222-0000-0000-0000-000000000004"),
+                FirstName = "Admin", LastName = "User",
+                Email = "admin@openfleet.io",
+                PasswordHash = BcryptNet.HashPassword("Admin@1234"),
+                Role = UserRole.Administrator,
+                IsActive = true,
+                DepartmentId = departments[0].Id
             }
         };
         await context.Users.AddRangeAsync(users);
@@ -243,6 +260,32 @@ public static class DataSeeder
             }
         };
         await context.MaintenanceSchedules.AddRangeAsync(maintenanceSchedules);
+        await context.SaveChangesAsync();
+
+        var auditLogs = new List<AuditLog>
+        {
+            new()
+            {
+                Action = AuditAction.VehicleUpdated,
+                EntityType = "Vehicle",
+                EntityId = vehicles[0].Id,
+                ChangedBy = "alice.johnson@openfleet.io",
+                OldValue = "Mileage=14000",
+                NewValue = "Mileage=15023",
+                Notes = "Mileage updated from fuel telemetry import."
+            },
+            new()
+            {
+                Action = AuditAction.WorkOrderStatusChanged,
+                EntityType = "WorkOrder",
+                EntityId = workOrders[0].Id,
+                ChangedBy = "bob.smith@openfleet.io",
+                OldValue = "Open",
+                NewValue = "Completed",
+                Notes = "Oil change completed."
+            }
+        };
+        await context.AuditLogs.AddRangeAsync(auditLogs);
 
         await context.SaveChangesAsync();
         logger.LogInformation("Database seeding complete.");

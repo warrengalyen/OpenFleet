@@ -8,6 +8,7 @@
   <ItemGroup>
     <PackageReference Include="AspNetCore.HealthChecks.NpgSql" Version="8.*" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="11.*" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.*" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.28" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.28">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
