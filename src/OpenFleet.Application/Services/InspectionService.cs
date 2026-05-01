@@ -12,11 +12,16 @@ public class InspectionService
 {
     private readonly IOpenFleetDbContext _context;
     private readonly WorkOrderService _workOrderService;
+    private readonly AuditService _auditService;
 
-    public InspectionService(IOpenFleetDbContext context, WorkOrderService workOrderService)
+    public InspectionService(
+        IOpenFleetDbContext context,
+        WorkOrderService workOrderService,
+        AuditService auditService)
     {
         _context = context;
         _workOrderService = workOrderService;
+        _auditService = auditService;
     }
 
     public async Task<Result<InspectionResponse>> CreateAsync(
@@ -68,6 +73,13 @@ public class InspectionService
                 inspection.GeneratedWorkOrderId = woResult.Value!.Id;
                 await _context.SaveChangesAsync(cancellationToken);
             }
+
+            await _auditService.LogAsync(
+                AuditAction.InspectionFailed,
+                "Inspection",
+                inspection.Id,
+                notes: $"Failed inspection created. GeneratedWorkOrderId={inspection.GeneratedWorkOrderId}",
+                cancellationToken: cancellationToken);
         }
 
         return Result<InspectionResponse>.Success(

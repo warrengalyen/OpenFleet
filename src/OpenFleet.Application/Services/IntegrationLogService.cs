@@ -12,16 +12,21 @@ public class IntegrationLogService
 {
     private readonly IOpenFleetDbContext _context;
     private readonly ILogger<IntegrationLogService> _logger;
+    private readonly AuditService _auditService;
 
     // Exponential backoff delays (in minutes) indexed by attempt number (1-based).
     // Attempt 1 → 2 min, attempt 2 → 8 min, attempt 3 → max/failed
     private static readonly int[] BackoffMinutes = [2, 8, 30];
     private const int MaxRetries = 3;
 
-    public IntegrationLogService(IOpenFleetDbContext context, ILogger<IntegrationLogService> logger)
+    public IntegrationLogService(
+        IOpenFleetDbContext context,
+        ILogger<IntegrationLogService> logger,
+        AuditService auditService)
     {
         _context = context;
         _logger = logger;
+        _auditService = auditService;
     }
 
     /// <summary>Create a new Pending log entry before a sync attempt begins.</summary>
@@ -119,6 +124,17 @@ public class IntegrationLogService
             _logger.LogError(
                 "Integration log {Id} ({Source}) permanently failed after {Attempts} attempts. Error: {Error}",
                 id, log.Source, log.AttemptCount, errorMessage);
+
+            await _context.SaveChangesAsync(cancellationToken);
+
+            await _auditService.LogAsync(
+                AuditAction.IntegrationSyncFailed,
+                "IntegrationLog",
+                log.Id,
+                notes: $"Source={log.Source} permanently failed after {log.AttemptCount} attempts. Error: {errorMessage}",
+                cancellationToken: cancellationToken);
+
+            return;
         }
 
         await _context.SaveChangesAsync(cancellationToken);

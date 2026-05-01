@@ -11,10 +11,12 @@ namespace OpenFleet.Application.Services;
 public class WorkOrderService
 {
     private readonly IOpenFleetDbContext _context;
+    private readonly AuditService _auditService;
 
-    public WorkOrderService(IOpenFleetDbContext context)
+    public WorkOrderService(IOpenFleetDbContext context, AuditService auditService)
     {
         _context = context;
+        _auditService = auditService;
     }
 
     public async Task<Result<WorkOrderResponse>> CreateAsync(
@@ -111,6 +113,7 @@ public class WorkOrderService
     public async Task<Result<WorkOrderResponse>> TransitionStatusAsync(
         Guid id,
         WorkOrderStatus newStatus,
+        string? changedBy = null,
         CancellationToken cancellationToken = default)
     {
         var workOrder = await _context.WorkOrders
@@ -124,12 +127,22 @@ public class WorkOrderService
                 $"Cannot transition from {workOrder.Status} to {newStatus}. " +
                 $"Allowed: [{string.Join(", ", WorkOrderStatusRules.AllowedTransitions(workOrder.Status))}]");
 
+        var oldStatus = workOrder.Status;
         workOrder.Status = newStatus;
 
         if (newStatus == WorkOrderStatus.Completed)
             workOrder.CompletedAt = DateTime.UtcNow;
 
         await _context.SaveChangesAsync(cancellationToken);
+
+        await _auditService.LogAsync(
+            AuditAction.WorkOrderStatusChanged,
+            "WorkOrder",
+            workOrder.Id,
+            changedBy,
+            oldValue: oldStatus.ToString(),
+            newValue: newStatus.ToString(),
+            cancellationToken: cancellationToken);
 
         return Result<WorkOrderResponse>.Success(
             (await LoadResponseAsync(id, cancellationToken))!);
@@ -225,9 +238,9 @@ public class WorkOrderService
             record.CreatedAt));
     }
 
-    public async Task<Result> CancelAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<Result> CancelAsync(Guid id, string? changedBy = null, CancellationToken cancellationToken = default)
     {
-        var result = await TransitionStatusAsync(id, WorkOrderStatus.Cancelled, cancellationToken);
+        var result = await TransitionStatusAsync(id, WorkOrderStatus.Cancelled, changedBy, cancellationToken);
         if (!result.IsSuccess)
             return Result.Failure(result.Error!, result.Code ?? ErrorCode.Validation);
 
