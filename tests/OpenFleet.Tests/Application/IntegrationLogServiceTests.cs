@@ -18,7 +18,8 @@ public class IntegrationLogServiceTests : IDisposable
             .UseInMemoryDatabase(Guid.NewGuid().ToString())
             .Options;
         _context = new OpenFleetDbContext(options);
-        _service = new IntegrationLogService(_context, NullLogger<IntegrationLogService>.Instance);
+        var auditService = new AuditService(_context);
+        _service = new IntegrationLogService(_context, NullLogger<IntegrationLogService>.Instance, auditService);
     }
 
     public void Dispose() => _context.Dispose();

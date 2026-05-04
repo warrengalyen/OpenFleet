@@ -1,7 +1,11 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using OpenFleet.Application.Common;
 using OpenFleet.Application.DTOs;
 using OpenFleet.Application.Interfaces;
+using OpenFleet.Application.Services;
 using OpenFleet.Domain.Entities;
 using OpenFleet.Domain.Enums;
 
@@ -10,15 +14,21 @@ namespace OpenFleet.Api.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Produces("application/json")]
+[Authorize(Roles = AuthorizationPolicies.AnyAuthenticated)]
 public class VehiclesController : ControllerBase
 {
     private readonly IOpenFleetDbContext _context;
     private readonly ILogger<VehiclesController> _logger;
+    private readonly AuditService _auditService;
 
-    public VehiclesController(IOpenFleetDbContext context, ILogger<VehiclesController> logger)
+    public VehiclesController(
+        IOpenFleetDbContext context,
+        ILogger<VehiclesController> logger,
+        AuditService auditService)
     {
         _context = context;
         _logger = logger;
+        _auditService = auditService;
     }
 
     /// <summary>Returns all vehicles with optional filtering and search.</summary>
@@ -96,6 +106,7 @@ public class VehiclesController : ControllerBase
 
     /// <summary>Creates a new vehicle.</summary>
     [HttpPost]
+    [Authorize(Roles = AuthorizationPolicies.TechnicianOrAbove)]
     [ProducesResponseType(typeof(VehicleResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Create(
@@ -141,6 +152,7 @@ public class VehiclesController : ControllerBase
 
     /// <summary>Updates an existing vehicle.</summary>
     [HttpPut("{id:guid}")]
+    [Authorize(Roles = AuthorizationPolicies.TechnicianOrAbove)]
     [ProducesResponseType(typeof(VehicleResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -172,6 +184,8 @@ public class VehiclesController : ControllerBase
                 return Conflict(new { error = $"A vehicle with VIN '{request.VIN}' already exists." });
         }
 
+        var oldSnapshot = $"Mileage={vehicle.Mileage}, Status={vehicle.Status}";
+
         if (request.VIN is not null) vehicle.VIN = request.VIN;
         if (request.LicensePlate is not null) vehicle.LicensePlate = request.LicensePlate;
         if (request.Make is not null) vehicle.Make = request.Make;
@@ -183,6 +197,15 @@ public class VehiclesController : ControllerBase
 
         await _context.SaveChangesAsync(cancellationToken);
 
+        await _auditService.LogAsync(
+            AuditAction.VehicleUpdated,
+            "Vehicle",
+            vehicle.Id,
+            User.FindFirstValue(ClaimTypes.Email),
+            oldValue: oldSnapshot,
+            newValue: $"Mileage={vehicle.Mileage}, Status={vehicle.Status}",
+            cancellationToken: cancellationToken);
+
         var updated = await _context.Vehicles
             .Include(v => v.Department)
             .AsNoTracking()
@@ -193,6 +216,7 @@ public class VehiclesController : ControllerBase
 
     /// <summary>Soft-deletes a vehicle by setting its status to Retired.</summary>
     [HttpDelete("{id:guid}")]
+    [Authorize(Roles = AuthorizationPolicies.TechnicianOrAbove)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)

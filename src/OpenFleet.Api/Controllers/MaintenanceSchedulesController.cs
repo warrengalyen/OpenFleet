@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OpenFleet.Application.Common;
 using OpenFleet.Application.DTOs;
@@ -8,6 +9,7 @@ namespace OpenFleet.Api.Controllers;
 [ApiController]
 [Route("api/maintenance-schedules")]
 [Produces("application/json")]
+[Authorize(Roles = AuthorizationPolicies.AnyAuthenticated)]
 public class MaintenanceSchedulesController : ControllerBase
 {
     private readonly MaintenanceScheduleService _scheduleService;
@@ -49,6 +51,7 @@ public class MaintenanceSchedulesController : ControllerBase
 
     /// <summary>Create a new maintenance schedule.</summary>
     [HttpPost]
+    [Authorize(Roles = AuthorizationPolicies.FleetManagerOrAbove)]
     [ProducesResponseType(typeof(MaintenanceScheduleResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Create(
@@ -65,6 +68,7 @@ public class MaintenanceSchedulesController : ControllerBase
 
     /// <summary>Update an existing maintenance schedule.</summary>
     [HttpPut("{id:guid}")]
+    [Authorize(Roles = AuthorizationPolicies.FleetManagerOrAbove)]
     [ProducesResponseType(typeof(MaintenanceScheduleResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Update(
@@ -82,6 +86,7 @@ public class MaintenanceSchedulesController : ControllerBase
 
     /// <summary>Deactivate a maintenance schedule (soft delete).</summary>
     [HttpDelete("{id:guid}")]
+    [Authorize(Roles = AuthorizationPolicies.FleetManagerOrAbove)]
     [ProducesResponseType(typeof(MaintenanceScheduleResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Deactivate(Guid id, CancellationToken cancellationToken)
@@ -96,6 +101,7 @@ public class MaintenanceSchedulesController : ControllerBase
 
     /// <summary>Mark a maintenance schedule as performed, updating the last performed date and mileage.</summary>
     [HttpPut("{id:guid}/mark-performed")]
+    [Authorize(Roles = AuthorizationPolicies.FleetManagerOrAbove)]
     [ProducesResponseType(typeof(MaintenanceScheduleResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> MarkPerformed(

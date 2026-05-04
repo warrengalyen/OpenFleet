@@ -1,5 +1,7 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using OpenFleet.Application.Common;
 using OpenFleet.Application.DTOs;
 using OpenFleet.Application.Interfaces;
 using OpenFleet.Domain.Entities;
@@ -10,6 +12,7 @@ namespace OpenFleet.Api.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Produces("application/json")]
+[Authorize(Roles = AuthorizationPolicies.AnyAuthenticated)]
 public class AssetsController : ControllerBase
 {
     private readonly IOpenFleetDbContext _context;
@@ -138,6 +141,7 @@ public class AssetsController : ControllerBase
 
     /// <summary>Updates an existing asset.</summary>
     [HttpPut("{id:guid}")]
+    [Authorize(Roles = AuthorizationPolicies.TechnicianOrAbove)]
     [ProducesResponseType(typeof(AssetResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -199,6 +203,7 @@ public class AssetsController : ControllerBase
 
     /// <summary>Soft-deletes an asset by setting its status to Decommissioned.</summary>
     [HttpDelete("{id:guid}")]
+    [Authorize(Roles = AuthorizationPolicies.TechnicianOrAbove)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
@@ -233,3 +238,4 @@ public class AssetsController : ControllerBase
         a.UpdatedAt
     );
 }
+

@@ -5,6 +5,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using OpenFleet.Api.Extensions;
 using OpenFleet.Api.Middleware;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using OpenFleet.Application.Common;
 using OpenFleet.Application.Interfaces;
 using OpenFleet.Application.Services;
 using OpenFleet.Application.Validators;
@@ -32,10 +36,33 @@ try
     builder.Services.AddControllers();
     builder.Services.AddFluentValidationAutoValidation();
     builder.Services.AddValidatorsFromAssemblyContaining<CreateVehicleRequestValidator>();
+    builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("Jwt"));
+
+    var jwtSecret = builder.Configuration["Jwt:Secret"]
+        ?? throw new InvalidOperationException("Jwt:Secret is not configured.");
+    builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        .AddJwtBearer(options =>
+        {
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                ValidAudience = builder.Configuration["Jwt:Audience"],
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret))
+            };
+        });
+    builder.Services.AddAuthorization();
+
+    builder.Services.AddScoped<AuditService>();
     builder.Services.AddScoped<WorkOrderService>();
     builder.Services.AddScoped<InspectionService>();
     builder.Services.AddScoped<MaintenanceScheduleService>();
     builder.Services.AddScoped<IntegrationLogService>();
+    builder.Services.AddScoped<UserManagementService>();
+    builder.Services.AddScoped<AuthService>();
     builder.Services.AddScoped<IExternalIntegrationConnector, FuelUsageConnector>();
     builder.Services.AddScoped<IExternalIntegrationConnector, VendorRepairConnector>();
     builder.Services.AddScoped<IExternalIntegrationConnector, PartsSupplierConnector>();
@@ -67,6 +94,8 @@ try
     }
 
     app.UseHttpsRedirection();
+    app.UseAuthentication();
+    app.UseAuthorization();
     app.MapControllers();
     app.MapHealthChecks("/health", new HealthCheckOptions
     {

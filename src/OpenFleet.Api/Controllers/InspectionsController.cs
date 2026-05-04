@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OpenFleet.Application.Common;
 using OpenFleet.Application.DTOs;
@@ -9,6 +10,7 @@ namespace OpenFleet.Api.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Produces("application/json")]
+[Authorize(Roles = AuthorizationPolicies.AnyAuthenticated)]
 public class InspectionsController : ControllerBase
 {
     private readonly InspectionService _inspectionService;
@@ -46,6 +48,7 @@ public class InspectionsController : ControllerBase
     /// Submit a new inspection. If the status is Failed, a work order is automatically created.
     /// </summary>
     [HttpPost]
+    [Authorize(Roles = AuthorizationPolicies.TechnicianOrAbove)]
     [ProducesResponseType(typeof(InspectionResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -65,6 +68,7 @@ public class InspectionsController : ControllerBase
     /// Update an inspection's status or notes. If transitioned to Failed, a work order is auto-created.
     /// </summary>
     [HttpPut("{id:guid}")]
+    [Authorize(Roles = AuthorizationPolicies.TechnicianOrAbove)]
     [ProducesResponseType(typeof(InspectionResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
