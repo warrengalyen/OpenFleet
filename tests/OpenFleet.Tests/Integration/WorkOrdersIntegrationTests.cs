@@ -18,7 +18,7 @@ public class WorkOrdersIntegrationTests
     public WorkOrdersIntegrationTests(OpenFleetWebFactory factory)
     {
         _factory = factory;
-        _client = factory.CreateClient();
+        _client = factory.CreateClientWithRole("Technician");
     }
 
     private async Task<Guid> SeedVehicleAsync(string vin, string plate)

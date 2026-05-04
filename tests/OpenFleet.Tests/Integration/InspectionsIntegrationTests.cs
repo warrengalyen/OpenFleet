@@ -18,7 +18,7 @@ public class InspectionsIntegrationTests
     public InspectionsIntegrationTests(OpenFleetWebFactory factory)
     {
         _factory = factory;
-        _client = factory.CreateClient();
+        _client = factory.CreateClientWithRole("Technician");
     }
 
     private async Task<(Guid vehicleId, Guid inspectorId)> SeedVehicleAndUserAsync(string tag)
@@ -142,7 +142,9 @@ public class InspectionsIntegrationTests
             DayInterval: 90
         );
 
-        var response = await _client.PostAsJsonAsync("/api/maintenance-schedules", request);
+        // Maintenance schedule creation requires FleetManager or above
+        var fleetManagerClient = _factory.CreateClientWithRole("FleetManager");
+        var response = await fleetManagerClient.PostAsJsonAsync("/api/maintenance-schedules", request);
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
 
         var body = await response.Content.ReadFromJsonAsync<MaintenanceScheduleResponse>();

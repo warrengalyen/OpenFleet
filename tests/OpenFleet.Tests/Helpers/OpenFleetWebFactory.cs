@@ -1,13 +1,12 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using OpenFleet.Infrastructure.Persistence;
 
@@ -39,6 +38,45 @@ public class OpenFleetWebFactory : WebApplicationFactory<Program>
             services.AddDbContext<OpenFleetDbContext>(options =>
                 options.UseInMemoryDatabase("OpenFleetIntegrationTestDb"));
         });
+    }
+
+    protected override IHost CreateHost(IHostBuilder builder)
+    {
+        var host = base.CreateHost(builder);
+        using var scope = host.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<OpenFleetDbContext>();
+        SeedTestAuthUser(db);
+        return host;
+    }
+
+    private static void SeedTestAuthUser(OpenFleetDbContext db)
+    {
+        if (db.Users.Any(u => u.Email == "admin@openfleet.io"))
+            return;
+
+        var dept = new OpenFleet.Domain.Entities.Department
+        {
+            Id = Guid.Parse("AAAAAAAA-0000-0000-0000-000000000001"),
+            Name = "Test Department",
+            Code = "TST"
+        };
+        if (!db.Departments.Any(d => d.Id == dept.Id))
+        {
+            db.Departments.Add(dept);
+            db.SaveChanges();
+        }
+
+        db.Users.Add(new OpenFleet.Domain.Entities.User
+        {
+            FirstName = "Admin",
+            LastName = "User",
+            Email = "admin@openfleet.io",
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin@1234"),
+            Role = OpenFleet.Domain.Enums.UserRole.Administrator,
+            IsActive = true,
+            DepartmentId = dept.Id
+        });
+        db.SaveChanges();
     }
 
     /// <summary>

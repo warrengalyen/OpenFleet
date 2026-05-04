@@ -18,7 +18,7 @@ public class VehiclesIntegrationTests
     public VehiclesIntegrationTests(OpenFleetWebFactory factory)
     {
         _factory = factory;
-        _client = factory.CreateClient();
+        _client = factory.CreateClientWithRole("Technician");
     }
 
     private async Task<Guid> SeedDepartmentAsync()

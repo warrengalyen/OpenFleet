@@ -13,7 +13,7 @@ public class IntegrationsIntegrationTests
 
     public IntegrationsIntegrationTests(OpenFleetWebFactory factory)
     {
-        _client = factory.CreateClient();
+        _client = factory.CreateClientWithRole("FleetManager");
     }
 
     [Fact]

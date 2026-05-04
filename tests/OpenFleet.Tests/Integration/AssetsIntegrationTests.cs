@@ -18,7 +18,7 @@ public class AssetsIntegrationTests
     public AssetsIntegrationTests(OpenFleetWebFactory factory)
     {
         _factory = factory;
-        _client = factory.CreateClient();
+        _client = factory.CreateClientWithRole("Technician");
     }
 
     private async Task<Guid> SeedDepartmentAsync(string code = "AST")
