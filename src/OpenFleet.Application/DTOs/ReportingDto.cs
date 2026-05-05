@@ -1,0 +1,115 @@
+using OpenFleet.Domain.Enums;
+
+namespace OpenFleet.Application.DTOs;
+
+// ── Open work orders ──────────────────────────────────────────────────────────
+
+public record OpenWorkOrdersReport(
+    int TotalOpen,
+    int Open,
+    int InProgress,
+    int WaitingForParts,
+    IReadOnlyList<WorkOrderSummaryItem> Items
+);
+
+public record WorkOrderSummaryItem(
+    Guid Id,
+    string Title,
+    WorkOrderStatus Status,
+    WorkOrderPriority Priority,
+    string? VehicleLabel,
+    DateTime CreatedAt
+);
+
+// ── Vehicles due for service ──────────────────────────────────────────────────
+// Reuses VehicleDueForServiceResponse from MaintenanceScheduleDto.cs
+
+public record VehiclesDueForServiceReport(
+    int TotalDue,
+    IReadOnlyList<VehicleDueForServiceResponse> Vehicles
+);
+
+// ── Maintenance cost by vehicle ────────────────────────────────────────────────
+
+public record MaintenanceCostByVehicle(
+    Guid VehicleId,
+    string VehicleLabel,
+    decimal TotalLaborHours,
+    int CompletedWorkOrders
+);
+
+public record MaintenanceCostReport(
+    IReadOnlyList<MaintenanceCostByVehicle> Vehicles
+);
+
+// ── Parts usage / inventory summary ───────────────────────────────────────────
+
+public record PartUsageSummary(
+    Guid PartId,
+    string Name,
+    string PartNumber,
+    string? VendorName,
+    int QuantityOnHand,
+    decimal UnitCost,
+    decimal TotalValue
+);
+
+public record PartUsageReport(
+    int TotalParts,
+    decimal TotalInventoryValue,
+    IReadOnlyList<PartUsageSummary> Parts
+);
+
+// ── Vehicle downtime ──────────────────────────────────────────────────────────
+
+public record VehicleDowntimeEntry(
+    Guid VehicleId,
+    string VehicleLabel,
+    string LicensePlate,
+    VehicleStatus Status,
+    int OpenWorkOrderCount,
+    DateTime? LastMaintenanceAt
+);
+
+public record VehicleDowntimeReport(
+    int VehiclesInMaintenance,
+    IReadOnlyList<VehicleDowntimeEntry> Vehicles
+);
+
+// ── Inspection failure rate ────────────────────────────────────────────────────
+
+public record InspectionFailureBySeverity(
+    Guid? VehicleId,
+    string? VehicleLabel,
+    int FailedCount
+);
+
+public record InspectionFailureRateReport(
+    int TotalInspections,
+    int Passed,
+    int Failed,
+    int NeedsReview,
+    double FailureRatePercent,
+    IReadOnlyList<InspectionFailureBySeverity> TopFailedVehicles
+);
+
+// ── Work orders by status ─────────────────────────────────────────────────────
+
+public record WorkOrdersByStatusReport(
+    int Open,
+    int InProgress,
+    int WaitingForParts,
+    int Completed,
+    int Cancelled,
+    int Total
+);
+
+// ── Work orders by priority ───────────────────────────────────────────────────
+
+public record WorkOrdersByPriorityReport(
+    int Low,
+    int Medium,
+    int High,
+    int Critical,
+    int Total
+);

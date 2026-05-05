@@ -154,20 +154,90 @@ public static class DataSeeder
         {
             new()
             {
+                Id = Guid.Parse("55555555-0000-0000-0000-000000000001"),
                 Title = "Oil Change & Filter Replacement",
                 Description = "Routine oil change at 15,000 miles interval.",
                 Status = WorkOrderStatus.Completed,
                 Priority = WorkOrderPriority.Low,
+                LaborHours = 1.5m,
+                CompletedAt = DateTime.UtcNow.AddDays(-10),
                 VehicleId = vehicles[0].Id,
                 AssignedUserId = users[1].Id
             },
             new()
             {
+                Id = Guid.Parse("55555555-0000-0000-0000-000000000002"),
                 Title = "Front Brake Inspection",
                 Description = "Driver reported brake squeal. Inspect and replace if worn.",
                 Status = WorkOrderStatus.InProgress,
                 Priority = WorkOrderPriority.High,
+                LaborHours = 2.0m,
                 VehicleId = vehicles[2].Id,
+                AssignedUserId = users[1].Id
+            },
+            new()
+            {
+                Id = Guid.Parse("55555555-0000-0000-0000-000000000003"),
+                Title = "Tire Rotation",
+                Description = "Rotate all four tires to ensure even wear.",
+                Status = WorkOrderStatus.Open,
+                Priority = WorkOrderPriority.Low,
+                VehicleId = vehicles[1].Id,
+                AssignedUserId = users[1].Id
+            },
+            new()
+            {
+                Id = Guid.Parse("55555555-0000-0000-0000-000000000004"),
+                Title = "Transmission Service",
+                Description = "Flush transmission fluid and replace filter.",
+                Status = WorkOrderStatus.WaitingForParts,
+                Priority = WorkOrderPriority.Medium,
+                LaborHours = 1.0m,
+                VehicleId = vehicles[1].Id,
+                AssignedUserId = users[1].Id
+            },
+            new()
+            {
+                Id = Guid.Parse("55555555-0000-0000-0000-000000000005"),
+                Title = "Engine Diagnostic",
+                Description = "Check engine light is on. Run full OBD-II diagnostic.",
+                Status = WorkOrderStatus.Open,
+                Priority = WorkOrderPriority.Critical,
+                VehicleId = vehicles[2].Id,
+                AssignedUserId = users[2].Id
+            },
+            new()
+            {
+                Id = Guid.Parse("55555555-0000-0000-0000-000000000006"),
+                Title = "Annual Safety Inspection",
+                Description = "State-mandated annual vehicle safety inspection.",
+                Status = WorkOrderStatus.Completed,
+                Priority = WorkOrderPriority.High,
+                LaborHours = 3.5m,
+                CompletedAt = DateTime.UtcNow.AddDays(-60),
+                VehicleId = vehicles[0].Id,
+                AssignedUserId = users[2].Id
+            },
+            new()
+            {
+                Id = Guid.Parse("55555555-0000-0000-0000-000000000007"),
+                Title = "Cooling System Flush",
+                Description = "Flush and refill coolant. Inspect hoses and thermostat.",
+                Status = WorkOrderStatus.Completed,
+                Priority = WorkOrderPriority.Medium,
+                LaborHours = 2.5m,
+                CompletedAt = DateTime.UtcNow.AddDays(-30),
+                VehicleId = vehicles[1].Id,
+                AssignedUserId = users[1].Id
+            },
+            new()
+            {
+                Id = Guid.Parse("55555555-0000-0000-0000-000000000008"),
+                Title = "Wiper Blade Replacement",
+                Description = "Front and rear wiper blades worn. Replace set.",
+                Status = WorkOrderStatus.Cancelled,
+                Priority = WorkOrderPriority.Low,
+                VehicleId = vehicles[0].Id,
                 AssignedUserId = users[1].Id
             }
         };
@@ -187,29 +257,80 @@ public static class DataSeeder
                 WorkOrderId = workOrders[1].Id,
                 Content = "Brake pads worn to 20%. Ordered replacement set from AutoParts Direct.",
                 AuthorName = "Carol Davis"
+            },
+            new()
+            {
+                WorkOrderId = workOrders[4].Id,
+                Content = "P0420 fault code detected. Catalyst efficiency below threshold.",
+                AuthorName = "Bob Smith"
             }
         };
         await context.WorkOrderNotes.AddRangeAsync(notes);
         await context.SaveChangesAsync();
 
-        var maintenanceRecord = new MaintenanceRecord
+        var maintenanceRecords = new List<MaintenanceRecord>
         {
-            WorkOrderId = workOrders[0].Id,
-            PerformedAt = DateTime.UtcNow.AddDays(-10),
-            OdometerReading = 15023,
-            Notes = "Used synthetic 5W-30. Next service at 30,000 miles."
+            new()
+            {
+                WorkOrderId = workOrders[0].Id,
+                PerformedAt = DateTime.UtcNow.AddDays(-10),
+                OdometerReading = 15023,
+                Notes = "Used synthetic 5W-30. Next service at 30,000 miles."
+            },
+            new()
+            {
+                WorkOrderId = workOrders[5].Id,
+                PerformedAt = DateTime.UtcNow.AddDays(-60),
+                OdometerReading = 14500,
+                Notes = "Safety inspection passed. All lights, brakes, and signals checked."
+            },
+            new()
+            {
+                WorkOrderId = workOrders[6].Id,
+                PerformedAt = DateTime.UtcNow.AddDays(-30),
+                OdometerReading = 31200,
+                Notes = "Coolant flushed and refilled. Thermostat replaced."
+            }
         };
-        await context.MaintenanceRecords.AddAsync(maintenanceRecord);
+        await context.MaintenanceRecords.AddRangeAsync(maintenanceRecords);
 
-        var inspection = new Inspection
+        var inspections = new List<Inspection>
         {
-            VehicleId = vehicles[0].Id,
-            InspectorUserId = users[2].Id,
-            InspectedAt = DateTime.UtcNow.AddDays(-5),
-            Status = Domain.Enums.InspectionStatus.Passed,
-            Notes = "All systems nominal. Tires at 35 PSI."
+            new()
+            {
+                VehicleId = vehicles[0].Id,
+                InspectorUserId = users[2].Id,
+                InspectedAt = DateTime.UtcNow.AddDays(-5),
+                Status = InspectionStatus.Passed,
+                Notes = "All systems nominal. Tires at 35 PSI."
+            },
+            new()
+            {
+                VehicleId = vehicles[1].Id,
+                InspectorUserId = users[2].Id,
+                InspectedAt = DateTime.UtcNow.AddDays(-20),
+                Status = InspectionStatus.Passed,
+                Notes = "Good condition. Minor surface rust on undercarriage noted."
+            },
+            new()
+            {
+                VehicleId = vehicles[2].Id,
+                InspectorUserId = users[2].Id,
+                InspectedAt = DateTime.UtcNow.AddDays(-3),
+                Status = InspectionStatus.Failed,
+                Notes = "Brake fluid contaminated. Left tail light inoperative. Work order generated.",
+                GeneratedWorkOrderId = workOrders[1].Id
+            },
+            new()
+            {
+                VehicleId = vehicles[2].Id,
+                InspectorUserId = users[1].Id,
+                InspectedAt = DateTime.UtcNow.AddDays(-45),
+                Status = InspectionStatus.NeedsReview,
+                Notes = "Tire tread at 3mm — borderline. Recommend replacement within 30 days."
+            }
         };
-        await context.Inspections.AddAsync(inspection);
+        await context.Inspections.AddRangeAsync(inspections);
 
         var assets = new List<Asset>
         {
