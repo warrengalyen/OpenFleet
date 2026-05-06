@@ -57,6 +57,7 @@ try
     builder.Services.AddAuthorization();
 
     builder.Services.AddScoped<AuditService>();
+    builder.Services.AddScoped<ReportingService>();
     builder.Services.AddScoped<WorkOrderService>();
     builder.Services.AddScoped<InspectionService>();
     builder.Services.AddScoped<MaintenanceScheduleService>();
