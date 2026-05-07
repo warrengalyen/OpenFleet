@@ -108,19 +108,26 @@ public class ReportingService
     public async Task<MaintenanceCostReport> GetMaintenanceCostByVehicleAsync(
         CancellationToken cancellationToken = default)
     {
-        var results = await _context.WorkOrders
+        // Materialize first, then order — GroupBy + computed projections aren't fully
+        // translatable to SQL when used with subsequent OrderByDescending on EF Core 8.
+        var raw = await _context.WorkOrders
             .AsNoTracking()
             .Where(wo => wo.Status == WorkOrderStatus.Completed && wo.VehicleId != null)
             .Include(wo => wo.Vehicle)
             .GroupBy(wo => new { wo.VehicleId, wo.Vehicle!.Make, wo.Vehicle.Model, wo.Vehicle.Year })
-            .Select(g => new MaintenanceCostByVehicle(
-                g.Key.VehicleId!.Value,
-                $"{g.Key.Year} {g.Key.Make} {g.Key.Model}",
-                g.Sum(wo => wo.LaborHours),
-                g.Count()
-            ))
-            .OrderByDescending(v => v.TotalLaborHours)
+            .Select(g => new
+            {
+                VehicleId = g.Key.VehicleId!.Value,
+                Label = $"{g.Key.Year} {g.Key.Make} {g.Key.Model}",
+                LaborHours = g.Sum(wo => wo.LaborHours),
+                Count = g.Count()
+            })
             .ToListAsync(cancellationToken);
+
+        var results = raw
+            .OrderByDescending(v => v.LaborHours)
+            .Select(v => new MaintenanceCostByVehicle(v.VehicleId, v.Label, v.LaborHours, v.Count))
+            .ToList();
 
         return new MaintenanceCostReport(Vehicles: results);
     }
@@ -218,21 +225,22 @@ public class ReportingService
 
         double failureRate = total == 0 ? 0.0 : Math.Round((double)failed / total * 100, 1);
 
-        // Top vehicles by failed inspection count
-        var topFailed = await _context.Inspections
+        // Top vehicles by failed inspection count — materialize before ordering
+        // because computed projections on GroupBy aren't always translateable.
+        var topFailedRaw = await _context.Inspections
             .AsNoTracking()
             .Where(i => i.Status == InspectionStatus.Failed)
             .Include(i => i.Vehicle)
             .GroupBy(i => new { i.VehicleId, VehicleLabel = i.Vehicle != null
                 ? i.Vehicle.Make + " " + i.Vehicle.Model : null })
-            .Select(g => new InspectionFailureBySeverity(
-                g.Key.VehicleId,
-                g.Key.VehicleLabel,
-                g.Count()
-            ))
-            .OrderByDescending(x => x.FailedCount)
-            .Take(5)
+            .Select(g => new { g.Key.VehicleId, g.Key.VehicleLabel, Count = g.Count() })
             .ToListAsync(cancellationToken);
+
+        var topFailed = topFailedRaw
+            .OrderByDescending(x => x.Count)
+            .Take(5)
+            .Select(x => new InspectionFailureBySeverity(x.VehicleId, x.VehicleLabel, x.Count))
+            .ToList();
 
         return new InspectionFailureRateReport(
             TotalInspections: total,
