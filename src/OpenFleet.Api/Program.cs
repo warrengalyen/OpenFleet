@@ -1,6 +1,7 @@
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using OpenFleet.Api.Extensions;
@@ -36,6 +37,25 @@ try
     builder.Services.AddControllers();
     builder.Services.AddFluentValidationAutoValidation();
     builder.Services.AddValidatorsFromAssemblyContaining<CreateVehicleRequestValidator>();
+
+    // Enrich validation error responses with the request's correlation ID
+    builder.Services.Configure<ApiBehaviorOptions>(options =>
+    {
+        options.InvalidModelStateResponseFactory = ctx =>
+        {
+            var correlationId = ctx.HttpContext.Items[CorrelationIdMiddleware.ItemsKey]?.ToString();
+            var problem = new ValidationProblemDetails(ctx.ModelState)
+            {
+                Type = "https://httpstatuses.io/400",
+                Title = "One or more validation errors occurred.",
+                Status = StatusCodes.Status400BadRequest,
+                Instance = ctx.HttpContext.Request.Path
+            };
+            if (correlationId is not null)
+                problem.Extensions["correlationId"] = correlationId;
+            return new BadRequestObjectResult(problem);
+        };
+    });
     builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("Jwt"));
 
     var jwtSecret = builder.Configuration["Jwt:Secret"]
@@ -82,7 +102,9 @@ try
 
     var app = builder.Build();
 
+    app.UseMiddleware<CorrelationIdMiddleware>();
     app.UseMiddleware<ExceptionHandlingMiddleware>();
+    app.UseSerilogRequestLogging();
 
     if (app.Environment.IsDevelopment())
     {
