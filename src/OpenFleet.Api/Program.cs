@@ -120,23 +120,42 @@ try
     app.UseAuthentication();
     app.UseAuthorization();
     app.MapControllers();
+
+    static Task WriteHealthResponse(HttpContext context,
+        Microsoft.Extensions.Diagnostics.HealthChecks.HealthReport report)
+    {
+        context.Response.ContentType = "application/json";
+        var result = System.Text.Json.JsonSerializer.Serialize(new
+        {
+            status = report.Status.ToString(),
+            checks = report.Entries.Select(e => new
+            {
+                name = e.Key,
+                status = e.Value.Status.ToString(),
+                description = e.Value.Description
+            })
+        });
+        return context.Response.WriteAsync(result);
+    }
+
+    // Combined health check — backward-compatible
     app.MapHealthChecks("/health", new HealthCheckOptions
     {
-        ResponseWriter = async (context, report) =>
-        {
-            context.Response.ContentType = "application/json";
-            var result = System.Text.Json.JsonSerializer.Serialize(new
-            {
-                status = report.Status.ToString(),
-                checks = report.Entries.Select(e => new
-                {
-                    name = e.Key,
-                    status = e.Value.Status.ToString(),
-                    description = e.Value.Description
-                })
-            });
-            await context.Response.WriteAsync(result);
-        }
+        ResponseWriter = WriteHealthResponse
+    });
+
+    // Liveness probe — always 200 while the process is alive (no DB dependency)
+    app.MapHealthChecks("/health/live", new HealthCheckOptions
+    {
+        Predicate = _ => false, // skip all registered checks
+        ResponseWriter = WriteHealthResponse
+    });
+
+    // Readiness probe — requires PostgreSQL to be healthy
+    app.MapHealthChecks("/health/ready", new HealthCheckOptions
+    {
+        Predicate = check => check.Tags.Contains("db"),
+        ResponseWriter = WriteHealthResponse
     });
 
     using (var scope = app.Services.CreateScope())
