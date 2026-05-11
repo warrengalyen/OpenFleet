@@ -3,15 +3,15 @@ services:
     image: postgres:16-alpine
     container_name: openfleet-db
     environment:
-      POSTGRES_DB: openfleet
-      POSTGRES_USER: openfleet
-      POSTGRES_PASSWORD: openfleet_pass
+      POSTGRES_DB: ${POSTGRES_DB:-openfleet}
+      POSTGRES_USER: ${POSTGRES_USER:-openfleet}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-openfleet_pass}
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U openfleet -d openfleet"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-openfleet} -d ${POSTGRES_DB:-openfleet}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -22,9 +22,9 @@ services:
       dockerfile: src/OpenFleet.Api/Dockerfile
     container_name: openfleet-api
     environment:
-      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT:-Development}
       ASPNETCORE_URLS: http://+:8080
-      ConnectionStrings__DefaultConnection: "Host=db;Port=5432;Database=openfleet;Username=openfleet;Password=openfleet_pass"
+      ConnectionStrings__DefaultConnection: "Host=db;Port=5432;Database=${POSTGRES_DB:-openfleet};Username=${POSTGRES_USER:-openfleet};Password=${POSTGRES_PASSWORD:-openfleet_pass}"
     ports:
       - "8080:8080"
     depends_on:
