@@ -1,22 +1,12 @@
 # OpenFleet
 
-**Open-source fleet and maintenance management REST API** built with C#/.NET 8 as a portfolio demonstration of enterprise backend architecture.
-
-> Built to showcase Clean Architecture, domain-driven design, JWT authentication, background services, structured logging, and production-ready API patterns in a realistic domain.
+**A fleet and maintenance management REST API** built with C#/.NET 8 as a portfolio demonstration of enterprise backend architecture.
 
 ---
 
 ## What Is OpenFleet?
 
 OpenFleet is a backend API for managing a vehicle fleet — tracking vehicles and assets, scheduling preventive maintenance, logging inspections, dispatching work orders to technicians, and syncing with external systems (fuel data, vendor repairs, parts suppliers). It is not a finished product; it is a portfolio project demonstrating how I approach backend systems at an enterprise scale.
-
-## Why I Built It
-
-Most portfolio projects are todo lists or CRUD apps. I wanted something with:
-- Real domain complexity (status machines, business rules, scheduled tasks)
-- Multiple interacting modules (auth, auditing, integrations, reporting)
-- Patterns I use in production: Result<T>, FluentValidation, correlation IDs, structured logging
-- Something I could explain in a technical interview at any depth
 
 ---
 
