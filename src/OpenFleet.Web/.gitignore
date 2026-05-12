@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+dist-ssr/
+
+# Environment overrides (keep .env.example, never commit .env.local or .env)
+.env
+.env.local
+.env.*.local
+
+# Vite cache
+.vite/
+
+# Editor
+.vscode/settings.json
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
