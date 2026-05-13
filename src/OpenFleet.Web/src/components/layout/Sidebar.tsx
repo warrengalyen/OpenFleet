@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import { clsx } from 'clsx'
 import {
@@ -7,10 +8,15 @@ import {
   ClipboardList,
   Eye,
   Calendar,
+  Wrench,
+  Store,
   PlugZap,
   BarChart3,
+  Shield,
   Users,
   FileText,
+  ChevronDown,
+  X,
 } from 'lucide-react'
 
 interface NavItem {
@@ -19,61 +25,155 @@ interface NavItem {
   icon: React.ElementType
 }
 
-const navItems: NavItem[] = [
+interface NavGroup {
+  label: string
+  icon: React.ElementType
+  children: NavItem[]
+}
+
+type NavEntry = NavItem | ({ isGroup: true } & NavGroup)
+
+const navEntries: NavEntry[] = [
   { label: 'Dashboard', to: '/dashboard', icon: LayoutDashboard },
   { label: 'Vehicles', to: '/vehicles', icon: Truck },
   { label: 'Assets', to: '/assets', icon: Package },
   { label: 'Work Orders', to: '/work-orders', icon: ClipboardList },
   { label: 'Inspections', to: '/inspections', icon: Eye },
   { label: 'Maintenance', to: '/maintenance', icon: Calendar },
+  { label: 'Parts', to: '/parts', icon: Wrench },
+  { label: 'Vendors', to: '/vendors', icon: Store },
   { label: 'Integrations', to: '/integrations', icon: PlugZap },
   { label: 'Reports', to: '/reports', icon: BarChart3 },
-  { label: 'Users', to: '/users', icon: Users },
-  { label: 'Audit', to: '/audit', icon: FileText },
+  {
+    isGroup: true,
+    label: 'Administration',
+    icon: Shield,
+    children: [
+      { label: 'Users', to: '/admin/users', icon: Users },
+      { label: 'Audit Log', to: '/admin/audit', icon: FileText },
+    ],
+  },
 ]
 
-export function Sidebar() {
+const linkBase =
+  'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors'
+const linkActive =
+  'bg-brand-50 text-brand-700 dark:bg-brand-950 dark:text-brand-300'
+const linkInactive =
+  'text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-100'
+
+interface SidebarProps {
+  onClose: () => void
+}
+
+export function Sidebar({ onClose }: SidebarProps) {
+  const [adminOpen, setAdminOpen] = useState(true)
+
   return (
-    <aside className="flex h-screen w-60 flex-col border-r border-gray-200 bg-white">
-      {/* Logo */}
-      <div className="flex h-16 items-center gap-2.5 border-b border-gray-100 px-5">
-        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-600">
-          <svg viewBox="0 0 32 32" fill="none" className="h-5 w-5">
-            <path d="M4 22h24M6 22V16a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v6" stroke="white" strokeWidth="2" strokeLinecap="round"/>
-            <circle cx="10" cy="24" r="2" fill="white"/>
-            <circle cx="22" cy="24" r="2" fill="white"/>
-          </svg>
+    <aside className="flex h-full flex-col border-r border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
+      {/* Logo row */}
+      <div className="flex h-16 items-center justify-between border-b border-gray-100 px-5 dark:border-gray-800">
+        <div className="flex items-center gap-2.5">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-brand-600">
+            <svg viewBox="0 0 32 32" fill="none" className="h-5 w-5">
+              <path
+                d="M4 22h24M6 22V16a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v6"
+                stroke="white"
+                strokeWidth="2"
+                strokeLinecap="round"
+              />
+              <circle cx="10" cy="24" r="2" fill="white" />
+              <circle cx="22" cy="24" r="2" fill="white" />
+            </svg>
+          </div>
+          <span className="text-base font-semibold tracking-tight text-gray-900 dark:text-white">
+            OpenFleet
+          </span>
         </div>
-        <span className="text-base font-semibold text-gray-900 tracking-tight">OpenFleet</span>
+
+        {/* Mobile close button */}
+        <button
+          onClick={onClose}
+          className="rounded-md p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 lg:hidden"
+          aria-label="Close sidebar"
+        >
+          <X className="h-5 w-5" />
+        </button>
       </div>
 
       {/* Navigation */}
       <nav className="flex-1 overflow-y-auto px-3 py-4 scrollbar-thin">
         <ul className="space-y-0.5">
-          {navItems.map(({ label, to, icon: Icon }) => (
-            <li key={to}>
-              <NavLink
-                to={to}
-                className={({ isActive }) =>
-                  clsx(
-                    'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
-                    isActive
-                      ? 'bg-brand-50 text-brand-700'
-                      : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900',
-                  )
-                }
-              >
-                <Icon className="h-4 w-4 shrink-0" />
-                {label}
-              </NavLink>
-            </li>
-          ))}
+          {navEntries.map((entry) => {
+            if ('isGroup' in entry && entry.isGroup) {
+              const { label, icon: Icon, children } = entry
+              return (
+                <li key={label}>
+                  <button
+                    onClick={() => setAdminOpen((o) => !o)}
+                    className={clsx(
+                      linkBase,
+                      'w-full justify-between',
+                      linkInactive,
+                    )}
+                    aria-expanded={adminOpen}
+                  >
+                    <span className="flex items-center gap-3">
+                      <Icon className="h-4 w-4 shrink-0" />
+                      {label}
+                    </span>
+                    <ChevronDown
+                      className={clsx(
+                        'h-4 w-4 shrink-0 text-gray-400 transition-transform',
+                        adminOpen && 'rotate-180',
+                      )}
+                    />
+                  </button>
+
+                  {adminOpen && (
+                    <ul className="mt-0.5 space-y-0.5 pl-4">
+                      {children.map(({ label: childLabel, to, icon: ChildIcon }) => (
+                        <li key={to}>
+                          <NavLink
+                            to={to}
+                            onClick={onClose}
+                            className={({ isActive }) =>
+                              clsx(linkBase, isActive ? linkActive : linkInactive)
+                            }
+                          >
+                            <ChildIcon className="h-4 w-4 shrink-0" />
+                            {childLabel}
+                          </NavLink>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </li>
+              )
+            }
+
+            const { label, to, icon: Icon } = entry as NavItem
+            return (
+              <li key={to}>
+                <NavLink
+                  to={to}
+                  onClick={onClose}
+                  className={({ isActive }) =>
+                    clsx(linkBase, isActive ? linkActive : linkInactive)
+                  }
+                >
+                  <Icon className="h-4 w-4 shrink-0" />
+                  {label}
+                </NavLink>
+              </li>
+            )
+          })}
         </ul>
       </nav>
 
       {/* Footer */}
-      <div className="border-t border-gray-100 px-4 py-3">
-        <p className="text-xs text-gray-400">OpenFleet v0.1.0</p>
+      <div className="border-t border-gray-100 px-4 py-3 dark:border-gray-800">
+        <p className="text-xs text-gray-400 dark:text-gray-600">OpenFleet v0.1.0</p>
       </div>
     </aside>
   )

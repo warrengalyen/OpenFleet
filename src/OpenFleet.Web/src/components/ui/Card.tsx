@@ -8,7 +8,12 @@ interface CardProps {
 
 export function Card({ className, children }: CardProps) {
   return (
-    <div className={clsx('rounded-xl border border-gray-200 bg-white shadow-sm', className)}>
+    <div
+      className={clsx(
+        'rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900',
+        className,
+      )}
+    >
       {children}
     </div>
   )
@@ -16,7 +21,12 @@ export function Card({ className, children }: CardProps) {
 
 export function CardHeader({ className, children }: CardProps) {
   return (
-    <div className={clsx('flex items-center justify-between px-6 py-4 border-b border-gray-100', className)}>
+    <div
+      className={clsx(
+        'flex items-center justify-between border-b border-gray-100 px-6 py-4 dark:border-gray-800',
+        className,
+      )}
+    >
       {children}
     </div>
   )
@@ -24,7 +34,9 @@ export function CardHeader({ className, children }: CardProps) {
 
 export function CardTitle({ children, className }: CardProps) {
   return (
-    <h2 className={clsx('text-base font-semibold text-gray-900', className)}>{children}</h2>
+    <h2 className={clsx('text-base font-semibold text-gray-900 dark:text-white', className)}>
+      {children}
+    </h2>
   )
 }
 
