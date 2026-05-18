@@ -18,7 +18,7 @@ export function StatCard({
   value,
   icon: Icon,
   iconColor = 'text-brand-600',
-  iconBg = 'bg-brand-50',
+  iconBg = 'bg-brand-50 dark:bg-brand-950',
   isLoading,
   sub,
   emphasis,
@@ -26,8 +26,10 @@ export function StatCard({
   return (
     <div
       className={clsx(
-        'rounded-xl border bg-white p-5 shadow-sm',
-        emphasis ? 'border-brand-200 ring-1 ring-brand-200' : 'border-gray-200',
+        'rounded-xl border bg-white p-5 shadow-sm dark:bg-gray-900',
+        emphasis
+          ? 'border-brand-200 ring-1 ring-brand-200 dark:border-brand-800 dark:ring-brand-800'
+          : 'border-gray-200 dark:border-gray-800',
       )}
     >
       <div className="flex items-start justify-between">
@@ -39,12 +41,14 @@ export function StatCard({
 
       <div className="mt-4">
         {isLoading || value === undefined ? (
-          <div className="h-8 w-16 animate-pulse rounded bg-gray-200" />
+          <div className="h-8 w-16 animate-pulse rounded bg-gray-200 dark:bg-gray-700" />
         ) : (
-          <p className="text-2xl font-bold tracking-tight text-gray-900">{value}</p>
+          <p className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+            {value}
+          </p>
         )}
-        <p className="mt-1 text-sm font-medium text-gray-500">{label}</p>
-        {sub && <p className="mt-0.5 text-xs text-gray-400">{sub}</p>}
+        <p className="mt-1 text-sm font-medium text-gray-500 dark:text-gray-400">{label}</p>
+        {sub && <p className="mt-0.5 text-xs text-gray-400 dark:text-gray-500">{sub}</p>}
       </div>
     </div>
   )
