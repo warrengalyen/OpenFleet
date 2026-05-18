@@ -21,7 +21,22 @@
   }
 }
 
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateX(1rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
 @layer utilities {
+  .animate-toast-in {
+    animation: toast-in 0.2s ease-out both;
+  }
+
   .scrollbar-thin {
     scrollbar-width: thin;
     scrollbar-color: theme(colors.gray.300) transparent;
