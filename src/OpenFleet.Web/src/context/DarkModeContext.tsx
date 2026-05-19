@@ -2,6 +2,7 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useState,
   type ReactNode,
 } from 'react'
@@ -16,7 +17,11 @@ const DarkModeContext = createContext<DarkModeContextValue>({
   toggle: () => {},
 })
 
-/** Reads the current state of the <html> class applied by the inline index.html script. */
+/**
+ * Read the class that the inline index.html script already applied.
+ * Using classList instead of localStorage so the two stay in sync —
+ * the script is the single source of truth on initial load.
+ */
 function getInitialDark(): boolean {
   return document.documentElement.classList.contains('dark')
 }
@@ -24,19 +29,20 @@ function getInitialDark(): boolean {
 export function DarkModeProvider({ children }: { children: ReactNode }) {
   const [dark, setDark] = useState(getInitialDark)
 
-  const toggle = useCallback(() => {
-    setDark((prev) => {
-      const next = !prev
-      if (next) {
-        document.documentElement.classList.add('dark')
-        localStorage.setItem('theme', 'dark')
-      } else {
-        document.documentElement.classList.remove('dark')
-        localStorage.setItem('theme', 'light')
-      }
-      return next
-    })
-  }, [])
+  // Keep the DOM class in sync with React state.
+  // useEffect (not the state updater) is the correct place for DOM side-effects.
+  useEffect(() => {
+    const root = document.documentElement
+    if (dark) {
+      root.classList.add('dark')
+      localStorage.setItem('theme', 'dark')
+    } else {
+      root.classList.remove('dark')
+      localStorage.setItem('theme', 'light')
+    }
+  }, [dark])
+
+  const toggle = useCallback(() => setDark((d) => !d), [])
 
   return (
     <DarkModeContext.Provider value={{ dark, toggle }}>
