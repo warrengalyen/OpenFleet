@@ -1,40 +1,32 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { authService } from '@/services/auth.service'
-import { tokenStorage } from '@/lib/api'
-import type { LoginRequest } from '@/types'
+/**
+ * Auth hooks — re-exported from AuthContext for convenience.
+ * All auth state lives in AuthProvider; these are thin accessors.
+ */
+export { useAuth } from '@/context/AuthContext'
 
-const ME_QUERY_KEY = ['auth', 'me'] as const
+import { useAuth } from '@/context/AuthContext'
 
+/** Returns true when a valid session and loaded user profile exist. */
+export function useIsAuthenticated(): boolean {
+  return useAuth().isAuthenticated
+}
+
+/** Returns the current user profile, or null when not authenticated. */
 export function useCurrentUser() {
-  return useQuery({
-    queryKey: ME_QUERY_KEY,
-    queryFn: authService.me,
-    enabled: !!tokenStorage.get(),
-    retry: false,
-    staleTime: 5 * 60 * 1000, // 5 minutes
-  })
+  const { user, isLoading } = useAuth()
+  return { data: user, isLoading }
 }
 
+/** Returns the login mutation function and pending state. */
 export function useLogin() {
-  const queryClient = useQueryClient()
-  return useMutation({
-    mutationFn: (request: LoginRequest) => authService.login(request),
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ME_QUERY_KEY })
-    },
-  })
-}
-
-export function useLogout() {
-  const queryClient = useQueryClient()
-  return () => {
-    authService.logout()
-    queryClient.clear()
-    window.location.replace('/login')
+  const { login, isLoggingIn } = useAuth()
+  return {
+    mutateAsync: login,
+    isPending: isLoggingIn,
   }
 }
 
-export function useIsAuthenticated(): boolean {
-  const { data } = useCurrentUser()
-  return !!data
+/** Returns a logout handler that clears session and redirects to login. */
+export function useLogout() {
+  return useAuth().logout
 }
