@@ -4,7 +4,7 @@ import type { CurrentUserResponse, LoginRequest, LoginResponse } from '@/types'
 export const authService = {
   async login(request: LoginRequest): Promise<LoginResponse> {
     const { data } = await api.post<LoginResponse>('/auth/login', request)
-    tokenStorage.set(data.token)
+    tokenStorage.set(data.token, data.expiresAt)
     return data
   },
 
