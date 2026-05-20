@@ -1,10 +1,13 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom'
 import { AppLayout } from '@/components/layout/AppLayout'
 import { ProtectedRoute } from './ProtectedRoute'
+import { RoleProtectedRoute } from './RoleProtectedRoute'
+import { AuthPolicy } from '@/lib/auth'
 
 // Public pages
 import { LoginPage } from '@/features/auth/LoginPage'
 import { NotFoundPage } from '@/features/errors/NotFoundPage'
+import { UnauthorizedPage } from '@/features/errors/UnauthorizedPage'
 
 // Dashboard
 import { DashboardPage } from '@/features/dashboard/DashboardPage'
@@ -30,6 +33,14 @@ export const router = createBrowserRouter([
     element: <LoginPage />,
   },
   {
+    path: '/unauthorized',
+    element: (
+      <ProtectedRoute>
+        <UnauthorizedPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
     path: '/',
     element: (
       <ProtectedRoute>
@@ -48,8 +59,22 @@ export const router = createBrowserRouter([
       { path: 'vendors', element: <VendorsPage /> },
       { path: 'integrations', element: <IntegrationsPage /> },
       { path: 'reports', element: <ReportsPage /> },
-      { path: 'admin/users', element: <UsersPage /> },
-      { path: 'admin/audit', element: <AuditPage /> },
+      {
+        path: 'admin/users',
+        element: (
+          <RoleProtectedRoute policy={AuthPolicy.AdminOnly}>
+            <UsersPage />
+          </RoleProtectedRoute>
+        ),
+      },
+      {
+        path: 'admin/audit',
+        element: (
+          <RoleProtectedRoute policy={AuthPolicy.FleetManagerOrAbove}>
+            <AuditPage />
+          </RoleProtectedRoute>
+        ),
+      },
     ],
   },
   {
