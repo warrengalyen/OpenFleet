@@ -1,16 +1,30 @@
-import { useState, type FormEvent } from 'react'
+import { useEffect, useState, type FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useLogin } from '@/hooks/useAuth'
-import { getProblemDetails } from '@/lib/api'
+import { AlertCircle, Mail, Lock } from 'lucide-react'
+import { useAuth, useLogin } from '@/hooks/useAuth'
+import { getApiErrorMessage, tokenStorage } from '@/lib/api'
 import { Button } from '@/components/ui/Button'
-import { AlertCircle } from 'lucide-react'
+import { Input } from '@/components/ui/Input'
+import { FormField } from '@/components/ui/FormField'
+import { LoadingSpinner } from '@/components/LoadingSpinner'
 
 export function LoginPage() {
   const navigate = useNavigate()
   const login = useLogin()
+  const { isAuthenticated, isLoading } = useAuth()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (tokenStorage.isValid() && isAuthenticated) {
+      navigate('/dashboard', { replace: true })
+    }
+  }, [isAuthenticated, navigate])
+
+  if (tokenStorage.isValid() && isLoading) {
+    return <LoadingSpinner fullPage />
+  }
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
@@ -19,66 +33,76 @@ export function LoginPage() {
       await login.mutateAsync({ email, password })
       navigate('/dashboard', { replace: true })
     } catch (err) {
-      const problem = getProblemDetails(err)
-      setError(problem.detail ?? problem.title)
+      setError(getApiErrorMessage(err))
     }
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 p-4">
+    <div className="flex min-h-screen items-center justify-center bg-gray-50 p-4 dark:bg-gray-950">
       <div className="w-full max-w-sm">
-        {/* Logo mark */}
         <div className="mb-8 flex justify-center">
           <div className="flex items-center gap-2.5">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-600">
               <svg viewBox="0 0 32 32" fill="none" className="h-6 w-6">
-                <path d="M4 22h24M6 22V16a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v6" stroke="white" strokeWidth="2" strokeLinecap="round"/>
-                <circle cx="10" cy="24" r="2" fill="white"/>
-                <circle cx="22" cy="24" r="2" fill="white"/>
+                <path
+                  d="M4 22h24M6 22V16a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v6"
+                  stroke="white"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                />
+                <circle cx="10" cy="24" r="2" fill="white" />
+                <circle cx="22" cy="24" r="2" fill="white" />
               </svg>
             </div>
-            <span className="text-xl font-bold text-gray-900">OpenFleet</span>
+            <span className="text-xl font-bold text-gray-900 dark:text-white">
+              OpenFleet
+            </span>
           </div>
         </div>
 
-        <div className="rounded-2xl border border-gray-200 bg-white p-8 shadow-sm">
-          <h1 className="mb-6 text-xl font-semibold text-gray-900">Sign in</h1>
+        <div className="rounded-2xl border border-gray-200 bg-white p-8 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+          <h1 className="mb-1 text-xl font-semibold text-gray-900 dark:text-white">
+            Sign in
+          </h1>
+          <p className="mb-6 text-sm text-gray-500 dark:text-gray-400">
+            Enter your credentials to access the fleet management system.
+          </p>
 
-          <form onSubmit={(e) => { void handleSubmit(e) }} className="space-y-4">
-            <div>
-              <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-gray-700">
-                Email
-              </label>
-              <input
-                id="email"
+          <form
+            onSubmit={(e) => {
+              void handleSubmit(e)
+            }}
+            className="space-y-4"
+          >
+            <FormField label="Email" required>
+              <Input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 autoComplete="email"
                 placeholder="admin@openfleet.io"
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20"
+                leftIcon={<Mail className="h-4 w-4" />}
               />
-            </div>
+            </FormField>
 
-            <div>
-              <label htmlFor="password" className="mb-1.5 block text-sm font-medium text-gray-700">
-                Password
-              </label>
-              <input
-                id="password"
+            <FormField label="Password" required>
+              <Input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 autoComplete="current-password"
                 placeholder="••••••••"
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20"
+                leftIcon={<Lock className="h-4 w-4" />}
               />
-            </div>
+            </FormField>
 
             {error && (
-              <div className="flex items-center gap-2 rounded-lg bg-red-50 p-3 text-sm text-red-700">
+              <div
+                className="flex items-center gap-2 rounded-lg bg-red-50 p-3 text-sm text-red-700 dark:bg-red-950 dark:text-red-300"
+                role="alert"
+              >
                 <AlertCircle className="h-4 w-4 shrink-0" />
                 {error}
               </div>
@@ -89,9 +113,15 @@ export function LoginPage() {
             </Button>
           </form>
 
-          <p className="mt-6 text-center text-xs text-gray-500">
-            Default: <code className="rounded bg-gray-100 px-1 py-0.5">admin@openfleet.io</code> /{' '}
-            <code className="rounded bg-gray-100 px-1 py-0.5">Admin@1234</code>
+          <p className="mt-6 text-center text-xs text-gray-500 dark:text-gray-400">
+            Default:{' '}
+            <code className="rounded bg-gray-100 px-1 py-0.5 dark:bg-gray-800">
+              admin@openfleet.io
+            </code>{' '}
+            /{' '}
+            <code className="rounded bg-gray-100 px-1 py-0.5 dark:bg-gray-800">
+              Admin@1234
+            </code>
           </p>
         </div>
       </div>

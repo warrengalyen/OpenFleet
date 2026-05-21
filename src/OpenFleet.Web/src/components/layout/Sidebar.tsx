@@ -18,11 +18,14 @@ import {
   ChevronDown,
   X,
 } from 'lucide-react'
+import { useAuth } from '@/hooks/useAuth'
+import { AuthPolicy, type AuthPolicy as AuthPolicyType } from '@/lib/auth'
 
 interface NavItem {
   label: string
   to: string
   icon: React.ElementType
+  policy?: AuthPolicyType
 }
 
 interface NavGroup {
@@ -49,8 +52,18 @@ const navEntries: NavEntry[] = [
     label: 'Administration',
     icon: Shield,
     children: [
-      { label: 'Users', to: '/admin/users', icon: Users },
-      { label: 'Audit Log', to: '/admin/audit', icon: FileText },
+      {
+        label: 'Users',
+        to: '/admin/users',
+        icon: Users,
+        policy: AuthPolicy.AdminOnly,
+      },
+      {
+        label: 'Audit Log',
+        to: '/admin/audit',
+        icon: FileText,
+        policy: AuthPolicy.FleetManagerOrAbove,
+      },
     ],
   },
 ]
@@ -68,10 +81,25 @@ interface SidebarProps {
 
 export function Sidebar({ onClose }: SidebarProps) {
   const [adminOpen, setAdminOpen] = useState(true)
+  const { hasPolicy } = useAuth()
+
+  function isVisible(item: NavItem): boolean {
+    return !item.policy || hasPolicy(item.policy)
+  }
+
+  const visibleEntries = navEntries
+    .map((entry) => {
+      if ('isGroup' in entry && entry.isGroup) {
+        const children = entry.children.filter(isVisible)
+        if (children.length === 0) return null
+        return { ...entry, children }
+      }
+      return isVisible(entry as NavItem) ? entry : null
+    })
+    .filter((entry): entry is NavEntry => entry !== null)
 
   return (
     <aside className="flex h-full flex-col border-r border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
-      {/* Logo row */}
       <div className="flex h-16 items-center justify-between border-b border-gray-100 px-5 dark:border-gray-800">
         <div className="flex items-center gap-2.5">
           <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-brand-600">
@@ -91,7 +119,6 @@ export function Sidebar({ onClose }: SidebarProps) {
           </span>
         </div>
 
-        {/* Mobile close button */}
         <button
           onClick={onClose}
           className="rounded-md p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 lg:hidden"
@@ -101,21 +128,16 @@ export function Sidebar({ onClose }: SidebarProps) {
         </button>
       </div>
 
-      {/* Navigation */}
       <nav className="flex-1 overflow-y-auto px-3 py-4 scrollbar-thin">
         <ul className="space-y-0.5">
-          {navEntries.map((entry) => {
+          {visibleEntries.map((entry) => {
             if ('isGroup' in entry && entry.isGroup) {
               const { label, icon: Icon, children } = entry
               return (
                 <li key={label}>
                   <button
                     onClick={() => setAdminOpen((o) => !o)}
-                    className={clsx(
-                      linkBase,
-                      'w-full justify-between',
-                      linkInactive,
-                    )}
+                    className={clsx(linkBase, 'w-full justify-between', linkInactive)}
                     aria-expanded={adminOpen}
                   >
                     <span className="flex items-center gap-3">
@@ -171,7 +193,6 @@ export function Sidebar({ onClose }: SidebarProps) {
         </ul>
       </nav>
 
-      {/* Footer */}
       <div className="border-t border-gray-100 px-4 py-3 dark:border-gray-800">
         <p className="text-xs text-gray-400 dark:text-gray-600">OpenFleet v0.1.0</p>
       </div>

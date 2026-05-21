@@ -38,11 +38,12 @@ api.interceptors.request.use((config) => {
   return config
 })
 
-// Normalise error responses; clear session on 401.
+// Normalise error responses; clear session on 401 (except failed login attempts).
 api.interceptors.response.use(
   (res) => res,
   (error: AxiosError<ProblemDetails>) => {
-    if (error.response?.status === 401) {
+    const isLoginRequest = error.config?.url?.includes('/auth/login')
+    if (error.response?.status === 401 && !isLoginRequest) {
       clearSession()
       redirectToLogin()
     }
