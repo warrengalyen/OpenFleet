@@ -19,10 +19,11 @@ export interface OpenWorkOrdersReport {
   items: WorkOrderSummaryItem[]
 }
 
-export interface VehicleDueSchedule {
+export interface DueScheduleEntry {
+  scheduleId: string
   scheduleName: string
-  isDueByDate: boolean
-  isDueByMileage: boolean
+  isDueByDate: boolean | null
+  isDueByMileage: boolean | null
   nextDueDate: string | null
   nextDueMileage: number | null
   daysOverdue: number | null
@@ -30,10 +31,12 @@ export interface VehicleDueSchedule {
 }
 
 export interface VehicleDueForServiceResponse {
-  vehicleId: string
-  vehicleDescription: string
-  currentMileage: number
-  dueSchedules: VehicleDueSchedule[]
+  vehicleId: string | null
+  vehicleDescription: string | null
+  assetId: string | null
+  assetDescription: string | null
+  currentMileage: number | null
+  dueSchedules: DueScheduleEntry[]
 }
 
 export interface VehiclesDueForServiceReport {
