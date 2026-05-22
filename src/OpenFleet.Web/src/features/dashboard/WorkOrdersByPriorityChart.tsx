@@ -1,7 +1,7 @@
 import { AlertTriangle } from 'lucide-react'
-import { DashboardPanel } from '../DashboardPanel'
-import { BarChart, type BarChartItem } from '../charts/BarChart'
-import { useWorkOrdersByPriority } from '../hooks'
+import { DashboardPanel } from './DashboardPanel'
+import { BarChart, type BarChartItem } from './charts/BarChart'
+import { useWorkOrdersByPriority } from './hooks'
 
 export function WorkOrdersByPriorityChart() {
   const { data, isLoading, isError, isFetching, refetch } = useWorkOrdersByPriority()

@@ -1,7 +1,7 @@
 import { ClipboardList } from 'lucide-react'
-import { DashboardPanel } from '../DashboardPanel'
-import { BarChart, type BarChartItem } from '../charts/BarChart'
-import { useWorkOrdersByStatus } from '../hooks'
+import { DashboardPanel } from './DashboardPanel'
+import { BarChart, type BarChartItem } from './charts/BarChart'
+import { useWorkOrdersByStatus } from './hooks'
 
 const STATUS_COLORS: BarChartItem[] = [
   { label: 'Open', value: 0, color: '#0ea5e9' },
