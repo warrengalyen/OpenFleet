@@ -9,6 +9,7 @@ interface StatCardProps {
   iconColor?: string
   iconBg?: string
   isLoading?: boolean
+  isError?: boolean
   sub?: string
   emphasis?: boolean
 }
@@ -20,6 +21,7 @@ export function StatCard({
   iconColor = 'text-brand-600',
   iconBg = 'bg-brand-50 dark:bg-brand-950',
   isLoading,
+  isError,
   sub,
   emphasis,
 }: StatCardProps) {
@@ -42,6 +44,8 @@ export function StatCard({
       <div className="mt-4">
         {isLoading || value === undefined ? (
           <div className="h-8 w-16 animate-pulse rounded bg-gray-200 dark:bg-gray-700" />
+        ) : isError ? (
+          <p className="text-2xl font-bold text-red-500">—</p>
         ) : (
           <p className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
             {value}
