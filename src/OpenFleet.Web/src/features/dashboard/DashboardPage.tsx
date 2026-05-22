@@ -1,151 +1,168 @@
+import { useMemo, useState } from 'react'
 import {
   ClipboardList,
   Truck,
   ShieldAlert,
-  Wrench,
-  AlertCircle,
-  CheckCircle2,
+  Package,
+  PlugZap,
+  AlertTriangle,
+  RefreshCw,
 } from 'lucide-react'
+import { PageTitle } from '@/components/layout/PageTitle'
+import { Button } from '@/components/ui/Button'
 import { StatCard } from './StatCard'
 import { OpenWorkOrdersTable } from './OpenWorkOrdersTable'
+import { WorkOrdersByStatusChart } from './WorkOrdersByStatusChart'
+import { WorkOrdersByPriorityChart } from './WorkOrdersByPriorityChart'
+import { VehiclesDuePanel } from './VehiclesDuePanel'
+import { FailedInspectionsPanel } from './FailedInspectionsPanel'
+import { LowStockPartsPanel } from './LowStockPartsPanel'
+import { IntegrationFailuresPanel } from './IntegrationFailuresPanel'
+import { LOW_STOCK_THRESHOLD } from './constants'
 import {
-  useWorkOrdersByStatus,
+  useOpenWorkOrders,
   useVehiclesDue,
   useInspectionFailureRate,
-  useVehicleDowntime,
+  usePartsUsage,
+  useIntegrationFailures,
+  useWorkOrdersByPriority,
+  useDashboardRefresh,
 } from './hooks'
 
-function SecondaryCard({
-  label,
-  value,
-  sub,
-  isLoading,
-}: {
-  label: string
-  value: string | number | undefined
-  sub?: string
-  isLoading: boolean
-}) {
-  return (
-    <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-800 dark:bg-gray-900">
-      <p className="text-sm font-medium text-gray-500 dark:text-gray-400">{label}</p>
-      {isLoading ? (
-        <div className="mt-2 h-8 w-20 animate-pulse rounded bg-gray-200 dark:bg-gray-700" />
-      ) : (
-        <>
-          <p className="mt-1 text-2xl font-bold text-gray-900 dark:text-white">{value}</p>
-          {sub && <p className="mt-0.5 text-xs text-gray-400 dark:text-gray-500">{sub}</p>}
-        </>
-      )}
-    </div>
-  )
-}
-
 export function DashboardPage() {
-  const { data: woStatus, isLoading: woStatusLoading } = useWorkOrdersByStatus()
-  const { data: vehiclesDue, isLoading: vehiclesDueLoading } = useVehiclesDue()
-  const { data: failureRate, isLoading: failureRateLoading } = useInspectionFailureRate()
-  const { data: downtime, isLoading: downtimeLoading } = useVehicleDowntime()
+  const refreshAll = useDashboardRefresh()
+  const [isRefreshing, setIsRefreshing] = useState(false)
+
+  const openWorkOrders = useOpenWorkOrders()
+  const vehiclesDue = useVehiclesDue()
+  const failureRate = useInspectionFailureRate()
+  const partsUsage = usePartsUsage()
+  const integrationFailures = useIntegrationFailures()
+  const workOrdersByPriority = useWorkOrdersByPriority()
+
+  const lowStockCount = useMemo(
+    () =>
+      partsUsage.data?.parts.filter((p) => p.quantityOnHand <= LOW_STOCK_THRESHOLD)
+        .length ?? 0,
+    [partsUsage.data],
+  )
+
+  async function handleRefreshAll() {
+    setIsRefreshing(true)
+    try {
+      await refreshAll()
+    } finally {
+      setIsRefreshing(false)
+    }
+  }
 
   return (
     <div className="space-y-6">
-      {/* Page header */}
-      <div>
-        <h1 className="text-xl font-semibold text-gray-900 dark:text-white">Dashboard</h1>
-        <p className="mt-0.5 text-sm text-gray-500 dark:text-gray-400">
-          Fleet overview and operational status
-        </p>
-      </div>
+      <PageTitle
+        title="Dashboard"
+        subtitle="Fleet overview and operational status"
+        actions={
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={() => void handleRefreshAll()}
+            loading={isRefreshing}
+          >
+            <RefreshCw className="h-4 w-4" />
+            Refresh
+          </Button>
+        }
+      />
 
-      {/* Stat cards — icon backgrounds include paired dark: variants */}
+      {/* Summary stat cards */}
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-3 xl:grid-cols-6">
         <StatCard
-          label="Open"
-          value={woStatus?.open}
+          label="Open Work Orders"
+          value={openWorkOrders.data?.totalOpen}
           icon={ClipboardList}
           iconColor="text-sky-600 dark:text-sky-400"
           iconBg="bg-sky-50 dark:bg-sky-950"
-          isLoading={woStatusLoading}
-        />
-        <StatCard
-          label="In Progress"
-          value={woStatus?.inProgress}
-          icon={Wrench}
-          iconColor="text-brand-600 dark:text-brand-400"
-          iconBg="bg-brand-50 dark:bg-brand-950"
-          isLoading={woStatusLoading}
-        />
-        <StatCard
-          label="Waiting Parts"
-          value={woStatus?.waitingForParts}
-          icon={AlertCircle}
-          iconColor="text-amber-600 dark:text-amber-400"
-          iconBg="bg-amber-50 dark:bg-amber-950"
-          isLoading={woStatusLoading}
-        />
-        <StatCard
-          label="Completed"
-          value={woStatus?.completed}
-          icon={CheckCircle2}
-          iconColor="text-emerald-600 dark:text-emerald-400"
-          iconBg="bg-emerald-50 dark:bg-emerald-950"
-          isLoading={woStatusLoading}
+          isLoading={openWorkOrders.isLoading}
+          isError={openWorkOrders.isError}
+          emphasis={!!openWorkOrders.data?.totalOpen}
         />
         <StatCard
           label="Vehicles Due"
-          value={vehiclesDue?.totalDue}
+          value={vehiclesDue.data?.totalDue}
           icon={Truck}
           iconColor="text-orange-600 dark:text-orange-400"
           iconBg="bg-orange-50 dark:bg-orange-950"
-          isLoading={vehiclesDueLoading}
-          emphasis={!!vehiclesDue?.totalDue}
+          isLoading={vehiclesDue.isLoading}
+          isError={vehiclesDue.isError}
+          emphasis={!!vehiclesDue.data?.totalDue}
         />
         <StatCard
-          label="In Maintenance"
-          value={downtime?.vehiclesInMaintenance}
+          label="Failed Inspections"
+          value={failureRate.data?.failed}
           icon={ShieldAlert}
           iconColor="text-red-600 dark:text-red-400"
           iconBg="bg-red-50 dark:bg-red-950"
-          isLoading={downtimeLoading}
+          isLoading={failureRate.isLoading}
+          isError={failureRate.isError}
+          sub={
+            failureRate.data
+              ? `${failureRate.data.failureRatePercent.toFixed(1)}% failure rate`
+              : undefined
+          }
+          emphasis={!!failureRate.data?.failed}
+        />
+        <StatCard
+          label="Low-Stock Parts"
+          value={partsUsage.isLoading ? undefined : lowStockCount}
+          icon={Package}
+          iconColor="text-amber-600 dark:text-amber-400"
+          iconBg="bg-amber-50 dark:bg-amber-950"
+          isLoading={partsUsage.isLoading}
+          isError={partsUsage.isError}
+          sub={`≤ ${LOW_STOCK_THRESHOLD} units`}
+          emphasis={lowStockCount > 0}
+        />
+        <StatCard
+          label="Integration Failures"
+          value={integrationFailures.data?.totalCount}
+          icon={PlugZap}
+          iconColor="text-purple-600 dark:text-purple-400"
+          iconBg="bg-purple-50 dark:bg-purple-950"
+          isLoading={integrationFailures.isLoading}
+          isError={integrationFailures.isError}
+          emphasis={!!integrationFailures.data?.totalCount}
+        />
+        <StatCard
+          label="Critical Priority"
+          value={workOrdersByPriority.data?.critical}
+          icon={AlertTriangle}
+          iconColor="text-red-600 dark:text-red-400"
+          iconBg="bg-red-50 dark:bg-red-950"
+          isLoading={workOrdersByPriority.isLoading}
+          isError={workOrdersByPriority.isError}
+          emphasis={!!workOrdersByPriority.data?.critical}
         />
       </div>
 
-      {/* Secondary stat row */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <SecondaryCard
-          label="Inspection Failure Rate"
-          value={
-            failureRate !== undefined
-              ? `${failureRate.failureRatePercent.toFixed(1)}%`
-              : undefined
-          }
-          sub={
-            failureRate
-              ? `${failureRate.failed} failed / ${failureRate.totalInspections} total`
-              : undefined
-          }
-          isLoading={failureRateLoading}
-        />
-        <SecondaryCard
-          label="Total Work Orders"
-          value={woStatus?.total}
-          sub={
-            woStatus
-              ? `${woStatus.completed} completed · ${woStatus.cancelled} cancelled`
-              : undefined
-          }
-          isLoading={woStatusLoading}
-        />
-        <SecondaryCard
-          label="Vehicles Under Review"
-          value={downtime?.vehicles.length ?? 0}
-          sub="with open work orders or in maintenance"
-          isLoading={downtimeLoading}
-        />
+      {/* Charts */}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <WorkOrdersByStatusChart />
+        <WorkOrdersByPriorityChart />
       </div>
 
       {/* Open work orders table */}
       <OpenWorkOrdersTable />
+
+      {/* Operational panels */}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <VehiclesDuePanel />
+        <FailedInspectionsPanel />
+      </div>
+
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <LowStockPartsPanel />
+        <IntegrationFailuresPanel />
+      </div>
     </div>
   )
 }
