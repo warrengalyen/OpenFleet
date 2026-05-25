@@ -1,4 +1,4 @@
-export type VehicleStatus = 'Active' | 'InMaintenance' | 'Retired' | 'Decommissioned'
+export type VehicleStatus = 'Active' | 'InMaintenance' | 'OutOfService' | 'Retired'
 
 export interface VehicleResponse {
   id: string

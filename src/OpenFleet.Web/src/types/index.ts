@@ -1,5 +1,7 @@
 export * from './api'
 export * from './auth'
+export * from './asset'
+export * from './department'
 export * from './vehicle'
 export * from './workOrder'
 export * from './inspection'

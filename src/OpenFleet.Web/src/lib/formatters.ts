@@ -1,4 +1,4 @@
-import type { WorkOrderPriority, WorkOrderStatus, VehicleStatus, InspectionStatus } from '@/types'
+import type { WorkOrderPriority, WorkOrderStatus, VehicleStatus, InspectionStatus, AssetStatus, AssetCondition } from '@/types'
 import type { BadgeVariant } from './badges'
 
 export function formatDate(iso: string): string {
@@ -56,15 +56,15 @@ export const workOrderPriorityVariant: Record<WorkOrderPriority, BadgeVariant> =
 export const vehicleStatusLabel: Record<VehicleStatus, string> = {
   Active: 'Active',
   InMaintenance: 'In Maintenance',
+  OutOfService: 'Out of Service',
   Retired: 'Retired',
-  Decommissioned: 'Decommissioned',
 }
 
 export const vehicleStatusVariant: Record<VehicleStatus, BadgeVariant> = {
   Active: 'success',
   InMaintenance: 'warning',
+  OutOfService: 'danger',
   Retired: 'neutral',
-  Decommissioned: 'danger',
 }
 
 // ── Inspection helpers ──────────────────────────────────────────────────────
@@ -79,4 +79,36 @@ export const inspectionStatusVariant: Record<InspectionStatus, BadgeVariant> = {
   Passed: 'success',
   Failed: 'danger',
   NeedsReview: 'warning',
+}
+
+// ── Asset helpers ───────────────────────────────────────────────────────────
+
+export const assetStatusLabel: Record<AssetStatus, string> = {
+  Available: 'Available',
+  InUse: 'In Use',
+  UnderMaintenance: 'Under Maintenance',
+  Decommissioned: 'Decommissioned',
+}
+
+export const assetStatusVariant: Record<AssetStatus, BadgeVariant> = {
+  Available: 'success',
+  InUse: 'info',
+  UnderMaintenance: 'warning',
+  Decommissioned: 'neutral',
+}
+
+export const assetConditionLabel: Record<AssetCondition, string> = {
+  New: 'New',
+  Good: 'Good',
+  Fair: 'Fair',
+  Poor: 'Poor',
+  Damaged: 'Damaged',
+}
+
+export const assetConditionVariant: Record<AssetCondition, BadgeVariant> = {
+  New: 'success',
+  Good: 'info',
+  Fair: 'default',
+  Poor: 'warning',
+  Damaged: 'danger',
 }
