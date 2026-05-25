@@ -1,16 +1,20 @@
 import { api } from '@/lib/api'
 import type {
   AddNoteRequest,
+  CreateMaintenanceRecordRequest,
   CreateWorkOrderRequest,
+  MaintenanceRecordResponse,
   RecordLaborRequest,
   TransitionStatusRequest,
+  UpdateWorkOrderRequest,
+  WorkOrderFilterRequest,
   WorkOrderNoteResponse,
   WorkOrderResponse,
 } from '@/types'
 
 export const workOrdersService = {
-  async list(): Promise<WorkOrderResponse[]> {
-    const { data } = await api.get<WorkOrderResponse[]>('/workorders')
+  async list(filters?: WorkOrderFilterRequest): Promise<WorkOrderResponse[]> {
+    const { data } = await api.get<WorkOrderResponse[]>('/workorders', { params: filters })
     return data
   },
 
@@ -24,13 +28,22 @@ export const workOrdersService = {
     return data
   },
 
+  async update(id: string, request: UpdateWorkOrderRequest): Promise<WorkOrderResponse> {
+    const { data } = await api.put<WorkOrderResponse>(`/workorders/${id}`, request)
+    return data
+  },
+
+  async cancel(id: string): Promise<void> {
+    await api.delete(`/workorders/${id}`)
+  },
+
   async transitionStatus(id: string, request: TransitionStatusRequest): Promise<WorkOrderResponse> {
     const { data } = await api.patch<WorkOrderResponse>(`/workorders/${id}/status`, request)
     return data
   },
 
   async recordLabor(id: string, request: RecordLaborRequest): Promise<WorkOrderResponse> {
-    const { data } = await api.post<WorkOrderResponse>(`/workorders/${id}/labor`, request)
+    const { data } = await api.put<WorkOrderResponse>(`/workorders/${id}/labor`, request)
     return data
   },
 
@@ -41,6 +54,17 @@ export const workOrdersService = {
 
   async getNotes(id: string): Promise<WorkOrderNoteResponse[]> {
     const { data } = await api.get<WorkOrderNoteResponse[]>(`/workorders/${id}/notes`)
+    return data
+  },
+
+  async linkMaintenanceRecord(
+    id: string,
+    request: CreateMaintenanceRecordRequest,
+  ): Promise<MaintenanceRecordResponse> {
+    const { data } = await api.post<MaintenanceRecordResponse>(
+      `/workorders/${id}/maintenance-record`,
+      request,
+    )
     return data
   },
 }

@@ -45,6 +45,38 @@ export interface CreateWorkOrderRequest {
   assignedUserId?: string
 }
 
+export interface UpdateWorkOrderRequest {
+  title?: string
+  description?: string
+  priority?: WorkOrderPriority
+  vehicleId?: string | null
+  assetId?: string | null
+  assignedUserId?: string | null
+}
+
+export interface WorkOrderFilterRequest {
+  status?: WorkOrderStatus
+  priority?: WorkOrderPriority
+  vehicleId?: string
+  assetId?: string
+  assignedUserId?: string
+}
+
+export interface CreateMaintenanceRecordRequest {
+  performedAt: string
+  odometerReading: number
+  notes: string
+}
+
+export interface MaintenanceRecordResponse {
+  id: string
+  workOrderId: string
+  performedAt: string
+  odometerReading: number
+  notes: string
+  createdAt: string
+}
+
 export interface TransitionStatusRequest {
   newStatus: WorkOrderStatus
 }
