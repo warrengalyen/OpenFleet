@@ -14,7 +14,13 @@ import { DashboardPage } from '@/features/dashboard/DashboardPage'
 
 // Feature pages
 import { VehiclesPage } from '@/features/vehicles/VehiclesPage'
+import { VehicleDetailPage } from '@/features/vehicles/VehicleDetailPage'
+import { VehicleCreatePage } from '@/features/vehicles/VehicleCreatePage'
+import { VehicleEditPage } from '@/features/vehicles/VehicleEditPage'
 import { AssetsPage } from '@/features/assets/AssetsPage'
+import { AssetDetailPage } from '@/features/assets/AssetDetailPage'
+import { AssetCreatePage } from '@/features/assets/AssetCreatePage'
+import { AssetEditPage } from '@/features/assets/AssetEditPage'
 import { WorkOrdersPage } from '@/features/work-orders/WorkOrdersPage'
 import { InspectionsPage } from '@/features/inspections/InspectionsPage'
 import { MaintenancePage } from '@/features/maintenance/MaintenancePage'
@@ -51,7 +57,34 @@ export const router = createBrowserRouter([
       { index: true, element: <Navigate to="/dashboard" replace /> },
       { path: 'dashboard', element: <DashboardPage /> },
       { path: 'vehicles', element: <VehiclesPage /> },
+      {
+        path: 'vehicles/new',
+        element: (
+          <RoleProtectedRoute policy={AuthPolicy.TechnicianOrAbove}>
+            <VehicleCreatePage />
+          </RoleProtectedRoute>
+        ),
+      },
+      { path: 'vehicles/:id', element: <VehicleDetailPage /> },
+      {
+        path: 'vehicles/:id/edit',
+        element: (
+          <RoleProtectedRoute policy={AuthPolicy.TechnicianOrAbove}>
+            <VehicleEditPage />
+          </RoleProtectedRoute>
+        ),
+      },
       { path: 'assets', element: <AssetsPage /> },
+      { path: 'assets/new', element: <AssetCreatePage /> },
+      { path: 'assets/:id', element: <AssetDetailPage /> },
+      {
+        path: 'assets/:id/edit',
+        element: (
+          <RoleProtectedRoute policy={AuthPolicy.TechnicianOrAbove}>
+            <AssetEditPage />
+          </RoleProtectedRoute>
+        ),
+      },
       { path: 'work-orders', element: <WorkOrdersPage /> },
       { path: 'inspections', element: <InspectionsPage /> },
       { path: 'maintenance', element: <MaintenancePage /> },
