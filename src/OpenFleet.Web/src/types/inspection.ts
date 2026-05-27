@@ -1,3 +1,15 @@
+export interface UpdateInspectionRequest {
+  status?: InspectionStatus
+  notes?: string
+}
+
+export interface InspectionFilterRequest {
+  vehicleId?: string
+  assetId?: string
+  status?: InspectionStatus
+  inspectorUserId?: string
+}
+
 export type InspectionStatus = 'Passed' | 'Failed' | 'NeedsReview'
 
 export interface InspectionResponse {

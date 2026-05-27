@@ -79,10 +79,11 @@ export const tokenStorage = {
 
 /** Extract a user-facing message from an API error. */
 export function getApiErrorMessage(error: unknown): string {
-  const axiosError = error as AxiosError<ProblemDetails & { error?: string }>
+  const axiosError = error as AxiosError<ProblemDetails & { error?: string; message?: string }>
   const data = axiosError?.response?.data
 
   if (data?.detail) return data.detail
+  if (data?.message) return data.message
   if (data?.title) return data.title
   if (data?.error) return data.error
 
