@@ -26,6 +26,9 @@ import { WorkOrderDetailPage } from '@/features/work-orders/WorkOrderDetailPage'
 import { WorkOrderCreatePage } from '@/features/work-orders/WorkOrderCreatePage'
 import { WorkOrderEditPage } from '@/features/work-orders/WorkOrderEditPage'
 import { InspectionsPage } from '@/features/inspections/InspectionsPage'
+import { InspectionDetailPage } from '@/features/inspections/InspectionDetailPage'
+import { InspectionCreatePage } from '@/features/inspections/InspectionCreatePage'
+import { InspectionEditPage } from '@/features/inspections/InspectionEditPage'
 import { MaintenancePage } from '@/features/maintenance/MaintenancePage'
 import { PartsPage } from '@/features/parts/PartsPage'
 import { VendorsPage } from '@/features/vendors/VendorsPage'
@@ -107,6 +110,23 @@ export const router = createBrowserRouter([
         ),
       },
       { path: 'inspections', element: <InspectionsPage /> },
+      {
+        path: 'inspections/new',
+        element: (
+          <RoleProtectedRoute policy={AuthPolicy.TechnicianOrAbove}>
+            <InspectionCreatePage />
+          </RoleProtectedRoute>
+        ),
+      },
+      { path: 'inspections/:id', element: <InspectionDetailPage /> },
+      {
+        path: 'inspections/:id/edit',
+        element: (
+          <RoleProtectedRoute policy={AuthPolicy.TechnicianOrAbove}>
+            <InspectionEditPage />
+          </RoleProtectedRoute>
+        ),
+      },
       { path: 'maintenance', element: <MaintenancePage /> },
       { path: 'parts', element: <PartsPage /> },
       { path: 'vendors', element: <VendorsPage /> },

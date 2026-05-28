@@ -1,6 +1,9 @@
 import type { WorkOrderPriority, WorkOrderStatus } from './workOrder'
 import type { VehicleStatus } from './vehicle'
 import type { InspectionStatus } from './inspection'
+import type { DueScheduleEntry, VehicleDueForServiceResponse } from './maintenance'
+
+export type { DueScheduleEntry, VehicleDueForServiceResponse }
 
 export interface WorkOrderSummaryItem {
   id: string
@@ -17,26 +20,6 @@ export interface OpenWorkOrdersReport {
   inProgress: number
   waitingForParts: number
   items: WorkOrderSummaryItem[]
-}
-
-export interface DueScheduleEntry {
-  scheduleId: string
-  scheduleName: string
-  isDueByDate: boolean | null
-  isDueByMileage: boolean | null
-  nextDueDate: string | null
-  nextDueMileage: number | null
-  daysOverdue: number | null
-  milesOverdue: number | null
-}
-
-export interface VehicleDueForServiceResponse {
-  vehicleId: string | null
-  vehicleDescription: string | null
-  assetId: string | null
-  assetDescription: string | null
-  currentMileage: number | null
-  dueSchedules: DueScheduleEntry[]
 }
 
 export interface VehiclesDueForServiceReport {
