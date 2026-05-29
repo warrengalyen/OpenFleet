@@ -30,6 +30,8 @@ import { InspectionDetailPage } from '@/features/inspections/InspectionDetailPag
 import { InspectionCreatePage } from '@/features/inspections/InspectionCreatePage'
 import { InspectionEditPage } from '@/features/inspections/InspectionEditPage'
 import { MaintenancePage } from '@/features/maintenance/MaintenancePage'
+import { MaintenanceScheduleCreatePage } from '@/features/maintenance/MaintenanceScheduleCreatePage'
+import { MaintenanceScheduleEditPage } from '@/features/maintenance/MaintenanceScheduleEditPage'
 import { PartsPage } from '@/features/parts/PartsPage'
 import { VendorsPage } from '@/features/vendors/VendorsPage'
 import { IntegrationsPage } from '@/features/integrations/IntegrationsPage'
@@ -128,6 +130,22 @@ export const router = createBrowserRouter([
         ),
       },
       { path: 'maintenance', element: <MaintenancePage /> },
+      {
+        path: 'maintenance/schedules/new',
+        element: (
+          <RoleProtectedRoute policy={AuthPolicy.FleetManagerOrAbove}>
+            <MaintenanceScheduleCreatePage />
+          </RoleProtectedRoute>
+        ),
+      },
+      {
+        path: 'maintenance/schedules/:id/edit',
+        element: (
+          <RoleProtectedRoute policy={AuthPolicy.FleetManagerOrAbove}>
+            <MaintenanceScheduleEditPage />
+          </RoleProtectedRoute>
+        ),
+      },
       { path: 'parts', element: <PartsPage /> },
       { path: 'vendors', element: <VendorsPage /> },
       { path: 'integrations', element: <IntegrationsPage /> },
