@@ -19,6 +19,7 @@ import {
 } from '@/lib/formatters'
 import { useToast } from '@/components/ui/Toaster'
 import { useDeleteVehicle, useVehicle } from './hooks'
+import { VehicleMaintenanceTimeline } from './VehicleMaintenanceTimeline'
 
 function DetailRow({ label, value }: { label: string; value: React.ReactNode }) {
   return (
@@ -134,6 +135,8 @@ export function VehicleDetailPage() {
           </CardContent>
         </Card>
       </div>
+
+      <VehicleMaintenanceTimeline vehicleId={id} />
 
       <ConfirmDialog
         open={deleteOpen}
