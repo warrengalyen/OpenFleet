@@ -8,5 +8,11 @@ public enum AuditAction
     IntegrationSyncFailed,
     UserCreated,
     UserUpdated,
-    UserDeactivated
+    UserDeactivated,
+    PartCreated,
+    PartUpdated,
+    PartDeleted,
+    VendorCreated,
+    VendorUpdated,
+    VendorDeleted
 }
