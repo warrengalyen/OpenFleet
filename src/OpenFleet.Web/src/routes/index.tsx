@@ -33,7 +33,13 @@ import { MaintenancePage } from '@/features/maintenance/MaintenancePage'
 import { MaintenanceScheduleCreatePage } from '@/features/maintenance/MaintenanceScheduleCreatePage'
 import { MaintenanceScheduleEditPage } from '@/features/maintenance/MaintenanceScheduleEditPage'
 import { PartsPage } from '@/features/parts/PartsPage'
+import { PartDetailPage } from '@/features/parts/PartDetailPage'
+import { PartCreatePage } from '@/features/parts/PartCreatePage'
+import { PartEditPage } from '@/features/parts/PartEditPage'
 import { VendorsPage } from '@/features/vendors/VendorsPage'
+import { VendorDetailPage } from '@/features/vendors/VendorDetailPage'
+import { VendorCreatePage } from '@/features/vendors/VendorCreatePage'
+import { VendorEditPage } from '@/features/vendors/VendorEditPage'
 import { IntegrationsPage } from '@/features/integrations/IntegrationsPage'
 import { ReportsPage } from '@/features/reports/ReportsPage'
 
@@ -147,7 +153,41 @@ export const router = createBrowserRouter([
         ),
       },
       { path: 'parts', element: <PartsPage /> },
+      {
+        path: 'parts/new',
+        element: (
+          <RoleProtectedRoute policy={AuthPolicy.FleetManagerOrAbove}>
+            <PartCreatePage />
+          </RoleProtectedRoute>
+        ),
+      },
+      { path: 'parts/:id', element: <PartDetailPage /> },
+      {
+        path: 'parts/:id/edit',
+        element: (
+          <RoleProtectedRoute policy={AuthPolicy.FleetManagerOrAbove}>
+            <PartEditPage />
+          </RoleProtectedRoute>
+        ),
+      },
       { path: 'vendors', element: <VendorsPage /> },
+      {
+        path: 'vendors/new',
+        element: (
+          <RoleProtectedRoute policy={AuthPolicy.FleetManagerOrAbove}>
+            <VendorCreatePage />
+          </RoleProtectedRoute>
+        ),
+      },
+      { path: 'vendors/:id', element: <VendorDetailPage /> },
+      {
+        path: 'vendors/:id/edit',
+        element: (
+          <RoleProtectedRoute policy={AuthPolicy.FleetManagerOrAbove}>
+            <VendorEditPage />
+          </RoleProtectedRoute>
+        ),
+      },
       { path: 'integrations', element: <IntegrationsPage /> },
       { path: 'reports', element: <ReportsPage /> },
       {
