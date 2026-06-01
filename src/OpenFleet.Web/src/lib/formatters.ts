@@ -112,3 +112,44 @@ export const assetConditionVariant: Record<AssetCondition, BadgeVariant> = {
   Poor: 'warning',
   Damaged: 'danger',
 }
+
+// ── Inventory helpers ───────────────────────────────────────────────────────
+
+export type StockLevel = 'in-stock' | 'low-stock' | 'out-of-stock'
+
+export function stockLevel(quantity: number, threshold: number): StockLevel {
+  if (quantity <= 0) return 'out-of-stock'
+  if (quantity <= threshold) return 'low-stock'
+  return 'in-stock'
+}
+
+export const stockLevelLabel: Record<StockLevel, string> = {
+  'in-stock': 'In Stock',
+  'low-stock': 'Low Stock',
+  'out-of-stock': 'Out of Stock',
+}
+
+export const stockLevelVariant: Record<StockLevel, BadgeVariant> = {
+  'in-stock': 'success',
+  'low-stock': 'warning',
+  'out-of-stock': 'danger',
+}
+
+export type VendorAvailability = 'active' | 'available' | 'unassigned'
+
+export function vendorAvailability(partCount: number): VendorAvailability {
+  if (partCount > 0) return 'active'
+  return 'available'
+}
+
+export const vendorAvailabilityLabel: Record<VendorAvailability, string> = {
+  active: 'Active supplier',
+  available: 'Available',
+  unassigned: 'No parts assigned',
+}
+
+export const vendorAvailabilityVariant: Record<VendorAvailability, BadgeVariant> = {
+  active: 'success',
+  available: 'info',
+  unassigned: 'neutral',
+}
