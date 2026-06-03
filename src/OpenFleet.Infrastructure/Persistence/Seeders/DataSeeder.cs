@@ -13,7 +13,8 @@ public static class DataSeeder
     {
         if (await context.Departments.AnyAsync())
         {
-            logger.LogInformation("Database already seeded. Skipping.");
+            logger.LogInformation("Database already seeded. Ensuring parts and vendors demo data...");
+            await EnsureInventorySeedDataAsync(context, logger);
             return;
         }
 
@@ -115,6 +116,21 @@ public static class DataSeeder
             {
                 Name = "Wiper Blades Set", PartNumber = "WB-22IN-PR",
                 VendorId = vendors[1].Id, QuantityOnHand = 40, UnitCost = 22.00m
+            },
+            new()
+            {
+                Name = "Spark Plugs (Set of 4)", PartNumber = "SP-4PK-IR",
+                VendorId = vendors[0].Id, QuantityOnHand = 18, UnitCost = 32.50m
+            },
+            new()
+            {
+                Name = "Coolant (1 Gallon)", PartNumber = "CL-50-50-GAL",
+                VendorId = vendors[1].Id, QuantityOnHand = 12, UnitCost = 24.99m
+            },
+            new()
+            {
+                Name = "Headlight Bulb H11", PartNumber = "HB-H11-LED",
+                VendorId = vendors[0].Id, QuantityOnHand = 0, UnitCost = 38.00m
             }
         };
         await context.Parts.AddRangeAsync(parts);
@@ -410,5 +426,121 @@ public static class DataSeeder
 
         await context.SaveChangesAsync();
         logger.LogInformation("Database seeding complete.");
+    }
+
+    /// <summary>
+    /// Backfills vendors/parts on existing databases and adds low-stock demo rows when useful.
+    /// </summary>
+    public static async Task EnsureInventorySeedDataAsync(OpenFleetDbContext context, ILogger logger)
+    {
+        var vendors = await context.Vendors.OrderBy(v => v.Name).ToListAsync();
+
+        if (vendors.Count == 0)
+        {
+            logger.LogInformation("No vendors found — seeding default vendors and parts.");
+            vendors =
+            [
+                new Vendor
+                {
+                    Id = Guid.Parse("33333333-0000-0000-0000-000000000001"),
+                    Name = "AutoParts Direct", ContactName = "Mike Torres",
+                    Email = "sales@autopartsdirect.com", Phone = "555-0101",
+                    Address = "100 Industrial Blvd, Detroit, MI 48201"
+                },
+                new Vendor
+                {
+                    Id = Guid.Parse("33333333-0000-0000-0000-000000000002"),
+                    Name = "FleetSupply Co.", ContactName = "Sarah Lee",
+                    Email = "orders@fleetsupply.com", Phone = "555-0202",
+                    Address = "250 Commerce Ave, Chicago, IL 60601"
+                }
+            ];
+            await context.Vendors.AddRangeAsync(vendors);
+            await context.SaveChangesAsync();
+        }
+
+        if (!await context.Parts.AnyAsync())
+        {
+            logger.LogInformation("No parts found — seeding default parts inventory.");
+            var parts = new List<Part>
+            {
+                new()
+                {
+                    Name = "Oil Filter", PartNumber = "OF-2024-STD",
+                    VendorId = vendors[0].Id, QuantityOnHand = 50, UnitCost = 12.99m
+                },
+                new()
+                {
+                    Name = "Brake Pads (Front)", PartNumber = "BP-F-HD",
+                    VendorId = vendors[0].Id, QuantityOnHand = 20, UnitCost = 45.50m
+                },
+                new()
+                {
+                    Name = "Air Filter", PartNumber = "AF-UNIV-01",
+                    VendorId = vendors[1].Id, QuantityOnHand = 35, UnitCost = 18.75m
+                },
+                new()
+                {
+                    Name = "Wiper Blades Set", PartNumber = "WB-22IN-PR",
+                    VendorId = vendors[1].Id, QuantityOnHand = 40, UnitCost = 22.00m
+                },
+                new()
+                {
+                    Name = "Spark Plugs (Set of 4)", PartNumber = "SP-4PK-IR",
+                    VendorId = vendors[0].Id, QuantityOnHand = 18, UnitCost = 32.50m
+                },
+                new()
+                {
+                    Name = "Coolant (1 Gallon)", PartNumber = "CL-50-50-GAL",
+                    VendorId = vendors[1].Id, QuantityOnHand = 12, UnitCost = 24.99m
+                },
+                new()
+                {
+                    Name = "Headlight Bulb H11", PartNumber = "HB-H11-LED",
+                    VendorId = vendors[0].Id, QuantityOnHand = 0, UnitCost = 38.00m
+                }
+            };
+            await context.Parts.AddRangeAsync(parts);
+            await context.SaveChangesAsync();
+            logger.LogInformation("Seeded {PartCount} parts across {VendorCount} vendors.", parts.Count, vendors.Count);
+            return;
+        }
+
+        var hasLowStock = await context.Parts.AnyAsync(p => p.QuantityOnHand > 0 && p.QuantityOnHand <= 25);
+        var hasOutOfStock = await context.Parts.AnyAsync(p => p.QuantityOnHand == 0);
+
+        if (!hasLowStock || !hasOutOfStock)
+        {
+            var extras = new List<Part>();
+            if (!hasLowStock)
+            {
+                extras.Add(new Part
+                {
+                    Name = "Fuel Filter", PartNumber = "FF-DEMO-LOW",
+                    VendorId = vendors[0].Id, QuantityOnHand = 8, UnitCost = 19.99m
+                });
+                extras.Add(new Part
+                {
+                    Name = "Cabin Air Filter", PartNumber = "CAF-DEMO-LOW",
+                    VendorId = vendors[1].Id, QuantityOnHand = 15, UnitCost = 16.50m
+                });
+            }
+
+            if (!hasOutOfStock)
+            {
+                extras.Add(new Part
+                {
+                    Name = "Headlight Bulb H11", PartNumber = "HB-H11-LED",
+                    VendorId = vendors[0].Id, QuantityOnHand = 0, UnitCost = 38.00m
+                });
+            }
+
+            if (extras.Count > 0)
+            {
+                await context.Parts.AddRangeAsync(extras);
+                await context.SaveChangesAsync();
+                logger.LogInformation("Added {Count} demo parts for inventory UI testing.", extras.Count);
+            }
+        }
     }
 }
