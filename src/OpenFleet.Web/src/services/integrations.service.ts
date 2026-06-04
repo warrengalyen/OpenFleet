@@ -1,5 +1,10 @@
 import { api } from '@/lib/api'
-import type { IntegrationHistoryFilter, IntegrationHistoryResponse } from '@/types'
+import type {
+  IntegrationHistoryFilter,
+  IntegrationHistoryResponse,
+  IntegrationLogResponse,
+  IntegrationSource,
+} from '@/types'
 
 export const integrationsService = {
   getHistory(filter: IntegrationHistoryFilter = {}) {
@@ -15,5 +20,21 @@ export const integrationsService = {
     const url = query ? `/integrations?${query}` : '/integrations'
 
     return api.get<IntegrationHistoryResponse>(url).then((r) => r.data)
+  },
+
+  getById(id: string) {
+    return api.get<IntegrationLogResponse>(`/integrations/${id}`).then((r) => r.data)
+  },
+
+  triggerSync(source: IntegrationSource) {
+    return api.post<IntegrationLogResponse>(`/integrations/sync/${source}`).then((r) => r.data)
+  },
+
+  retry(id: string) {
+    return api.post<IntegrationLogResponse>(`/integrations/retry/${id}`).then((r) => r.data)
+  },
+
+  export(source: IntegrationSource) {
+    return api.get<IntegrationLogResponse>(`/integrations/export/${source}`).then((r) => r.data)
   },
 }
