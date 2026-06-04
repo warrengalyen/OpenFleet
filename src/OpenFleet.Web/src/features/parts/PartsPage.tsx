@@ -8,8 +8,10 @@ import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Select } from '@/components/ui/Select'
 import { Pagination, paginate } from '@/components/ui/Pagination'
+import { QueryErrorBanner } from '@/components/ui/QueryErrorBanner'
 import { useAuth } from '@/hooks/useAuth'
 import { AuthPolicy } from '@/lib/auth'
+import { isQueryLoadFailure } from '@/lib/query'
 import {
   formatCurrency,
   formatNumber,
@@ -46,6 +48,7 @@ export function PartsPage() {
 
   const { data, isLoading, isError, refetch } = useParts(filters)
 
+  const loadFailed = isQueryLoadFailure(isError, data)
   const allData = useMemo(() => data ?? [], [data])
   const paginatedData = useMemo(() => paginate(allData, page, PAGE_SIZE), [allData, page])
   const lowStockCount = useMemo(() => allData.filter((p) => p.isLowStock).length, [allData])
@@ -63,6 +66,11 @@ export function PartsPage() {
     e.preventDefault()
     updateParams({ search: searchInput.trim() || null, page: '1' })
   }
+
+  const hasActiveFilters =
+    !!searchParams.get('search') ||
+    !!searchParams.get('vendorId') ||
+    searchParams.get('lowStock') === 'true'
 
   return (
     <div className="space-y-6">
@@ -155,15 +163,14 @@ export function PartsPage() {
         )}
       </div>
 
-      {isError && (
-        <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700 dark:border-red-900 dark:bg-red-950 dark:text-red-300">
-          Failed to load parts.{' '}
-          <button type="button" onClick={() => void refetch()} className="underline">
-            Try again
-          </button>
-        </div>
-      )}
+      <QueryErrorBanner
+        show={loadFailed}
+        message="Failed to load parts."
+        onRetry={() => void refetch()}
+      />
 
+      {!loadFailed && (
+        <>
       <DataTable<PartResponse>
         columns={[
           {
@@ -232,8 +239,12 @@ export function PartsPage() {
         getRowKey={(row) => row.id}
         onRowClick={(row) => navigate(`/parts/${row.id}`)}
         emptyIcon={Wrench}
-        emptyTitle="No parts"
-        emptyDescription="Add parts to track inventory and stock levels."
+        emptyTitle={hasActiveFilters ? 'No matching parts' : 'No parts'}
+        emptyDescription={
+          hasActiveFilters
+            ? 'Try adjusting your search or filters.'
+            : 'Add parts to track inventory and stock levels.'
+        }
         emptyAction={
           canWrite ? (
             <Link
@@ -252,6 +263,8 @@ export function PartsPage() {
         totalItems={allData.length}
         onPageChange={(p) => updateParams({ page: String(p) })}
       />
+        </>
+      )}
     </div>
   )
 }

@@ -7,8 +7,10 @@ import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Pagination, paginate } from '@/components/ui/Pagination'
+import { QueryErrorBanner } from '@/components/ui/QueryErrorBanner'
 import { useAuth } from '@/hooks/useAuth'
 import { AuthPolicy } from '@/lib/auth'
+import { isQueryLoadFailure } from '@/lib/query'
 import {
   formatDate,
   vendorAvailability,
@@ -36,6 +38,7 @@ export function VendorsPage() {
 
   const { data, isLoading, isError, refetch } = useVendors(filters)
 
+  const loadFailed = isQueryLoadFailure(isError, data)
   const allData = useMemo(() => data ?? [], [data])
   const paginatedData = useMemo(() => paginate(allData, page, PAGE_SIZE), [allData, page])
 
@@ -52,6 +55,8 @@ export function VendorsPage() {
     e.preventDefault()
     updateParams({ search: searchInput.trim() || null, page: '1' })
   }
+
+  const hasActiveFilters = !!searchParams.get('search')
 
   return (
     <div className="space-y-6">
@@ -92,15 +97,14 @@ export function VendorsPage() {
         )}
       </form>
 
-      {isError && (
-        <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700 dark:border-red-900 dark:bg-red-950 dark:text-red-300">
-          Failed to load vendors.{' '}
-          <button type="button" onClick={() => void refetch()} className="underline">
-            Try again
-          </button>
-        </div>
-      )}
+      <QueryErrorBanner
+        show={loadFailed}
+        message="Failed to load vendors."
+        onRetry={() => void refetch()}
+      />
 
+      {!loadFailed && (
+        <>
       <DataTable<VendorResponse>
         columns={[
           {
@@ -164,8 +168,12 @@ export function VendorsPage() {
         getRowKey={(row) => row.id}
         onRowClick={(row) => navigate(`/vendors/${row.id}`)}
         emptyIcon={Store}
-        emptyTitle="No vendors"
-        emptyDescription="Add vendors to assign parts and track suppliers."
+        emptyTitle={hasActiveFilters ? 'No matching vendors' : 'No vendors'}
+        emptyDescription={
+          hasActiveFilters
+            ? 'Try adjusting your search.'
+            : 'Add vendors to assign parts and track suppliers.'
+        }
         emptyAction={
           canWrite ? (
             <Link
@@ -184,6 +192,8 @@ export function VendorsPage() {
         totalItems={allData.length}
         onPageChange={(p) => updateParams({ page: String(p) })}
       />
+        </>
+      )}
     </div>
   )
 }
