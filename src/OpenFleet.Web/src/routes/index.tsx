@@ -42,7 +42,8 @@ import { VendorCreatePage } from '@/features/vendors/VendorCreatePage'
 import { VendorEditPage } from '@/features/vendors/VendorEditPage'
 import { IntegrationsPage } from '@/features/integrations/IntegrationsPage'
 import { IntegrationDetailPage } from '@/features/integrations/IntegrationDetailPage'
-import { ReportsPage } from '@/features/reports/ReportsPage'
+import { ReportsIndexPage } from '@/features/reports/ReportsIndexPage'
+import { ReportDetailPage } from '@/features/reports/ReportDetailPage'
 
 // Admin pages
 import { UsersPage } from '@/features/admin/UsersPage'
@@ -191,7 +192,8 @@ export const router = createBrowserRouter([
       },
       { path: 'integrations', element: <IntegrationsPage /> },
       { path: 'integrations/:id', element: <IntegrationDetailPage /> },
-      { path: 'reports', element: <ReportsPage /> },
+      { path: 'reports', element: <ReportsIndexPage /> },
+      { path: 'reports/:slug', element: <ReportDetailPage /> },
       {
         path: 'admin/users',
         element: (
