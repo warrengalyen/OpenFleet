@@ -13,6 +13,11 @@ dist-ssr/
 # Vite cache
 .vite/
 
+# Test output
+playwright-report/
+test-results/
+coverage/
+
 # Editor
 .vscode/settings.json
 *.suo
