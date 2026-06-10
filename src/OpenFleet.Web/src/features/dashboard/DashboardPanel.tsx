@@ -48,10 +48,10 @@ export function DashboardPanel({
               type="button"
               onClick={onRefresh}
               disabled={isFetching}
-              title="Refresh"
-              className="rounded-md p-1.5 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600 disabled:opacity-50 dark:hover:bg-gray-800 dark:hover:text-gray-300"
+              aria-label="Refresh panel"
+              className="rounded-md p-1.5 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 disabled:opacity-50 dark:hover:bg-gray-800 dark:hover:text-gray-300"
             >
-              <RefreshCw className={clsx('h-4 w-4', isFetching && 'animate-spin')} />
+              <RefreshCw className={clsx('h-4 w-4', isFetching && 'animate-spin')} aria-hidden="true" />
             </button>
           )}
         </div>
@@ -59,11 +59,16 @@ export function DashboardPanel({
 
       <CardContent className={clsx('p-0', contentClassName)}>
         {isLoading ? (
-          <div className="flex items-center justify-center py-12">
+          <div className="flex items-center justify-center py-12" role="status" aria-label={`Loading ${title}`}>
             <Spinner size="lg" />
+            <span className="sr-only">Loading {title}</span>
           </div>
         ) : isError ? (
-          <div className="flex flex-col items-center gap-3 px-6 py-12 text-center">
+          <div
+            className="flex flex-col items-center gap-3 px-6 py-12 text-center"
+            role="alert"
+            aria-live="assertive"
+          >
             <AlertCircle className="h-8 w-8 text-red-500" />
             <p className="text-sm text-gray-600 dark:text-gray-400">
               Failed to load this section.

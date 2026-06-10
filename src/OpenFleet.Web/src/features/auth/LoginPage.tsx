@@ -73,6 +73,7 @@ export function LoginPage() {
               void handleSubmit(e)
             }}
             className="space-y-4"
+            aria-label="Sign in form"
           >
             <FormField label="Email" required>
               <Input
@@ -108,7 +109,7 @@ export function LoginPage() {
               </div>
             )}
 
-            <Button type="submit" loading={login.isPending} className="w-full justify-center">
+            <Button type="submit" loading={login.isPending} className="w-full justify-center" aria-busy={login.isPending}>
               Sign in
             </Button>
           </form>

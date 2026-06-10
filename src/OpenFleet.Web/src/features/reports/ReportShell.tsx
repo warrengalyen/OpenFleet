@@ -76,11 +76,16 @@ export function ReportShell({
         </CardHeader>
         <CardContent className="p-0">
           {isLoading ? (
-            <div className="flex items-center justify-center py-16">
+            <div className="flex items-center justify-center py-16" role="status" aria-label={`Loading ${title}`}>
               <Spinner size="lg" />
+              <span className="sr-only">Loading {title}</span>
             </div>
           ) : loadFailed ? (
-            <div className="flex flex-col items-center gap-3 px-6 py-16 text-center">
+            <div
+              className="flex flex-col items-center gap-3 px-6 py-16 text-center"
+              role="alert"
+              aria-live="assertive"
+            >
               <AlertCircle className="h-8 w-8 text-red-500" />
               <p className="text-sm text-gray-600 dark:text-gray-400">Failed to load this report.</p>
               <Button variant="secondary" size="sm" onClick={onRetry}>

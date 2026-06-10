@@ -7,8 +7,8 @@ interface LoadingSpinnerProps {
 
 export function LoadingSpinner({ message = 'Loading…', fullPage = false }: LoadingSpinnerProps) {
   const inner = (
-    <div className="flex flex-col items-center gap-3">
-      <Spinner size="lg" />
+    <div className="flex flex-col items-center gap-3" role="status" aria-label={message}>
+      <Spinner size="lg" decorative />
       <p className="text-sm text-gray-500">{message}</p>
     </div>
   )
