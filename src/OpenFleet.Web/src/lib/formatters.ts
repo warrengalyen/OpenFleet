@@ -1,4 +1,5 @@
 import type { WorkOrderPriority, WorkOrderStatus, VehicleStatus, InspectionStatus, AssetStatus, AssetCondition } from '@/types'
+import type { AuditAction } from '@/types/audit'
 import type { BadgeVariant } from './badges'
 
 export function formatDate(iso: string): string {
@@ -152,4 +153,38 @@ export const vendorAvailabilityVariant: Record<VendorAvailability, BadgeVariant>
   active: 'success',
   available: 'info',
   unassigned: 'neutral',
+}
+
+// ── Audit helpers ───────────────────────────────────────────────────────────
+
+export const auditActionLabel: Record<AuditAction, string> = {
+  VehicleUpdated: 'Vehicle updated',
+  WorkOrderStatusChanged: 'Work order status changed',
+  InspectionFailed: 'Inspection failed',
+  IntegrationSyncFailed: 'Integration sync failed',
+  UserCreated: 'User created',
+  UserUpdated: 'User updated',
+  UserDeactivated: 'User deactivated',
+  PartCreated: 'Part created',
+  PartUpdated: 'Part updated',
+  PartDeleted: 'Part deleted',
+  VendorCreated: 'Vendor created',
+  VendorUpdated: 'Vendor updated',
+  VendorDeleted: 'Vendor deleted',
+}
+
+export const auditActionVariant: Record<AuditAction, BadgeVariant> = {
+  VehicleUpdated: 'info',
+  WorkOrderStatusChanged: 'default',
+  InspectionFailed: 'warning',
+  IntegrationSyncFailed: 'danger',
+  UserCreated: 'success',
+  UserUpdated: 'info',
+  UserDeactivated: 'danger',
+  PartCreated: 'success',
+  PartUpdated: 'info',
+  PartDeleted: 'danger',
+  VendorCreated: 'success',
+  VendorUpdated: 'info',
+  VendorDeleted: 'danger',
 }
