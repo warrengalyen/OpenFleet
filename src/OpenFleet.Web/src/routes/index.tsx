@@ -46,8 +46,19 @@ import { ReportsIndexPage } from '@/features/reports/ReportsIndexPage'
 import { ReportDetailPage } from '@/features/reports/ReportDetailPage'
 
 // Admin pages
+import { AdminIndexPage } from '@/features/admin/AdminIndexPage'
 import { UsersPage } from '@/features/admin/UsersPage'
+import { UserDetailPage } from '@/features/admin/UserDetailPage'
+import { UserCreatePage } from '@/features/admin/UserCreatePage'
+import { UserEditPage } from '@/features/admin/UserEditPage'
+import { RolesPage } from '@/features/admin/RolesPage'
+import { DepartmentsPage } from '@/features/admin/DepartmentsPage'
+import { DepartmentDetailPage } from '@/features/admin/DepartmentDetailPage'
+import { DepartmentCreatePage } from '@/features/admin/DepartmentCreatePage'
+import { DepartmentEditPage } from '@/features/admin/DepartmentEditPage'
+import { SettingsPage } from '@/features/admin/SettingsPage'
 import { AuditPage } from '@/features/admin/AuditPage'
+import { AuditDetailPage } from '@/features/admin/AuditDetailPage'
 
 export const router = createBrowserRouter([
   {
@@ -195,6 +206,14 @@ export const router = createBrowserRouter([
       { path: 'reports', element: <ReportsIndexPage /> },
       { path: 'reports/:slug', element: <ReportDetailPage /> },
       {
+        path: 'admin',
+        element: (
+          <RoleProtectedRoute policy={AuthPolicy.FleetManagerOrAbove}>
+            <AdminIndexPage />
+          </RoleProtectedRoute>
+        ),
+      },
+      {
         path: 'admin/users',
         element: (
           <RoleProtectedRoute policy={AuthPolicy.AdminOnly}>
@@ -203,10 +222,90 @@ export const router = createBrowserRouter([
         ),
       },
       {
+        path: 'admin/users/new',
+        element: (
+          <RoleProtectedRoute policy={AuthPolicy.AdminOnly}>
+            <UserCreatePage />
+          </RoleProtectedRoute>
+        ),
+      },
+      {
+        path: 'admin/users/:id',
+        element: (
+          <RoleProtectedRoute policy={AuthPolicy.AdminOnly}>
+            <UserDetailPage />
+          </RoleProtectedRoute>
+        ),
+      },
+      {
+        path: 'admin/users/:id/edit',
+        element: (
+          <RoleProtectedRoute policy={AuthPolicy.AdminOnly}>
+            <UserEditPage />
+          </RoleProtectedRoute>
+        ),
+      },
+      {
+        path: 'admin/roles',
+        element: (
+          <RoleProtectedRoute policy={AuthPolicy.AdminOnly}>
+            <RolesPage />
+          </RoleProtectedRoute>
+        ),
+      },
+      {
+        path: 'admin/departments',
+        element: (
+          <RoleProtectedRoute policy={AuthPolicy.AdminOnly}>
+            <DepartmentsPage />
+          </RoleProtectedRoute>
+        ),
+      },
+      {
+        path: 'admin/departments/new',
+        element: (
+          <RoleProtectedRoute policy={AuthPolicy.AdminOnly}>
+            <DepartmentCreatePage />
+          </RoleProtectedRoute>
+        ),
+      },
+      {
+        path: 'admin/departments/:id',
+        element: (
+          <RoleProtectedRoute policy={AuthPolicy.AdminOnly}>
+            <DepartmentDetailPage />
+          </RoleProtectedRoute>
+        ),
+      },
+      {
+        path: 'admin/departments/:id/edit',
+        element: (
+          <RoleProtectedRoute policy={AuthPolicy.AdminOnly}>
+            <DepartmentEditPage />
+          </RoleProtectedRoute>
+        ),
+      },
+      {
+        path: 'admin/settings',
+        element: (
+          <RoleProtectedRoute policy={AuthPolicy.AdminOnly}>
+            <SettingsPage />
+          </RoleProtectedRoute>
+        ),
+      },
+      {
         path: 'admin/audit',
         element: (
           <RoleProtectedRoute policy={AuthPolicy.FleetManagerOrAbove}>
             <AuditPage />
+          </RoleProtectedRoute>
+        ),
+      },
+      {
+        path: 'admin/audit/:id',
+        element: (
+          <RoleProtectedRoute policy={AuthPolicy.FleetManagerOrAbove}>
+            <AuditDetailPage />
           </RoleProtectedRoute>
         ),
       },

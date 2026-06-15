@@ -1,10 +1,26 @@
 import { describe, expect, it } from 'vitest'
-import { AuthPolicy, hasPolicy, isExpired } from '@/lib/auth'
+import { AuthPolicy, hasPolicy, isExpired, normalizeUserRole } from '@/lib/auth'
 import { createTestExpiresAt } from '@/test/fixtures/auth'
+
+describe('normalizeUserRole', () => {
+  it('passes through string role names', () => {
+    expect(normalizeUserRole('Administrator')).toBe('Administrator')
+  })
+
+  it('maps numeric enum values from the API', () => {
+    expect(normalizeUserRole(4)).toBe('Administrator')
+    expect(normalizeUserRole(3)).toBe('FleetManager')
+  })
+
+  it('maps stringified numeric enum values', () => {
+    expect(normalizeUserRole('4')).toBe('Administrator')
+  })
+})
 
 describe('hasPolicy', () => {
   it('allows administrators for all policies', () => {
     expect(hasPolicy('Administrator', AuthPolicy.AdminOnly)).toBe(true)
+    expect(hasPolicy(4, AuthPolicy.AdminOnly)).toBe(true)
     expect(hasPolicy('Administrator', AuthPolicy.FleetManagerOrAbove)).toBe(true)
     expect(hasPolicy('Administrator', AuthPolicy.TechnicianOrAbove)).toBe(true)
   })
