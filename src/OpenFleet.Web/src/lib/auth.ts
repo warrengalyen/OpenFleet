@@ -1,35 +1,7 @@
 import type { UserRole } from '@/types'
+import { isUserRole, normalizeUserRole } from '@/lib/enums'
 
-const USER_ROLES: readonly UserRole[] = [
-  'Viewer',
-  'Technician',
-  'Supervisor',
-  'FleetManager',
-  'Administrator',
-]
-
-const ROLE_BY_INDEX: Record<number, UserRole> = {
-  0: 'Viewer',
-  1: 'Technician',
-  2: 'Supervisor',
-  3: 'FleetManager',
-  4: 'Administrator',
-}
-
-export function isUserRole(value: unknown): value is UserRole {
-  return typeof value === 'string' && USER_ROLES.includes(value as UserRole)
-}
-
-/** API enums may arrive as numeric indices; normalize to UserRole strings. */
-export function normalizeUserRole(role: unknown): UserRole {
-  if (isUserRole(role)) return role
-  if (typeof role === 'number' && role in ROLE_BY_INDEX) return ROLE_BY_INDEX[role]
-  if (typeof role === 'string') {
-    const parsed = Number(role)
-    if (!Number.isNaN(parsed) && parsed in ROLE_BY_INDEX) return ROLE_BY_INDEX[parsed]
-  }
-  return 'Viewer'
-}
+export { isUserRole, normalizeUserRole }
 
 /**
  * Role policy sets mirroring OpenFleet.Application.Common.AuthorizationPolicies.

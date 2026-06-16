@@ -1,5 +1,10 @@
 import { api } from '@/lib/api'
+import { normalizeAuditAction } from '@/lib/enums'
 import type { AuditHistoryFilter, AuditLogResponse } from '@/types/audit'
+
+function normalizeAuditLog(log: AuditLogResponse): AuditLogResponse {
+  return { ...log, action: normalizeAuditAction(log.action) }
+}
 
 export const auditService = {
   async getHistory(filter: AuditHistoryFilter = {}): Promise<AuditLogResponse[]> {
@@ -13,11 +18,11 @@ export const auditService = {
     if (filter.pageSize) params.pageSize = filter.pageSize
 
     const { data } = await api.get<AuditLogResponse[]>('/audit', { params })
-    return data
+    return data.map(normalizeAuditLog)
   },
 
   async getById(id: string): Promise<AuditLogResponse> {
     const { data } = await api.get<AuditLogResponse>(`/audit/${id}`)
-    return data
+    return normalizeAuditLog(data)
   },
 }
