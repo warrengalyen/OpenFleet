@@ -1,24 +1,71 @@
 # Screenshots
 
-OpenFleet's primary interface is the Swagger UI available at `http://localhost:8080` in Development mode.
+OpenFleet includes both a **React web application** (fleet operations console) and a **Swagger UI** (API reference). This document describes how to capture UI screenshots for documentation and portfolio use.
 
 ---
 
-## Swagger UI
+## Web Application (OpenFleet.Web)
+
+**URL (development):** `http://localhost:5173`
+
+### Placeholder images
+
+Wireframe placeholders are committed until real captures are added:
+
+| Screen | Placeholder | Route |
+|--------|-------------|-------|
+| Login | ![Login placeholder](images/placeholder-login.svg) | `/login` |
+| Dashboard | ![Dashboard placeholder](images/placeholder-dashboard.svg) | `/dashboard` |
+| Work Orders | ![Work orders placeholder](images/placeholder-work-orders.svg) | `/work-orders` |
+| Reports | ![Reports placeholder](images/placeholder-reports.svg) | `/reports` |
+
+### Capturing real screenshots
+
+1. Start the API: `docker compose up --build` (or `dotnet run --project src/OpenFleet.Api`)
+2. Start the frontend:
+   ```bash
+   cd src/OpenFleet.Web
+   cp .env.example .env.local
+   npm install
+   npm run dev
+   ```
+3. Sign in as `admin@openfleet.io` / `Admin@1234`
+4. Capture at **1280×720** or **1440×900** for consistency
+5. Save PNG files to `docs/images/`:
+   - `web-login.png`
+   - `web-dashboard.png`
+   - `web-work-orders.png`
+   - `web-reports.png`
+   - `web-vehicles.png`
+   - `web-admin-users.png`
+6. Replace placeholder references in this file and the root `README.md`
+
+**Recommended captures for a portfolio:**
+
+- Dashboard with stat cards and open work orders table populated
+- Work order detail with status actions
+- Reports index or a chart-heavy report detail page
+- Admin users list (demonstrates RBAC UI)
+- Mobile viewport (375px) of the sidebar drawer
+
+---
+
+## Swagger UI (API)
+
+**URL (development):** `http://localhost:8080`
 
 The Swagger UI provides interactive documentation for all API endpoints.
 
 **To access:**
+
 1. Start the API: `docker compose up --build`
 2. Open `http://localhost:8080`
 3. Authenticate: click **Authorize**, call `POST /api/auth/login`, paste the returned token
 
-### Endpoint Groups
-
-The Swagger UI organizes endpoints by controller tag:
+### Endpoint groups
 
 | Tag | Endpoints |
-|-----|----------|
+|-----|-----------|
 | Auth | Login, current user profile |
 | Users | Admin user management |
 | Vehicles | Fleet CRUD with filtering |
@@ -31,26 +78,7 @@ The Swagger UI organizes endpoints by controller tag:
 | Audit | Audit trail history |
 | Reports | 8 dashboard and operational report endpoints |
 
----
-
-## Adding Real Screenshots
-
-To add real screenshots to this document:
-
-1. Start the API with `docker compose up --build`
-2. Open `http://localhost:8080`
-3. Take screenshots of:
-   - The full endpoint list in Swagger UI
-   - The Authorize dialog with a token pasted
-   - A sample request/response (e.g., `GET /api/reports/work-orders-by-status`)
-   - The `/health` endpoint response
-4. Save images to `docs/images/`
-5. Reference them here:
-
-```markdown
-![Swagger UI](images/swagger-ui.png)
-![Work Orders Report](images/work-orders-by-status.png)
-```
+Save API screenshots as `docs/images/swagger-ui.png` and reference in the README if desired.
 
 ---
 
