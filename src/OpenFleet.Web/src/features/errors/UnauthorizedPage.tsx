@@ -2,8 +2,10 @@ import { Link } from 'react-router-dom'
 import { ShieldOff } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
 import { roleLabel } from '@/lib/auth'
+import { useDocumentTitle } from '@/hooks/useDocumentTitle'
 
 export function UnauthorizedPage() {
+  useDocumentTitle('Access denied')
   const { user } = useAuth()
 
   return (

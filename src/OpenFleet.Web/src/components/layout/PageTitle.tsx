@@ -1,13 +1,18 @@
 import { type ReactNode } from 'react'
+import { useDocumentTitle } from '@/hooks/useDocumentTitle'
 
 interface PageTitleProps {
   title: string
   subtitle?: string
+  /** Override browser tab title (defaults to `title`) */
+  documentTitle?: string
   /** Slot for action buttons rendered on the right */
   actions?: ReactNode
 }
 
-export function PageTitle({ title, subtitle, actions }: PageTitleProps) {
+export function PageTitle({ title, subtitle, documentTitle, actions }: PageTitleProps) {
+  useDocumentTitle(documentTitle ?? title)
+
   return (
     <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
       <div>

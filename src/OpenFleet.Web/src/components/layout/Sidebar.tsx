@@ -13,6 +13,7 @@ import {
   PlugZap,
   BarChart3,
   Shield,
+  LayoutGrid,
   Users,
   Building2,
   Settings,
@@ -54,6 +55,12 @@ const navEntries: NavEntry[] = [
     label: 'Administration',
     icon: Shield,
     children: [
+      {
+        label: 'Overview',
+        to: '/admin',
+        icon: LayoutGrid,
+        policy: AuthPolicy.FleetManagerOrAbove,
+      },
       {
         label: 'Users',
         to: '/admin/users',

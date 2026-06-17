@@ -10,6 +10,13 @@ export function AppLayout() {
 
   return (
     <div className="flex h-screen overflow-hidden bg-gray-50 dark:bg-gray-950">
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-brand-600 focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-white"
+      >
+        Skip to main content
+      </a>
+
       {/* Mobile backdrop */}
       {sidebarOpen && (
         <div
@@ -31,7 +38,11 @@ export function AppLayout() {
 
       <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
         <Header onMenuClick={openSidebar} />
-        <main className="flex-1 overflow-y-auto px-4 py-6 sm:px-6 scrollbar-thin">
+        <main
+          id="main-content"
+          tabIndex={-1}
+          className="flex-1 overflow-y-auto px-4 py-6 sm:px-6 scrollbar-thin focus:outline-none"
+        >
           <Outlet />
         </main>
       </div>

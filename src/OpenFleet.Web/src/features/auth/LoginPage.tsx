@@ -7,8 +7,10 @@ import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { FormField } from '@/components/ui/FormField'
 import { LoadingSpinner } from '@/components/LoadingSpinner'
+import { useDocumentTitle } from '@/hooks/useDocumentTitle'
 
 export function LoginPage() {
+  useDocumentTitle('Sign in')
   const navigate = useNavigate()
   const login = useLogin()
   const { isAuthenticated, isLoading } = useAuth()
