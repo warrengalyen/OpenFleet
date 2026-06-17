@@ -1,3 +1,4 @@
+import type { AssetCondition, AssetStatus } from '@/types/asset'
 import type { AuditAction } from '@/types/audit'
 import type { InspectionStatus } from '@/types/inspection'
 import type { UserRole } from '@/types/auth'
@@ -48,6 +49,29 @@ const WORK_ORDER_PRIORITY_MAP: EnumMap<WorkOrderPriority> = {
   values: ['Low', 'Medium', 'High', 'Critical'],
   byIndex: { 0: 'Low', 1: 'Medium', 2: 'High', 3: 'Critical' },
   fallback: 'Medium',
+}
+
+const ASSET_STATUS_MAP: EnumMap<AssetStatus> = {
+  values: ['Available', 'InUse', 'UnderMaintenance', 'Decommissioned'],
+  byIndex: {
+    0: 'Available',
+    1: 'InUse',
+    2: 'UnderMaintenance',
+    3: 'Decommissioned',
+  },
+  fallback: 'Available',
+}
+
+const ASSET_CONDITION_MAP: EnumMap<AssetCondition> = {
+  values: ['New', 'Good', 'Fair', 'Poor', 'Damaged'],
+  byIndex: {
+    0: 'New',
+    1: 'Good',
+    2: 'Fair',
+    3: 'Poor',
+    4: 'Damaged',
+  },
+  fallback: 'Good',
 }
 
 const VEHICLE_STATUS_MAP: EnumMap<VehicleStatus> = {
@@ -115,6 +139,14 @@ export function normalizeWorkOrderStatus(status: unknown): WorkOrderStatus {
 
 export function normalizeWorkOrderPriority(priority: unknown): WorkOrderPriority {
   return normalizeEnum(priority, WORK_ORDER_PRIORITY_MAP)
+}
+
+export function normalizeAssetStatus(status: unknown): AssetStatus {
+  return normalizeEnum(status, ASSET_STATUS_MAP)
+}
+
+export function normalizeAssetCondition(condition: unknown): AssetCondition {
+  return normalizeEnum(condition, ASSET_CONDITION_MAP)
 }
 
 export function normalizeVehicleStatus(status: unknown): VehicleStatus {
