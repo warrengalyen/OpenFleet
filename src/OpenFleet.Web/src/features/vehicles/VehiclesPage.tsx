@@ -8,9 +8,11 @@ import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Select } from '@/components/ui/Select'
 import { Pagination, paginate } from '@/components/ui/Pagination'
+import { QueryErrorBanner } from '@/components/ui/QueryErrorBanner'
 import { useDepartments } from '@/hooks/useDepartments'
 import { useAuth } from '@/hooks/useAuth'
 import { AuthPolicy } from '@/lib/auth'
+import { isQueryLoadFailure } from '@/lib/query'
 import {
   formatNumber,
   vehicleStatusLabel,
@@ -53,6 +55,7 @@ export function VehiclesPage() {
 
   const page = Math.max(1, Number(searchParams.get('page') ?? '1'))
   const { data, isLoading, isError, refetch } = useVehicles(filters)
+  const loadFailed = isQueryLoadFailure(isError, data)
 
   const paginatedData = useMemo(
     () => paginate(data ?? [], page, PAGE_SIZE),
@@ -164,14 +167,11 @@ export function VehiclesPage() {
         </form>
       </div>
 
-      {isError && (
-        <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700 dark:border-red-900 dark:bg-red-950 dark:text-red-300">
-          Failed to load vehicles.{' '}
-          <button type="button" onClick={() => void refetch()} className="underline">
-            Try again
-          </button>
-        </div>
-      )}
+      <QueryErrorBanner
+        show={loadFailed}
+        message="Failed to load vehicles."
+        onRetry={() => void refetch()}
+      />
 
       <DataTable<VehicleResponse>
         columns={[

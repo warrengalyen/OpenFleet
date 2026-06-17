@@ -87,7 +87,7 @@ export function getApiErrorMessage(error: unknown): string {
   if (data?.title) return data.title
   if (data?.error) return data.error
 
-  return 'An unexpected error occurred.'
+  return 'Something went wrong. Please try again.'
 }
 
 /** @deprecated Use getApiErrorMessage instead. */

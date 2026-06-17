@@ -8,8 +8,10 @@ import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import { Select } from '@/components/ui/Select'
 import { Pagination, paginate } from '@/components/ui/Pagination'
+import { QueryErrorBanner } from '@/components/ui/QueryErrorBanner'
 import { useAuth } from '@/hooks/useAuth'
 import { AuthPolicy } from '@/lib/auth'
+import { isQueryLoadFailure } from '@/lib/query'
 import {
   formatDate,
   workOrderPriorityLabel,
@@ -61,6 +63,7 @@ export function WorkOrdersPage() {
   }, [searchParams])
 
   const { data, isLoading, isError, refetch } = useWorkOrders(filters)
+  const loadFailed = isQueryLoadFailure(isError, data)
 
   const boardData = useMemo(() => data ?? [], [data])
   const paginatedData = useMemo(
@@ -158,14 +161,11 @@ export function WorkOrdersPage() {
         )}
       </div>
 
-      {isError && (
-        <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700 dark:border-red-900 dark:bg-red-950 dark:text-red-300">
-          Failed to load work orders.{' '}
-          <button type="button" onClick={() => void refetch()} className="underline">
-            Try again
-          </button>
-        </div>
-      )}
+      <QueryErrorBanner
+        show={loadFailed}
+        message="Failed to load work orders."
+        onRetry={() => void refetch()}
+      />
 
       {view === 'board' ? (
         <WorkOrderKanban workOrders={boardData} isLoading={isLoading} />

@@ -1,4 +1,5 @@
 import { api } from '@/lib/api'
+import { normalizeVehicleStatus } from '@/lib/enums'
 import type {
   CreateVehicleRequest,
   UpdateVehicleRequest,
@@ -6,25 +7,32 @@ import type {
   VehicleResponse,
 } from '@/types'
 
+function normalizeVehicle(vehicle: VehicleResponse): VehicleResponse {
+  return {
+    ...vehicle,
+    status: normalizeVehicleStatus(vehicle.status),
+  }
+}
+
 export const vehiclesService = {
   async list(filters?: VehicleFilterRequest): Promise<VehicleResponse[]> {
     const { data } = await api.get<VehicleResponse[]>('/vehicles', { params: filters })
-    return data
+    return data.map(normalizeVehicle)
   },
 
   async get(id: string): Promise<VehicleResponse> {
     const { data } = await api.get<VehicleResponse>(`/vehicles/${id}`)
-    return data
+    return normalizeVehicle(data)
   },
 
   async create(request: CreateVehicleRequest): Promise<VehicleResponse> {
     const { data } = await api.post<VehicleResponse>('/vehicles', request)
-    return data
+    return normalizeVehicle(data)
   },
 
   async update(id: string, request: UpdateVehicleRequest): Promise<VehicleResponse> {
     const { data } = await api.put<VehicleResponse>(`/vehicles/${id}`, request)
-    return data
+    return normalizeVehicle(data)
   },
 
   async remove(id: string): Promise<void> {

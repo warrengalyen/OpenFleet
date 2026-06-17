@@ -27,6 +27,7 @@ export function Header({ onMenuClick }: HeaderProps) {
       <div className="flex items-center gap-2">
         <button
           onClick={toggleDark}
+          aria-label={dark ? 'Switch to light mode' : 'Switch to dark mode'}
           title={dark ? 'Switch to light mode' : 'Switch to dark mode'}
           className="rounded-md p-1.5 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-100"
         >

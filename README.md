@@ -2,7 +2,7 @@
 
 **A full-stack fleet and maintenance management platform** — enterprise-grade .NET 8 REST API with a React operations console, built as a portfolio demonstration of production-oriented architecture.
 
-![Dashboard](docs/images/placeholder-dashboard.svg)
+Dashboard
 
 ---
 
@@ -12,52 +12,68 @@ OpenFleet manages a vehicle fleet end to end: vehicles and assets, preventive ma
 
 ---
 
+
+
 ## Features
+
+
 
 ### Backend API
 
-| Area | What's Included |
-|------|----------------|
-| Fleet Management | Vehicle and asset CRUD with filtering, department assignment, VIN validation |
-| Work Orders | Full lifecycle with status transitions, priority levels, labor hour tracking, notes |
-| Inspections | Inspection submission with automatic work order creation on failure |
-| Preventive Maintenance | Mileage and date-interval schedules; background service checks every hour |
-| Authentication | JWT Bearer with role-based access (Viewer → Administrator) |
-| Audit Trail | Immutable audit log for vehicle updates, status changes, inspection failures, sync failures |
-| External Integrations | Mock connectors for fuel import, vendor repair status, parts inventory, and asset sync |
-| Reporting | 8 dashboard endpoints: open work orders, maintenance cost, parts inventory, downtime, failure rates |
-| Observability | Correlation IDs, structured Serilog logging, split health checks |
-| Testing | 243+ backend tests — domain, application, infrastructure, integration, middleware |
-| CI | GitHub Actions build, test, and coverage pipeline |
+
+| Area                   | What's Included                                                                                     |
+| ---------------------- | --------------------------------------------------------------------------------------------------- |
+| Fleet Management       | Vehicle and asset CRUD with filtering, department assignment, VIN validation                        |
+| Work Orders            | Full lifecycle with status transitions, priority levels, labor hour tracking, notes                 |
+| Inspections            | Inspection submission with automatic work order creation on failure                                 |
+| Preventive Maintenance | Mileage and date-interval schedules; background service checks every hour                           |
+| Authentication         | JWT Bearer with role-based access (Viewer → Administrator)                                          |
+| Audit Trail            | Immutable audit log for vehicle updates, status changes, inspection failures, sync failures         |
+| External Integrations  | Mock connectors for fuel import, vendor repair status, parts inventory, and asset sync              |
+| Reporting              | 8 dashboard endpoints: open work orders, maintenance cost, parts inventory, downtime, failure rates |
+| Observability          | Correlation IDs, structured Serilog logging, split health checks                                    |
+| Testing                | 243+ backend tests — domain, application, infrastructure, integration, middleware                   |
+| CI                     | GitHub Actions build, test, and coverage pipeline                                                   |
+
+
+
 
 ### Web Application (OpenFleet.Web)
 
-| Area | What's Included |
-|------|----------------|
-| Dashboard | KPI cards, charts, open work orders, due vehicles, failed inspections, low stock, integration failures |
-| Fleet | Vehicles and assets — list, detail, create, edit with filters and pagination |
-| Operations | Work orders, inspections, preventive maintenance schedules |
-| Inventory | Parts catalog and vendor management |
-| Integrations | Sync history, manual triggers, failure visibility |
-| Reports | 7 operational reports with charts, tables, date filters, CSV export |
-| Administration | User management, roles reference, departments, audit logs, settings placeholder |
-| UX | Dark mode, responsive sidebar, loading skeletons, empty states, toast notifications |
-| Testing | Vitest unit/component tests, Playwright E2E, MSW API mocking |
+
+| Area           | What's Included                                                                                        |
+| -------------- | ------------------------------------------------------------------------------------------------------ |
+| Dashboard      | KPI cards, charts, open work orders, due vehicles, failed inspections, low stock, integration failures |
+| Fleet          | Vehicles and assets — list, detail, create, edit with filters and pagination                           |
+| Operations     | Work orders, inspections, preventive maintenance schedules                                             |
+| Inventory      | Parts catalog and vendor management                                                                    |
+| Integrations   | Sync history, manual triggers, failure visibility                                                      |
+| Reports        | 7 operational reports with charts, tables, date filters, CSV export                                    |
+| Administration | User management, roles reference, departments, audit logs, settings placeholder                        |
+| UX             | Dark mode, responsive sidebar, loading skeletons, empty states, toast notifications                    |
+| Testing        | Vitest unit/component tests, Playwright E2E, MSW API mocking                                           |
+
 
 ---
+
+
 
 ## Tech Stack
 
-| Layer | Technology |
-|-------|-----------|
-| **API** | .NET 8 / ASP.NET Core, EF Core 8, PostgreSQL 16, FluentValidation, Serilog, Swagger |
-| **Frontend** | React 18, TypeScript, Vite 6, TanStack Query, React Router, Tailwind CSS, Axios |
-| **Auth** | JWT Bearer (shared between API and SPA) |
-| **Testing** | xUnit (API), Vitest + Testing Library + MSW (unit), Playwright (E2E) |
-| **Containers** | Docker / Docker Compose |
-| **CI** | GitHub Actions (.NET + frontend tests) |
+
+| Layer          | Technology                                                                          |
+| -------------- | ----------------------------------------------------------------------------------- |
+| **API**        | .NET 8 / ASP.NET Core, EF Core 8, PostgreSQL 16, FluentValidation, Serilog, Swagger |
+| **Frontend**   | React, TypeScript, Vite, TanStack Query, React Router, Tailwind CSS, Axios          |
+| **Auth**       | JWT Bearer (shared between API and SPA)                                             |
+| **Testing**    | xUnit (API), Vitest + Testing Library + MSW (unit), Playwright (E2E)                |
+| **Containers** | Docker / Docker Compose                                                             |
+| **CI**         | GitHub Actions (.NET + frontend tests)                                              |
+
 
 ---
+
+
 
 ## Architecture
 
@@ -80,12 +96,18 @@ See [docs/architecture.md](docs/architecture.md) and [docs/frontend-architecture
 
 ---
 
+
+
 ## Running Locally
+
+
 
 ### Prerequisites
 
 - Docker Desktop, **or** .NET 8 SDK + PostgreSQL 16
 - Node.js 20+ (for the web application)
+
+
 
 ### Docker — API only (recommended for backend)
 
@@ -95,7 +117,7 @@ cd openfleet
 docker compose up --build
 ```
 
-Swagger UI: **http://localhost:8080**
+Swagger UI: **[http://localhost:8080](http://localhost:8080)**
 
 Migrations and seed data apply automatically on first boot.
 
@@ -117,46 +139,60 @@ npm install
 npm run dev
 ```
 
-Web UI: **http://localhost:5173**
+Web UI: **[http://localhost:5173](http://localhost:5173)**
 
 The Vite dev server proxies `/api` to the backend, so no CORS setup is required locally.
 
 ### Default credentials
 
-| Email | Password | Role | Typical use |
-|-------|----------|------|-------------|
-| `admin@openfleet.io` | `Admin@1234` | Administrator | Full access including user admin |
-| `alice.johnson@openfleet.io` | `Fleet@1234` | FleetManager | Reports, maintenance schedules, audit |
-| `bob.smith@openfleet.io` | `Fleet@1234` | Technician | Create work orders, inspections, vehicles |
+
+| Email                        | Password     | Role          | Typical use                               |
+| ---------------------------- | ------------ | ------------- | ----------------------------------------- |
+| `admin@openfleet.io`         | `Admin@1234` | Administrator | Full access including user admin          |
+| `alice.johnson@openfleet.io` | `Fleet@1234` | FleetManager  | Reports, maintenance schedules, audit     |
+| `bob.smith@openfleet.io`     | `Fleet@1234` | Technician    | Create work orders, inspections, vehicles |
+
 
 ---
 
+
+
 ## Environment Variables
+
+
 
 ### API (`.env` at repo root)
 
 Copy `.env.example` to `.env` for Docker Compose. Key variables:
 
-| Variable | Description |
-|----------|-------------|
-| `POSTGRES_DB` / `POSTGRES_USER` / `POSTGRES_PASSWORD` | PostgreSQL credentials |
-| `ConnectionStrings__DefaultConnection` | EF Core connection string |
-| `JwtSettings__SecretKey` | HMAC signing key (min 32 chars) |
-| `JwtSettings__Issuer` / `Audience` / `ExpiryMinutes` | JWT configuration |
+
+| Variable                                              | Description                     |
+| ----------------------------------------------------- | ------------------------------- |
+| `POSTGRES_DB` / `POSTGRES_USER` / `POSTGRES_PASSWORD` | PostgreSQL credentials          |
+| `ConnectionStrings__DefaultConnection`                | EF Core connection string       |
+| `JwtSettings__SecretKey`                              | HMAC signing key (min 32 chars) |
+| `JwtSettings__Issuer` / `Audience` / `ExpiryMinutes`  | JWT configuration               |
+
 
 See [.env.example](.env.example) for the full list.
 
 ### Frontend (`src/OpenFleet.Web/.env.local`)
 
-| Variable | Description | Default |
-|----------|-------------|---------|
+
+| Variable            | Description                    | Default                 |
+| ------------------- | ------------------------------ | ----------------------- |
 | `VITE_API_BASE_URL` | Backend URL for Vite dev proxy | `http://localhost:8080` |
+
 
 See [src/OpenFleet.Web/.env.example](src/OpenFleet.Web/.env.example). Only `VITE_*` variables are exposed to the browser bundle.
 
 ---
 
+
+
 ## Build Instructions
+
+
 
 ### API
 
@@ -164,6 +200,8 @@ See [src/OpenFleet.Web/.env.example](src/OpenFleet.Web/.env.example). Only `VITE
 dotnet build --configuration Release
 dotnet publish src/OpenFleet.Api -c Release -o ./publish/api
 ```
+
+
 
 ### Frontend
 
@@ -178,7 +216,11 @@ Deploy `dist/` behind a static host or reverse proxy that forwards `/api` to the
 
 ---
 
+
+
 ## Running Tests
+
+
 
 ### Backend
 
@@ -207,19 +249,25 @@ E2E tests run in CI with Chromium. See the `frontend-test` job in [.github/workf
 
 ---
 
+
+
 ## Troubleshooting
 
-| Issue | Solution |
-|-------|----------|
-| Frontend shows blank data or 401 | Ensure the API is running on port 8080; check `VITE_API_BASE_URL` |
-| Login succeeds but redirects back | Clear `localStorage` keys `openfleet_token` / `openfleet_token_expires` |
-| Status badges show blank labels | Hard-refresh after updates; enums are normalized in services — report if a page was missed |
-| Admin nav missing for admin user | Confirm role is `Administrator` (API may return numeric enum — handled by `lib/enums.ts`) |
-| `npm run test:e2e` fails | Start API with seed data, or run in CI where the workflow configures the environment |
-| Docker API won't start | Check port 8080 / 5432 conflicts; verify `.env` database credentials |
-| CORS errors in production | Serve SPA and API under the same origin or configure API CORS for your host |
+
+| Issue                             | Solution                                                                                   |
+| --------------------------------- | ------------------------------------------------------------------------------------------ |
+| Frontend shows blank data or 401  | Ensure the API is running on port 8080; check `VITE_API_BASE_URL`                          |
+| Login succeeds but redirects back | Clear `localStorage` keys `openfleet_token` / `openfleet_token_expires`                    |
+| Status badges show blank labels   | Hard-refresh after updates; enums are normalized in services — report if a page was missed |
+| Admin nav missing for admin user  | Confirm role is `Administrator` (API may return numeric enum — handled by `lib/enums.ts`)  |
+| `npm run test:e2e` fails          | Start API with seed data, or run in CI where the workflow configures the environment       |
+| Docker API won't start            | Check port 8080 / 5432 conflicts; verify `.env` database credentials                       |
+| CORS errors in production         | Serve SPA and API under the same origin or configure API CORS for your host                |
+
 
 ---
+
+
 
 ## API Documentation
 
@@ -229,42 +277,50 @@ Interactive Swagger UI: `http://localhost:8080` (Development).
 
 1. `POST /api/auth/login` with `{"email": "...", "password": "..."}`
 2. Copy the `token` from the response
-3. In Swagger, click **Authorize** and paste the token (without `Bearer ` prefix)
+3. In Swagger, click **Authorize** and paste the token (without `Bearer`  prefix)
 
 The web app handles this automatically via the login form.
 
 ### Endpoint overview
 
-| Area | Base Route |
-|------|-----------|
-| Auth | `POST /api/auth/login`, `GET /api/auth/me` |
-| Users (Admin) | `GET/POST/PUT/DELETE /api/users` |
-| Vehicles | `GET/POST/PUT/DELETE /api/vehicles` |
-| Assets | `GET/POST/PUT/DELETE /api/assets` |
-| Work Orders | `GET/POST /api/workorders`, `PATCH /api/workorders/{id}/status` |
-| Inspections | `GET/POST/PUT /api/inspections` |
+
+| Area                  | Base Route                                                                  |
+| --------------------- | --------------------------------------------------------------------------- |
+| Auth                  | `POST /api/auth/login`, `GET /api/auth/me`                                  |
+| Users (Admin)         | `GET/POST/PUT/DELETE /api/users`                                            |
+| Vehicles              | `GET/POST/PUT/DELETE /api/vehicles`                                         |
+| Assets                | `GET/POST/PUT/DELETE /api/assets`                                           |
+| Work Orders           | `GET/POST /api/workorders`, `PATCH /api/workorders/{id}/status`             |
+| Inspections           | `GET/POST/PUT /api/inspections`                                             |
 | Maintenance Schedules | `GET/POST /api/maintenance-schedules`, `GET /api/maintenance-schedules/due` |
-| Departments | `GET /api/departments` |
-| Integrations | `GET /api/integrations`, `POST /api/integrations/{source}/sync` |
-| Audit | `GET /api/audit`, `GET /api/audit/{id}` |
-| Reports | `GET /api/reports/*` (8 endpoints) |
-| Health | `GET /health`, `/health/live`, `/health/ready` |
+| Departments           | `GET /api/departments`                                                      |
+| Integrations          | `GET /api/integrations`, `POST /api/integrations/{source}/sync`             |
+| Audit                 | `GET /api/audit`, `GET /api/audit/{id}`                                     |
+| Reports               | `GET /api/reports/*` (8 endpoints)                                          |
+| Health                | `GET /health`, `/health/live`, `/health/ready`                              |
+
 
 See [docs/api-design.md](docs/api-design.md) and [docs/frontend-api-client.md](docs/frontend-api-client.md).
 
 ---
 
+
+
 ## Frontend Documentation
 
-| Document | Contents |
-|----------|----------|
-| [frontend-architecture.md](docs/frontend-architecture.md) | Stack, folder layout, patterns |
-| [frontend-routes.md](docs/frontend-routes.md) | Route map and role policies |
-| [frontend-api-client.md](docs/frontend-api-client.md) | Axios, services, enum normalization |
-| [frontend-accessibility.md](docs/frontend-accessibility.md) | A11y patterns and testing |
-| [screenshots.md](docs/screenshots.md) | UI capture guide and placeholders |
+
+| Document                                                    | Contents                            |
+| ----------------------------------------------------------- | ----------------------------------- |
+| [frontend-architecture.md](docs/frontend-architecture.md)   | Stack, folder layout, patterns      |
+| [frontend-routes.md](docs/frontend-routes.md)               | Route map and role policies         |
+| [frontend-api-client.md](docs/frontend-api-client.md)       | Axios, services, enum normalization |
+| [frontend-accessibility.md](docs/frontend-accessibility.md) | A11y patterns and testing           |
+| [screenshots.md](docs/screenshots.md)                       | UI capture guide and placeholders   |
+
 
 ---
+
+
 
 ## Portfolio Relevance
 
@@ -279,6 +335,8 @@ The project intentionally mirrors patterns found in fleet, logistics, and asset-
 
 ---
 
+
+
 ## Roadmap
 
 See [docs/roadmap.md](docs/roadmap.md). Near-term ideas:
@@ -292,6 +350,8 @@ See [docs/roadmap.md](docs/roadmap.md). Near-term ideas:
 - [ ] Multi-tenant fleet isolation
 
 ---
+
+
 
 ## Project Layout
 
@@ -312,6 +372,8 @@ See [docs/roadmap.md](docs/roadmap.md). Near-term ideas:
 
 ---
 
+
+
 ## Adding a Migration
 
 ```bash
@@ -321,6 +383,8 @@ dotnet ef migrations add <Name> \
 ```
 
 ---
+
+
 
 ## Contributing
 
