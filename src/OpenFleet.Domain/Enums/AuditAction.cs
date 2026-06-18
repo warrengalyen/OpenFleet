@@ -14,5 +14,8 @@ public enum AuditAction
     PartDeleted,
     VendorCreated,
     VendorUpdated,
-    VendorDeleted
+    VendorDeleted,
+    DepartmentCreated,
+    DepartmentUpdated,
+    DepartmentDeleted
 }
