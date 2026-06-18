@@ -55,6 +55,24 @@ public class AuthorizationTests
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
 
+    [Fact]
+    public async Task GET_departments_with_Viewer_token_returns_200()
+    {
+        var client = _factory.CreateClientWithRole("Viewer");
+        var response = await client.GetAsync("/api/departments");
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task POST_department_with_Viewer_token_returns_403()
+    {
+        var client = _factory.CreateClientWithRole("Viewer");
+        var response = await client.PostAsJsonAsync(
+            "/api/departments",
+            new { name = "Test", code = "TST" });
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+    }
+
     // ------- Viewer role — write blocked -------
 
     [Fact]
