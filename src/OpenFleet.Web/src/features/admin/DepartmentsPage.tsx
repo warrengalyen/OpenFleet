@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { Building2, Search } from 'lucide-react'
+import { Building2, Plus, Search } from 'lucide-react'
 import { PageTitle } from '@/components/layout/PageTitle'
 import { DataTable } from '@/components/ui/DataTable'
 import { Button } from '@/components/ui/Button'
@@ -60,6 +60,12 @@ export function DepartmentsPage() {
       <PageTitle
         title="Departments"
         subtitle="Organizational units used for vehicles, assets, and user assignments"
+        actions={
+          <Button onClick={() => navigate('/admin/departments/new')}>
+            <Plus className="h-4 w-4" />
+            New department
+          </Button>
+        }
       />
 
       <form onSubmit={handleSearchSubmit} className="flex max-w-sm gap-2">
@@ -84,7 +90,19 @@ export function DepartmentsPage() {
         <EmptyState
           icon={Building2}
           title="No departments found"
-          description="Departments are seeded in the database. Create and edit endpoints are not yet available in the API."
+          description={
+            searchParams.get('search')
+              ? 'Try a different search term.'
+              : 'Create a department to organize vehicles, assets, and users.'
+          }
+          action={
+            !searchParams.get('search') ? (
+              <Button onClick={() => navigate('/admin/departments/new')}>
+                <Plus className="h-4 w-4" />
+                New department
+              </Button>
+            ) : undefined
+          }
         />
       )}
 
@@ -110,8 +128,24 @@ export function DepartmentsPage() {
                 render: (row) => formatNumber(row.vehicleCount),
               },
               {
+                key: 'userCount',
+                header: 'Users',
+                className: 'hidden md:table-cell',
+                headerClassName: 'hidden md:table-cell',
+                render: (row) => formatNumber(row.userCount),
+              },
+              {
+                key: 'assetCount',
+                header: 'Assets',
+                className: 'hidden lg:table-cell',
+                headerClassName: 'hidden lg:table-cell',
+                render: (row) => formatNumber(row.assetCount),
+              },
+              {
                 key: 'createdAt',
                 header: 'Created',
+                className: 'hidden sm:table-cell',
+                headerClassName: 'hidden sm:table-cell',
                 render: (row) => formatDate(row.createdAt),
               },
             ]}

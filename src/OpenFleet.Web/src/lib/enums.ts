@@ -106,6 +106,9 @@ const AUDIT_ACTION_MAP: EnumMap<AuditAction> = {
     'VendorCreated',
     'VendorUpdated',
     'VendorDeleted',
+    'DepartmentCreated',
+    'DepartmentUpdated',
+    'DepartmentDeleted',
   ],
   byIndex: {
     0: 'VehicleUpdated',
@@ -121,6 +124,9 @@ const AUDIT_ACTION_MAP: EnumMap<AuditAction> = {
     10: 'VendorCreated',
     11: 'VendorUpdated',
     12: 'VendorDeleted',
+    13: 'DepartmentCreated',
+    14: 'DepartmentUpdated',
+    15: 'DepartmentDeleted',
   },
   fallback: 'VehicleUpdated',
 }

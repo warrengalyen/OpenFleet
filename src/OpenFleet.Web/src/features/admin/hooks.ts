@@ -3,6 +3,7 @@ import { auditService } from '@/services/audit.service'
 import { departmentsService } from '@/services/departments.service'
 import { usersService } from '@/services/users.service'
 import type { AuditHistoryFilter } from '@/types/audit'
+import type { CreateDepartmentRequest, UpdateDepartmentRequest } from '@/types/department'
 import type { CreateUserRequest, UpdateUserRequest } from '@/types/user'
 
 export const userKeys = {
@@ -92,5 +93,36 @@ export function useDepartmentDetail(id: string) {
     queryKey: adminDepartmentKeys.detail(id),
     queryFn: () => departmentsService.get(id),
     enabled: !!id,
+  })
+}
+
+export function useCreateDepartment() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (request: CreateDepartmentRequest) => departmentsService.create(request),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: adminDepartmentKeys.all })
+    },
+  })
+}
+
+export function useUpdateDepartment(id: string) {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (request: UpdateDepartmentRequest) => departmentsService.update(id, request),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: adminDepartmentKeys.all })
+      void queryClient.invalidateQueries({ queryKey: adminDepartmentKeys.detail(id) })
+    },
+  })
+}
+
+export function useDeleteDepartment() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (id: string) => departmentsService.remove(id),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: adminDepartmentKeys.all })
+    },
   })
 }

@@ -31,3 +31,17 @@ export type CreateUserFormValues = z.infer<typeof createUserFormSchema>
 export type EditUserFormValues = z.infer<typeof editUserFormSchema>
 
 export const USER_ROLE_OPTIONS = userRoleValues.map((role) => ({ value: role, label: role }))
+
+export const departmentFormSchema = z.object({
+  name: z
+    .string()
+    .min(1, 'Department name is required.')
+    .max(100, 'Name must not exceed 100 characters.'),
+  code: z
+    .string()
+    .min(1, 'Department code is required.')
+    .max(20, 'Code must not exceed 20 characters.')
+    .regex(/^[A-Z0-9]+$/, 'Code must contain only uppercase letters and numbers.'),
+})
+
+export type DepartmentFormValues = z.infer<typeof departmentFormSchema>

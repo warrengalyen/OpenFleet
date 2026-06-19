@@ -12,6 +12,9 @@ export type AuditAction =
   | 'VendorCreated'
   | 'VendorUpdated'
   | 'VendorDeleted'
+  | 'DepartmentCreated'
+  | 'DepartmentUpdated'
+  | 'DepartmentDeleted'
 
 export interface AuditLogResponse {
   id: string
