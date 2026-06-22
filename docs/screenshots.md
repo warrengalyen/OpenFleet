@@ -73,7 +73,7 @@ The Swagger UI provides interactive documentation for all API endpoints.
 | WorkOrders | Work order lifecycle management |
 | Inspections | Inspection submission and history |
 | MaintenanceSchedules | Schedule creation, due-for-service view |
-| Departments | Department management |
+| Departments | Department list, create, edit, and detail with assignment counts |
 | Integrations | Sync history and manual triggers |
 | Audit | Audit trail history |
 | Reports | 8 dashboard and operational report endpoints |

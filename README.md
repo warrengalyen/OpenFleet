@@ -49,7 +49,7 @@ OpenFleet manages a vehicle fleet end to end: vehicles and assets, preventive ma
 | Inventory      | Parts catalog and vendor management                                                                    |
 | Integrations   | Sync history, manual triggers, failure visibility                                                      |
 | Reports        | 7 operational reports with charts, tables, date filters, CSV export                                    |
-| Administration | User management, roles reference, departments, audit logs, settings placeholder                        |
+| Administration | User management, department CRUD, roles reference, audit logs, settings placeholder                 |
 | UX             | Dark mode, responsive sidebar, loading skeletons, empty states, toast notifications                    |
 | Testing        | Vitest unit/component tests, Playwright E2E, MSW API mocking                                           |
 
@@ -293,7 +293,7 @@ The web app handles this automatically via the login form.
 | Work Orders           | `GET/POST /api/workorders`, `PATCH /api/workorders/{id}/status`             |
 | Inspections           | `GET/POST/PUT /api/inspections`                                             |
 | Maintenance Schedules | `GET/POST /api/maintenance-schedules`, `GET /api/maintenance-schedules/due` |
-| Departments           | `GET /api/departments`                                                      |
+| Departments           | `GET/POST/PUT/DELETE /api/departments` (writes: Administrator)              |
 | Integrations          | `GET /api/integrations`, `POST /api/integrations/{source}/sync`             |
 | Audit                 | `GET /api/audit`, `GET /api/audit/{id}`                                     |
 | Reports               | `GET /api/reports/*` (8 endpoints)                                          |
@@ -344,7 +344,7 @@ See [docs/roadmap.md](docs/roadmap.md). Near-term ideas:
 - [x] React frontend (OpenFleet.Web)
 - [ ] SignalR real-time work order notifications
 - [ ] PDF work order export
-- [ ] Department create/edit API endpoints
+- [x] Department create/edit API endpoints and admin UI
 - [ ] Application settings API
 - [ ] OpenTelemetry traces (Jaeger/Zipkin)
 - [ ] Multi-tenant fleet isolation

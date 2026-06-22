@@ -126,5 +126,5 @@ test('dashboard has no critical a11y violations', async ({ page }) => {
 ## Known Limitations
 
 - Charts on the dashboard and reports are visual summaries without alternative data tables; screen reader users should use the underlying report pages or data tables where available.
-- Some admin placeholder pages (department create/edit, settings) are informational until backend endpoints exist.
+- Settings placeholder page is informational until backend endpoints exist.
 - Sortable columns rely on click; enhanced keyboard sort controls are a future improvement.

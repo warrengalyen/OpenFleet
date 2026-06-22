@@ -97,7 +97,7 @@ Each domain has a service file in `src/services/`:
 | `maintenanceSchedules.service.ts` | `/maintenance-schedules` |
 | `parts.service.ts` | `/parts` |
 | `vendors.service.ts` | `/vendors` |
-| `departments.service.ts` | `/departments` |
+| `departments.service.ts` | `/departments` — list, get, create, update, delete |
 | `integrations.service.ts` | `/integrations` |
 | `reports.service.ts` | `/reports` |
 | `audit.service.ts` | `/audit` |

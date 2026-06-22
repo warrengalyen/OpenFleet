@@ -247,6 +247,62 @@ Authorization: Bearer {token}
 
 ---
 
+---
+
+## Departments
+
+Departments organize vehicles, assets, and users. All authenticated roles can list and view departments; only **Administrator** can create, update, or delete.
+
+### List departments
+
+```http
+GET /api/departments
+Authorization: Bearer {token}
+```
+
+### Create department
+
+```http
+POST /api/departments
+Authorization: Bearer {token}
+Content-Type: application/json
+
+{
+  "name": "Warehouse",
+  "code": "WHS"
+}
+```
+
+Validation:
+- `name` — required, max 100 characters, unique (case-insensitive)
+- `code` — required, max 20 characters, uppercase alphanumeric, unique
+
+### Update department
+
+```http
+PUT /api/departments/{id}
+Authorization: Bearer {token}
+Content-Type: application/json
+
+{
+  "name": "Warehouse Operations",
+  "code": "WHS"
+}
+```
+
+### Delete department
+
+```http
+DELETE /api/departments/{id}
+Authorization: Bearer {token}
+```
+
+Returns `409 Conflict` when vehicles, users, or assets are still assigned to the department.
+
+Department mutations are recorded in the audit log (`DepartmentCreated`, `DepartmentUpdated`, `DepartmentDeleted`).
+
+---
+
 ## Reports
 
 All report endpoints require any authenticated role (`GET` only).
@@ -286,10 +342,10 @@ All report endpoints require any authenticated role (`GET` only).
 
 ## Role Reference
 
-| Role | Read | Write WO/Inspection | Manage Schedules | Manage Users | Audit |
-|------|------|---------------------|-----------------|--------------|-------|
-| Viewer | ✓ | — | — | — | — |
-| Technician | ✓ | ✓ | — | — | — |
-| Supervisor | ✓ | ✓ | — | — | — |
-| FleetManager | ✓ | ✓ | ✓ | — | ✓ |
-| Administrator | ✓ | ✓ | ✓ | ✓ | ✓ |
+| Role | Read | Write WO/Inspection | Manage Schedules | Manage Users | Manage Departments | Audit |
+|------|------|---------------------|-----------------|--------------|-------------------|-------|
+| Viewer | ✓ | — | — | — | read | — |
+| Technician | ✓ | ✓ | — | — | read | — |
+| Supervisor | ✓ | ✓ | — | — | read | — |
+| FleetManager | ✓ | ✓ | ✓ | — | read | ✓ |
+| Administrator | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
