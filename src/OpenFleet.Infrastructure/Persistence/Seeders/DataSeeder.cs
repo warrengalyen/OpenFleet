@@ -512,34 +512,61 @@ public static class DataSeeder
         if (!hasLowStock || !hasOutOfStock)
         {
             var extras = new List<Part>();
+            var changed = false;
+
             if (!hasLowStock)
             {
-                extras.Add(new Part
+                if (!await context.Parts.AnyAsync(p => p.PartNumber == "FF-DEMO-LOW"))
                 {
-                    Name = "Fuel Filter", PartNumber = "FF-DEMO-LOW",
-                    VendorId = vendors[0].Id, QuantityOnHand = 8, UnitCost = 19.99m
-                });
-                extras.Add(new Part
+                    extras.Add(new Part
+                    {
+                        Name = "Fuel Filter", PartNumber = "FF-DEMO-LOW",
+                        VendorId = vendors[0].Id, QuantityOnHand = 8, UnitCost = 19.99m
+                    });
+                }
+
+                if (!await context.Parts.AnyAsync(p => p.PartNumber == "CAF-DEMO-LOW"))
                 {
-                    Name = "Cabin Air Filter", PartNumber = "CAF-DEMO-LOW",
-                    VendorId = vendors[1].Id, QuantityOnHand = 15, UnitCost = 16.50m
-                });
+                    extras.Add(new Part
+                    {
+                        Name = "Cabin Air Filter", PartNumber = "CAF-DEMO-LOW",
+                        VendorId = vendors[1].Id, QuantityOnHand = 15, UnitCost = 16.50m
+                    });
+                }
             }
 
             if (!hasOutOfStock)
             {
-                extras.Add(new Part
+                var headlight = await context.Parts
+                    .FirstOrDefaultAsync(p => p.PartNumber == "HB-H11-LED");
+
+                if (headlight is null)
                 {
-                    Name = "Headlight Bulb H11", PartNumber = "HB-H11-LED",
-                    VendorId = vendors[0].Id, QuantityOnHand = 0, UnitCost = 38.00m
-                });
+                    extras.Add(new Part
+                    {
+                        Name = "Headlight Bulb H11", PartNumber = "HB-H11-LED",
+                        VendorId = vendors[0].Id, QuantityOnHand = 0, UnitCost = 38.00m
+                    });
+                }
+                else if (headlight.QuantityOnHand > 0)
+                {
+                    headlight.QuantityOnHand = 0;
+                    changed = true;
+                }
             }
 
             if (extras.Count > 0)
             {
                 await context.Parts.AddRangeAsync(extras);
+                changed = true;
+            }
+
+            if (changed)
+            {
                 await context.SaveChangesAsync();
-                logger.LogInformation("Added {Count} demo parts for inventory UI testing.", extras.Count);
+                logger.LogInformation(
+                    "Updated inventory demo data ({AddedCount} part(s) added).",
+                    extras.Count);
             }
         }
     }
