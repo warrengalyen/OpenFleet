@@ -13,15 +13,18 @@ public class InspectionService
     private readonly IOpenFleetDbContext _context;
     private readonly WorkOrderService _workOrderService;
     private readonly AuditService _auditService;
+    private readonly IApplicationSettingsProvider _settingsProvider;
 
     public InspectionService(
         IOpenFleetDbContext context,
         WorkOrderService workOrderService,
-        AuditService auditService)
+        AuditService auditService,
+        IApplicationSettingsProvider settingsProvider)
     {
         _context = context;
         _workOrderService = workOrderService;
         _auditService = auditService;
+        _settingsProvider = settingsProvider;
     }
 
     public async Task<Result<InspectionResponse>> CreateAsync(
@@ -56,7 +59,8 @@ public class InspectionService
         _context.Inspections.Add(inspection);
         await _context.SaveChangesAsync(cancellationToken);
 
-        if (InspectionWorkOrderPolicy.ShouldCreateWorkOrder(request.Status))
+        if (InspectionWorkOrderPolicy.ShouldCreateWorkOrder(request.Status)
+            && (await _settingsProvider.GetValuesAsync(cancellationToken)).AutoCreateWorkOrderOnFailedInspection)
         {
             var workOrderTitle = await BuildWorkOrderTitleAsync(inspection, cancellationToken);
             var woResult = await _workOrderService.CreateAsync(new CreateWorkOrderRequest(
@@ -108,7 +112,8 @@ public class InspectionService
         if (request.Status == InspectionStatus.Failed
             && previousStatus != InspectionStatus.Failed
             && inspection.GeneratedWorkOrderId is null
-            && InspectionWorkOrderPolicy.ShouldCreateWorkOrder(InspectionStatus.Failed))
+            && InspectionWorkOrderPolicy.ShouldCreateWorkOrder(InspectionStatus.Failed)
+            && (await _settingsProvider.GetValuesAsync(cancellationToken)).AutoCreateWorkOrderOnFailedInspection)
         {
             var workOrderTitle = await BuildWorkOrderTitleAsync(inspection, cancellationToken);
             var woResult = await _workOrderService.CreateAsync(new CreateWorkOrderRequest(

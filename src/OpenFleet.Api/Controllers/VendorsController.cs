@@ -20,15 +20,18 @@ public class VendorsController : ControllerBase
     private readonly IOpenFleetDbContext _context;
     private readonly ILogger<VendorsController> _logger;
     private readonly AuditService _auditService;
+    private readonly IApplicationSettingsProvider _settingsProvider;
 
     public VendorsController(
         IOpenFleetDbContext context,
         ILogger<VendorsController> logger,
-        AuditService auditService)
+        AuditService auditService,
+        IApplicationSettingsProvider settingsProvider)
     {
         _context = context;
         _logger = logger;
         _auditService = auditService;
+        _settingsProvider = settingsProvider;
     }
 
     /// <summary>Returns all vendors with optional search.</summary>
@@ -67,6 +70,7 @@ public class VendorsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken)
     {
+        var lowStockThreshold = (await _settingsProvider.GetValuesAsync(cancellationToken)).LowPartsStockThreshold;
         var vendor = await _context.Vendors
             .Include(v => v.Parts)
             .AsNoTracking()
@@ -75,7 +79,7 @@ public class VendorsController : ControllerBase
         if (vendor is null)
             return NotFound();
 
-        return Ok(ToDetailResponse(vendor));
+        return Ok(ToDetailResponse(vendor, lowStockThreshold));
     }
 
     /// <summary>Creates a new vendor.</summary>
@@ -209,7 +213,7 @@ public class VendorsController : ControllerBase
         v.CreatedAt,
         v.UpdatedAt);
 
-    private static VendorDetailResponse ToDetailResponse(Vendor v) => new(
+    private static VendorDetailResponse ToDetailResponse(Vendor v, int lowStockThreshold) => new(
         v.Id,
         v.Name,
         v.ContactName,
@@ -225,7 +229,7 @@ public class VendorsController : ControllerBase
                 p.Name,
                 p.PartNumber,
                 p.QuantityOnHand,
-                p.QuantityOnHand <= InventoryConstants.LowStockThreshold))
+                p.QuantityOnHand <= lowStockThreshold))
             .ToList(),
         v.CreatedAt,
         v.UpdatedAt);

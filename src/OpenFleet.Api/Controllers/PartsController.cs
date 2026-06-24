@@ -21,15 +21,18 @@ public class PartsController : ControllerBase
     private readonly IOpenFleetDbContext _context;
     private readonly ILogger<PartsController> _logger;
     private readonly AuditService _auditService;
+    private readonly IApplicationSettingsProvider _settingsProvider;
 
     public PartsController(
         IOpenFleetDbContext context,
         ILogger<PartsController> logger,
-        AuditService auditService)
+        AuditService auditService,
+        IApplicationSettingsProvider settingsProvider)
     {
         _context = context;
         _logger = logger;
         _auditService = auditService;
+        _settingsProvider = settingsProvider;
     }
 
     /// <summary>Returns all parts with optional filtering and search.</summary>
@@ -41,6 +44,7 @@ public class PartsController : ControllerBase
         [FromQuery] bool? lowStockOnly,
         CancellationToken cancellationToken)
     {
+        var lowStockThreshold = (await _settingsProvider.GetValuesAsync(cancellationToken)).LowPartsStockThreshold;
         var query = _context.Parts
             .Include(p => p.Vendor)
             .AsNoTracking()
@@ -50,7 +54,7 @@ public class PartsController : ControllerBase
             query = query.Where(p => p.VendorId == vendorId.Value);
 
         if (lowStockOnly == true)
-            query = query.Where(p => p.QuantityOnHand <= InventoryConstants.LowStockThreshold);
+            query = query.Where(p => p.QuantityOnHand <= lowStockThreshold);
 
         if (!string.IsNullOrWhiteSpace(search))
         {
@@ -63,10 +67,9 @@ public class PartsController : ControllerBase
 
         var parts = await query
             .OrderBy(p => p.Name)
-            .Select(p => ToResponse(p))
             .ToListAsync(cancellationToken);
 
-        return Ok(parts);
+        return Ok(parts.Select(p => ToResponse(p, lowStockThreshold)));
     }
 
     /// <summary>Returns a part by ID.</summary>
@@ -75,6 +78,7 @@ public class PartsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken)
     {
+        var lowStockThreshold = (await _settingsProvider.GetValuesAsync(cancellationToken)).LowPartsStockThreshold;
         var part = await _context.Parts
             .Include(p => p.Vendor)
             .AsNoTracking()
@@ -83,7 +87,7 @@ public class PartsController : ControllerBase
         if (part is null)
             return NotFound();
 
-        return Ok(ToResponse(part));
+        return Ok(ToResponse(part, lowStockThreshold));
     }
 
     /// <summary>Returns quantity change history for a part from audit logs and integration syncs.</summary>
@@ -219,7 +223,8 @@ public class PartsController : ControllerBase
 
         _logger.LogInformation("Part created: {PartId} Number={PartNumber}", part.Id, part.PartNumber);
 
-        return CreatedAtAction(nameof(GetById), new { id = part.Id }, ToResponse(created));
+        var lowStockThreshold = (await _settingsProvider.GetValuesAsync(cancellationToken)).LowPartsStockThreshold;
+        return CreatedAtAction(nameof(GetById), new { id = part.Id }, ToResponse(created, lowStockThreshold));
     }
 
     /// <summary>Updates an existing part.</summary>
@@ -280,7 +285,8 @@ public class PartsController : ControllerBase
             .AsNoTracking()
             .FirstAsync(p => p.Id == id, cancellationToken);
 
-        return Ok(ToResponse(updated));
+        var lowStockThreshold = (await _settingsProvider.GetValuesAsync(cancellationToken)).LowPartsStockThreshold;
+        return Ok(ToResponse(updated, lowStockThreshold));
     }
 
     /// <summary>Deletes a part from inventory.</summary>
@@ -313,7 +319,7 @@ public class PartsController : ControllerBase
         return NoContent();
     }
 
-    private static PartResponse ToResponse(Part p)
+    private static PartResponse ToResponse(Part p, int lowStockThreshold)
     {
         var totalValue = (decimal)p.QuantityOnHand * p.UnitCost;
         return new PartResponse(
@@ -325,8 +331,8 @@ public class PartsController : ControllerBase
             p.QuantityOnHand,
             p.UnitCost,
             totalValue,
-            p.QuantityOnHand <= InventoryConstants.LowStockThreshold,
-            InventoryConstants.LowStockThreshold,
+            p.QuantityOnHand <= lowStockThreshold,
+            lowStockThreshold,
             p.CreatedAt,
             p.UpdatedAt);
     }

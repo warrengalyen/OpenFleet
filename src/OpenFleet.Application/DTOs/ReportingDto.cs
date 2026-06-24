@@ -57,6 +57,7 @@ public record PartUsageSummary(
 public record PartUsageReport(
     int TotalParts,
     decimal TotalInventoryValue,
+    int LowStockThreshold,
     IReadOnlyList<PartUsageSummary> Parts
 );
 

@@ -13,10 +13,12 @@ namespace OpenFleet.Application.Services;
 public class ReportingService
 {
     private readonly IOpenFleetDbContext _context;
+    private readonly IApplicationSettingsProvider _settingsProvider;
 
-    public ReportingService(IOpenFleetDbContext context)
+    public ReportingService(IOpenFleetDbContext context, IApplicationSettingsProvider settingsProvider)
     {
         _context = context;
+        _settingsProvider = settingsProvider;
     }
 
     // ── 1. Open work orders ────────────────────────────────────────────────────
@@ -57,6 +59,7 @@ public class ReportingService
         CancellationToken cancellationToken = default)
     {
         var now = DateTime.UtcNow;
+        var leadDays = (await _settingsProvider.GetValuesAsync(cancellationToken)).MaintenanceReminderLeadDays;
 
         var schedules = await _context.MaintenanceSchedules
             .AsNoTracking()
@@ -67,7 +70,7 @@ public class ReportingService
 
         // Group schedules by vehicle/asset and check each one
         var dueByVehicle = schedules
-            .Where(s => MaintenanceDueCalculator.IsDue(s, now, s.Vehicle?.Mileage))
+            .Where(s => MaintenanceDueCalculator.IsDueOrWithinLeadDays(s, now, leadDays, s.Vehicle?.Mileage))
             .GroupBy(s => new { s.VehicleId, s.AssetId })
             .Select(g =>
             {
@@ -137,6 +140,8 @@ public class ReportingService
     public async Task<PartUsageReport> GetPartUsageSummaryAsync(
         CancellationToken cancellationToken = default)
     {
+        var lowStockThreshold = (await _settingsProvider.GetValuesAsync(cancellationToken)).LowPartsStockThreshold;
+
         var parts = await _context.Parts
             .AsNoTracking()
             .Include(p => p.Vendor)
@@ -157,6 +162,7 @@ public class ReportingService
         return new PartUsageReport(
             TotalParts: parts.Count,
             TotalInventoryValue: totalValue,
+            LowStockThreshold: lowStockThreshold,
             Parts: parts
         );
     }

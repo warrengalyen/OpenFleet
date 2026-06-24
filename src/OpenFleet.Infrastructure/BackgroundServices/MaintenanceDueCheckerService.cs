@@ -45,8 +45,10 @@ public class MaintenanceDueCheckerService : BackgroundService
     {
         using var scope = _scopeFactory.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<IOpenFleetDbContext>();
+        var settingsProvider = scope.ServiceProvider.GetRequiredService<IApplicationSettingsProvider>();
 
         var now = DateTime.UtcNow;
+        var settings = await settingsProvider.GetValuesAsync(cancellationToken);
 
         var activeSchedules = await context.MaintenanceSchedules
             .Include(s => s.Vehicle)
@@ -56,47 +58,67 @@ public class MaintenanceDueCheckerService : BackgroundService
             .ToListAsync(cancellationToken);
 
         var dueCount = 0;
+        var upcomingCount = 0;
         foreach (var schedule in activeSchedules)
         {
             var currentMileage = schedule.Vehicle?.Mileage;
-            if (!MaintenanceDueCalculator.IsDue(schedule, now, currentMileage)) continue;
-
-            dueCount++;
-            var target = schedule.Vehicle is not null
-                ? $"Vehicle '{schedule.Vehicle.Year} {schedule.Vehicle.Make} {schedule.Vehicle.Model}'"
-                : $"Asset '{schedule.Asset?.Name ?? "Unknown"}'";
-
-            var daysOverdue = MaintenanceDueCalculator.DaysOverdue(schedule, now);
-            var milesOverdue = MaintenanceDueCalculator.MilesOverdue(schedule, currentMileage);
-
-            if (daysOverdue.HasValue && milesOverdue.HasValue)
+            if (MaintenanceDueCalculator.IsDue(schedule, now, currentMileage))
             {
-                _logger.LogWarning(
-                    "Schedule '{ScheduleName}' for {Target} is overdue by {Days:F0} days and {Miles} miles.",
-                    schedule.Name, target, daysOverdue.Value.TotalDays, milesOverdue.Value);
+                dueCount++;
+                LogDueSchedule(schedule, now, currentMileage);
+                continue;
             }
-            else if (daysOverdue.HasValue)
+
+            if (MaintenanceDueCalculator.IsDueOrWithinLeadDays(
+                    schedule, now, settings.MaintenanceReminderLeadDays, currentMileage))
             {
-                _logger.LogWarning(
-                    "Schedule '{ScheduleName}' for {Target} is overdue by {Days:F0} days.",
-                    schedule.Name, target, daysOverdue.Value.TotalDays);
-            }
-            else if (milesOverdue.HasValue)
-            {
-                _logger.LogWarning(
-                    "Schedule '{ScheduleName}' for {Target} is overdue by {Miles} miles.",
-                    schedule.Name, target, milesOverdue.Value);
-            }
-            else
-            {
+                upcomingCount++;
+                var target = schedule.Vehicle is not null
+                    ? $"Vehicle '{schedule.Vehicle.Year} {schedule.Vehicle.Make} {schedule.Vehicle.Model}'"
+                    : $"Asset '{schedule.Asset?.Name ?? "Unknown"}'";
                 _logger.LogInformation(
-                    "Schedule '{ScheduleName}' for {Target} is due for service.",
-                    schedule.Name, target);
+                    "Schedule '{ScheduleName}' for {Target} is due within {LeadDays} day(s).",
+                    schedule.Name, target, settings.MaintenanceReminderLeadDays);
             }
         }
 
         _logger.LogInformation(
-            "Maintenance due check complete. {DueCount}/{TotalCount} schedules are due.",
-            dueCount, activeSchedules.Count);
+            "Maintenance due check complete. {DueCount} overdue, {UpcomingCount} upcoming within {LeadDays} day(s), {TotalCount} active schedules.",
+            dueCount, upcomingCount, settings.MaintenanceReminderLeadDays, activeSchedules.Count);
+    }
+
+    private void LogDueSchedule(Domain.Entities.MaintenanceSchedule schedule, DateTime now, int? currentMileage)
+    {
+        var target = schedule.Vehicle is not null
+            ? $"Vehicle '{schedule.Vehicle.Year} {schedule.Vehicle.Make} {schedule.Vehicle.Model}'"
+            : $"Asset '{schedule.Asset?.Name ?? "Unknown"}'";
+
+        var daysOverdue = MaintenanceDueCalculator.DaysOverdue(schedule, now);
+        var milesOverdue = MaintenanceDueCalculator.MilesOverdue(schedule, currentMileage);
+
+        if (daysOverdue.HasValue && milesOverdue.HasValue)
+        {
+            _logger.LogWarning(
+                "Schedule '{ScheduleName}' for {Target} is overdue by {Days:F0} days and {Miles} miles.",
+                schedule.Name, target, daysOverdue.Value.TotalDays, milesOverdue.Value);
+        }
+        else if (daysOverdue.HasValue)
+        {
+            _logger.LogWarning(
+                "Schedule '{ScheduleName}' for {Target} is overdue by {Days:F0} days.",
+                schedule.Name, target, daysOverdue.Value.TotalDays);
+        }
+        else if (milesOverdue.HasValue)
+        {
+            _logger.LogWarning(
+                "Schedule '{ScheduleName}' for {Target} is overdue by {Miles} miles.",
+                schedule.Name, target, milesOverdue.Value);
+        }
+        else
+        {
+            _logger.LogInformation(
+                "Schedule '{ScheduleName}' for {Target} is due for service.",
+                schedule.Name, target);
+        }
     }
 }

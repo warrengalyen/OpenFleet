@@ -5,6 +5,25 @@ namespace OpenFleet.Domain.Services;
 public static class MaintenanceDueCalculator
 {
     /// <summary>
+    /// Returns true when a schedule is due now or will be due within the configured lead window.
+    /// </summary>
+    public static bool IsDueOrWithinLeadDays(
+        MaintenanceSchedule schedule,
+        DateTime now,
+        int leadDays,
+        int? currentMileage)
+    {
+        if (IsDue(schedule, now, currentMileage))
+            return true;
+
+        if (leadDays <= 0 || !schedule.DayInterval.HasValue)
+            return false;
+
+        var nextDue = NextDueDate(schedule);
+        return nextDue.HasValue && now >= nextDue.Value.AddDays(-leadDays);
+    }
+
+    /// <summary>
     /// Returns true if the schedule is due based on date interval, mileage interval, or both.
     /// A schedule that has never been performed is always considered due.
     /// </summary>

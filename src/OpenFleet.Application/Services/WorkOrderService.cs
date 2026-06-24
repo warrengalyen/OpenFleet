@@ -12,11 +12,16 @@ public class WorkOrderService
 {
     private readonly IOpenFleetDbContext _context;
     private readonly AuditService _auditService;
+    private readonly IApplicationSettingsProvider _settingsProvider;
 
-    public WorkOrderService(IOpenFleetDbContext context, AuditService auditService)
+    public WorkOrderService(
+        IOpenFleetDbContext context,
+        AuditService auditService,
+        IApplicationSettingsProvider settingsProvider)
     {
         _context = context;
         _auditService = auditService;
+        _settingsProvider = settingsProvider;
     }
 
     public async Task<Result<WorkOrderResponse>> CreateAsync(
@@ -47,11 +52,16 @@ public class WorkOrderService
                 return Result<WorkOrderResponse>.NotFound("Assigned user not found.");
         }
 
+        var settings = await _settingsProvider.GetValuesAsync(cancellationToken);
+        var priority = request.Priority ?? settings.DefaultWorkOrderPriority;
+        var dueDate = DateTime.UtcNow.AddDays(settings.DefaultWorkOrderDueDays);
+
         var workOrder = new WorkOrder
         {
             Title = request.Title,
             Description = request.Description ?? string.Empty,
-            Priority = request.Priority,
+            Priority = priority,
+            DueDate = dueDate,
             VehicleId = request.VehicleId,
             AssetId = request.AssetId,
             AssignedUserId = request.AssignedUserId
@@ -276,6 +286,7 @@ public class WorkOrderService
         w.AssignedUserId,
         w.AssignedUser is null ? null : $"{w.AssignedUser.FirstName} {w.AssignedUser.LastName}",
         w.LaborHours,
+        w.DueDate,
         w.CompletedAt,
         w.Notes.Count,
         WorkOrderStatusRules.AllowedTransitions(w.Status),

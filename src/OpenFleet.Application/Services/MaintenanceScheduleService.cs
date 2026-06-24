@@ -10,10 +10,14 @@ namespace OpenFleet.Application.Services;
 public class MaintenanceScheduleService
 {
     private readonly IOpenFleetDbContext _context;
+    private readonly IApplicationSettingsProvider _settingsProvider;
 
-    public MaintenanceScheduleService(IOpenFleetDbContext context)
+    public MaintenanceScheduleService(
+        IOpenFleetDbContext context,
+        IApplicationSettingsProvider settingsProvider)
     {
         _context = context;
+        _settingsProvider = settingsProvider;
     }
 
     public async Task<Result<MaintenanceScheduleResponse>> CreateAsync(
@@ -138,6 +142,8 @@ public class MaintenanceScheduleService
         DateTime now,
         CancellationToken cancellationToken = default)
     {
+        var leadDays = (await _settingsProvider.GetValuesAsync(cancellationToken)).MaintenanceReminderLeadDays;
+
         var activeSchedules = await _context.MaintenanceSchedules
             .Include(s => s.Vehicle)
             .Include(s => s.Asset)
@@ -146,7 +152,7 @@ public class MaintenanceScheduleService
             .ToListAsync(cancellationToken);
 
         var dueSchedules = activeSchedules
-            .Where(s => MaintenanceDueCalculator.IsDue(s, now, s.Vehicle?.Mileage))
+            .Where(s => MaintenanceDueCalculator.IsDueOrWithinLeadDays(s, now, leadDays, s.Vehicle?.Mileage))
             .ToList();
 
         // Group by vehicle or asset

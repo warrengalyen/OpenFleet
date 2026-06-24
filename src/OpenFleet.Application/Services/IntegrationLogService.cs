@@ -13,20 +13,21 @@ public class IntegrationLogService
     private readonly IOpenFleetDbContext _context;
     private readonly ILogger<IntegrationLogService> _logger;
     private readonly AuditService _auditService;
+    private readonly IApplicationSettingsProvider _settingsProvider;
 
     // Exponential backoff delays (in minutes) indexed by attempt number (1-based).
-    // Attempt 1 → 2 min, attempt 2 → 8 min, attempt 3 → max/failed
     private static readonly int[] BackoffMinutes = [2, 8, 30];
-    private const int MaxRetries = 3;
 
     public IntegrationLogService(
         IOpenFleetDbContext context,
         ILogger<IntegrationLogService> logger,
-        AuditService auditService)
+        AuditService auditService,
+        IApplicationSettingsProvider settingsProvider)
     {
         _context = context;
         _logger = logger;
         _auditService = auditService;
+        _settingsProvider = settingsProvider;
     }
 
     /// <summary>Create a new Pending log entry before a sync attempt begins.</summary>
@@ -105,9 +106,13 @@ public class IntegrationLogService
         log.LastAttemptAt = DateTime.UtcNow;
         log.ErrorMessage = errorMessage;
 
-        if (log.AttemptCount < MaxRetries)
+        var settings = await _settingsProvider.GetValuesAsync(cancellationToken);
+        var maxRetries = settings.IntegrationRetryLimit;
+
+        if (maxRetries > 0 && log.AttemptCount < maxRetries)
         {
-            var backoffMinutes = BackoffMinutes[log.AttemptCount - 1];
+            var backoffIndex = Math.Min(log.AttemptCount - 1, BackoffMinutes.Length - 1);
+            var backoffMinutes = BackoffMinutes[backoffIndex];
             log.Status = IntegrationStatus.Retrying;
             log.NextRetryAt = DateTime.UtcNow.AddMinutes(backoffMinutes);
 
