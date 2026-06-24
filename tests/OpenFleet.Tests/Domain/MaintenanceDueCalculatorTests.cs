@@ -150,4 +150,13 @@ public class MaintenanceDueCalculatorTests
         var schedule = MileageSchedule(5000, 10000);
         Assert.Null(MaintenanceDueCalculator.MilesOverdue(schedule, 12000));
     }
+
+    [Fact]
+    public void IsDueOrWithinLeadDays_returns_true_before_due_date_within_lead_window()
+    {
+        var lastPerformed = DateTime.UtcNow.AddDays(-25);
+        var schedule = DateSchedule(30, lastPerformed);
+        Assert.False(MaintenanceDueCalculator.IsDue(schedule, DateTime.UtcNow, null));
+        Assert.True(MaintenanceDueCalculator.IsDueOrWithinLeadDays(schedule, DateTime.UtcNow, 7, null));
+    }
 }

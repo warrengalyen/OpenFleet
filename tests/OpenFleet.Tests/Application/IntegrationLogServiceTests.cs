@@ -4,6 +4,7 @@ using OpenFleet.Application.DTOs;
 using OpenFleet.Application.Services;
 using OpenFleet.Domain.Enums;
 using OpenFleet.Infrastructure.Persistence;
+using OpenFleet.Tests.Helpers;
 
 namespace OpenFleet.Tests.Application;
 
@@ -19,7 +20,12 @@ public class IntegrationLogServiceTests : IDisposable
             .Options;
         _context = new OpenFleetDbContext(options);
         var auditService = new AuditService(_context);
-        _service = new IntegrationLogService(_context, NullLogger<IntegrationLogService>.Instance, auditService);
+        var settingsProvider = ApplicationSettingsTestHelper.CreateProviderAsync(_context).GetAwaiter().GetResult();
+        _service = new IntegrationLogService(
+            _context,
+            NullLogger<IntegrationLogService>.Instance,
+            auditService,
+            settingsProvider);
     }
 
     public void Dispose() => _context.Dispose();

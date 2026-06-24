@@ -3,6 +3,7 @@ using OpenFleet.Application.Services;
 using OpenFleet.Domain.Entities;
 using OpenFleet.Domain.Enums;
 using OpenFleet.Infrastructure.Persistence;
+using OpenFleet.Tests.Helpers;
 
 namespace OpenFleet.Tests.Application;
 
@@ -23,7 +24,8 @@ public class ReportingServiceTests : IDisposable
             .UseInMemoryDatabase(Guid.NewGuid().ToString())
             .Options;
         _context = new OpenFleetDbContext(options);
-        _service = new ReportingService(_context);
+        var settingsProvider = ApplicationSettingsTestHelper.CreateProviderAsync(_context).GetAwaiter().GetResult();
+        _service = new ReportingService(_context, settingsProvider);
         SeedTestData();
     }
 
@@ -185,7 +187,8 @@ public class ReportingServiceTests : IDisposable
             .UseInMemoryDatabase(Guid.NewGuid().ToString())
             .Options;
         using var ctx = new OpenFleetDbContext(options);
-        var svc = new ReportingService(ctx);
+        var settingsProvider = await ApplicationSettingsTestHelper.CreateProviderAsync(ctx);
+        var svc = new ReportingService(ctx, settingsProvider);
 
         var deptId = Guid.NewGuid();
         var userId = Guid.NewGuid();
