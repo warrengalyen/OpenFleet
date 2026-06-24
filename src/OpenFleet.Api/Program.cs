@@ -76,6 +76,9 @@ try
         });
     builder.Services.AddAuthorization();
 
+    builder.Services.AddScoped<ApplicationSettingsService>();
+    builder.Services.AddScoped<IApplicationSettingsProvider>(sp =>
+        sp.GetRequiredService<ApplicationSettingsService>());
     builder.Services.AddScoped<AuditService>();
     builder.Services.AddScoped<ReportingService>();
     builder.Services.AddScoped<WorkOrderService>();

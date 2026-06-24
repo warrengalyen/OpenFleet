@@ -18,6 +18,7 @@ public interface IOpenFleetDbContext
     DbSet<Vendor> Vendors { get; }
     DbSet<Department> Departments { get; }
     DbSet<User> Users { get; }
+    DbSet<ApplicationSettings> ApplicationSettings { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

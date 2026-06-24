@@ -21,6 +21,7 @@ public class OpenFleetDbContext : DbContext, IOpenFleetDbContext
     public DbSet<Vendor> Vendors => Set<Vendor>();
     public DbSet<Department> Departments => Set<Department>();
     public DbSet<User> Users => Set<User>();
+    public DbSet<ApplicationSettings> ApplicationSettings => Set<ApplicationSettings>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

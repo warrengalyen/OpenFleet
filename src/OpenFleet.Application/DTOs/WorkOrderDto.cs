@@ -5,7 +5,7 @@ namespace OpenFleet.Application.DTOs;
 public record CreateWorkOrderRequest(
     string Title,
     string? Description,
-    WorkOrderPriority Priority,
+    WorkOrderPriority? Priority,
     Guid? VehicleId,
     Guid? AssetId,
     Guid? AssignedUserId
@@ -45,6 +45,7 @@ public record WorkOrderResponse(
     Guid? AssignedUserId,
     string? AssignedUserName,
     decimal LaborHours,
+    DateTime? DueDate,
     DateTime? CompletedAt,
     int NoteCount,
     WorkOrderStatus[] AllowedNextStatuses,

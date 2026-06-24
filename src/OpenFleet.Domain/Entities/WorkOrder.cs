@@ -12,6 +12,7 @@ public class WorkOrder : BaseEntity
     public Guid? AssetId { get; set; }
     public Guid? AssignedUserId { get; set; }
     public decimal LaborHours { get; set; }
+    public DateTime? DueDate { get; set; }
     public DateTime? CompletedAt { get; set; }
 
     public Vehicle? Vehicle { get; set; }

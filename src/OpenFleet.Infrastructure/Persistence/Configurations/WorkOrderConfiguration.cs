@@ -14,6 +14,7 @@ public class WorkOrderConfiguration : IEntityTypeConfiguration<WorkOrder>
         builder.Property(w => w.Status).IsRequired();
         builder.Property(w => w.Priority).IsRequired();
         builder.Property(w => w.LaborHours).HasPrecision(8, 2);
+        builder.Property(w => w.DueDate);
         builder.Property(w => w.CompletedAt);
 
         builder.HasOne(w => w.Vehicle)

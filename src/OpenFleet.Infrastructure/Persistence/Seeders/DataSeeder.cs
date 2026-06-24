@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using OpenFleet.Application.Services;
 using OpenFleet.Domain.Entities;
 using OpenFleet.Domain.Enums;
 using OpenFleet.Infrastructure.Persistence;
@@ -11,6 +12,8 @@ public static class DataSeeder
 {
     public static async Task SeedAsync(OpenFleetDbContext context, ILogger logger)
     {
+        await ApplicationSettingsService.EnsureDefaultsAsync(context);
+
         if (await context.Departments.AnyAsync())
         {
             logger.LogInformation("Database already seeded. Ensuring parts and vendors demo data...");
