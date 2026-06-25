@@ -249,6 +249,49 @@ Authorization: Bearer {token}
 
 ---
 
+## Application Settings
+
+Fleet-wide operational settings are stored in the database as a singleton record. All authenticated roles can read settings; only **Administrator** can update them.
+
+### Get settings
+
+```http
+GET /api/settings
+Authorization: Bearer {token}
+```
+
+### Update settings
+
+```http
+PUT /api/settings
+Authorization: Bearer {token}
+Content-Type: application/json
+
+{
+  "organizationName": "OpenFleet",
+  "defaultWorkOrderPriority": "Medium",
+  "defaultWorkOrderDueDays": 7,
+  "autoCreateWorkOrderOnFailedInspection": true,
+  "maintenanceReminderLeadDays": 7,
+  "lowPartsStockThreshold": 25,
+  "integrationRetryLimit": 3,
+  "auditLogRetentionDays": 365
+}
+```
+
+| Setting | Controls |
+|---------|----------|
+| `organizationName` | Display name in dashboard/header |
+| `defaultWorkOrderPriority` | Priority used when a work order is created without one |
+| `defaultWorkOrderDueDays` | Days from creation until work order `dueDate` |
+| `autoCreateWorkOrderOnFailedInspection` | Whether failed inspections generate corrective work orders |
+| `maintenanceReminderLeadDays` | Include schedules due within N days in due/upcoming reports |
+| `lowPartsStockThreshold` | Quantity at or below which parts are flagged low stock |
+| `integrationRetryLimit` | Max failed sync attempts before permanent failure |
+| `auditLogRetentionDays` | Stored for future cleanup (**not enforced automatically yet**) |
+
+---
+
 ## Departments
 
 Departments organize vehicles, assets, and users. All authenticated roles can list and view departments; only **Administrator** can create, update, or delete.
