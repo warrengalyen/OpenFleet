@@ -3,18 +3,19 @@ import { Package } from 'lucide-react'
 import { Badge } from '@/components/ui/Badge'
 import { formatCurrency } from '@/lib/formatters'
 import { DashboardPanel } from './DashboardPanel'
-import { LOW_STOCK_THRESHOLD } from './constants'
 import { usePartsUsage } from './hooks'
 
 export function LowStockPartsPanel() {
   const { data, isLoading, isError, isFetching, refetch } = usePartsUsage()
 
+  const lowStockThreshold = data?.lowStockThreshold ?? 25
+
   const lowStockParts = useMemo(
     () =>
       data?.parts
-        .filter((p) => p.quantityOnHand <= LOW_STOCK_THRESHOLD)
+        .filter((p) => p.quantityOnHand <= lowStockThreshold)
         .sort((a, b) => a.quantityOnHand - b.quantityOnHand) ?? [],
-    [data],
+    [data, lowStockThreshold],
   )
 
   return (
@@ -28,7 +29,7 @@ export function LowStockPartsPanel() {
       isEmpty={!!data && lowStockParts.length === 0}
       emptyIcon={Package}
       emptyTitle="Stock levels healthy"
-      emptyDescription={`No parts at or below ${LOW_STOCK_THRESHOLD} units on hand.`}
+      emptyDescription={`No parts at or below ${lowStockThreshold} units on hand.`}
     >
       <ul className="divide-y divide-gray-100 dark:divide-gray-800">
         {lowStockParts.map((part) => (

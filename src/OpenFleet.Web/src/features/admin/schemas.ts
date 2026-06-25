@@ -45,3 +45,43 @@ export const departmentFormSchema = z.object({
 })
 
 export type DepartmentFormValues = z.infer<typeof departmentFormSchema>
+
+const workOrderPriorityValues = ['Low', 'Medium', 'High', 'Critical'] as const
+
+export const settingsFormSchema = z.object({
+  organizationName: z
+    .string()
+    .min(1, 'Organization name is required.')
+    .max(200, 'Organization name must not exceed 200 characters.'),
+  defaultWorkOrderPriority: z.enum(workOrderPriorityValues, {
+    message: 'Default work order priority is required.',
+  }),
+  defaultWorkOrderDueDays: z.coerce
+    .number()
+    .int('Due days must be a whole number.')
+    .min(1, 'Default work order due days must be greater than zero.'),
+  autoCreateWorkOrderOnFailedInspection: z.boolean(),
+  maintenanceReminderLeadDays: z.coerce
+    .number()
+    .int('Lead days must be a whole number.')
+    .min(0, 'Maintenance reminder lead days must be zero or greater.'),
+  lowPartsStockThreshold: z.coerce
+    .number()
+    .int('Threshold must be a whole number.')
+    .min(0, 'Low parts stock threshold must be zero or greater.'),
+  integrationRetryLimit: z.coerce
+    .number()
+    .int('Retry limit must be a whole number.')
+    .min(0, 'Integration retry limit must be zero or greater.'),
+  auditLogRetentionDays: z.coerce
+    .number()
+    .int('Retention days must be a whole number.')
+    .min(1, 'Audit log retention days must be greater than zero.'),
+})
+
+export type SettingsFormValues = z.infer<typeof settingsFormSchema>
+
+export const WORK_ORDER_PRIORITY_OPTIONS = workOrderPriorityValues.map((priority) => ({
+  value: priority,
+  label: priority,
+}))

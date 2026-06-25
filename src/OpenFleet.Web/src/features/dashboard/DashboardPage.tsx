@@ -18,7 +18,6 @@ import { VehiclesDuePanel } from './VehiclesDuePanel'
 import { FailedInspectionsPanel } from './FailedInspectionsPanel'
 import { LowStockPartsPanel } from './LowStockPartsPanel'
 import { IntegrationFailuresPanel } from './IntegrationFailuresPanel'
-import { LOW_STOCK_THRESHOLD } from './constants'
 import {
   useOpenWorkOrders,
   useVehiclesDue,
@@ -28,10 +27,12 @@ import {
   useWorkOrdersByPriority,
   useDashboardRefresh,
 } from './hooks'
+import { useSettings } from '@/hooks/useSettings'
 
 export function DashboardPage() {
   const refreshAll = useDashboardRefresh()
   const [isRefreshing, setIsRefreshing] = useState(false)
+  const { data: settings } = useSettings()
 
   const openWorkOrders = useOpenWorkOrders()
   const vehiclesDue = useVehiclesDue()
@@ -40,11 +41,13 @@ export function DashboardPage() {
   const integrationFailures = useIntegrationFailures()
   const workOrdersByPriority = useWorkOrdersByPriority()
 
+  const lowStockThreshold =
+    partsUsage.data?.lowStockThreshold ?? settings?.lowPartsStockThreshold ?? 25
+
   const lowStockCount = useMemo(
     () =>
-      partsUsage.data?.parts.filter((p) => p.quantityOnHand <= LOW_STOCK_THRESHOLD)
-        .length ?? 0,
-    [partsUsage.data],
+      partsUsage.data?.parts.filter((p) => p.quantityOnHand <= lowStockThreshold).length ?? 0,
+    [partsUsage.data, lowStockThreshold],
   )
 
   async function handleRefreshAll() {
@@ -59,7 +62,7 @@ export function DashboardPage() {
   return (
     <div className="space-y-6">
       <PageTitle
-        title="Dashboard"
+        title={settings?.organizationName ? `${settings.organizationName} Dashboard` : 'Dashboard'}
         subtitle="Fleet overview and operational status"
         actions={
           <Button
@@ -119,7 +122,7 @@ export function DashboardPage() {
           iconBg="bg-amber-50 dark:bg-amber-950"
           isLoading={partsUsage.isLoading}
           isError={partsUsage.isError}
-          sub={`≤ ${LOW_STOCK_THRESHOLD} units`}
+          sub={`≤ ${lowStockThreshold} units`}
           emphasis={lowStockCount > 0}
         />
         <StatCard

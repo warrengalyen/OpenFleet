@@ -1,5 +1,6 @@
 import { LogOut, User, Menu, Sun, Moon } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
+import { useSettings } from '@/hooks/useSettings'
 import { useDarkMode } from '@/hooks/useDarkMode'
 import { roleBadgeVariant, roleLabel } from '@/lib/auth'
 import { Badge } from '@/components/ui/Badge'
@@ -11,6 +12,7 @@ interface HeaderProps {
 export function Header({ onMenuClick }: HeaderProps) {
   const { user, logout } = useAuth()
   const { dark, toggle: toggleDark } = useDarkMode()
+  const { data: settings } = useSettings()
 
   return (
     <header className="flex h-16 shrink-0 items-center justify-between border-b border-gray-200 bg-white px-4 dark:border-gray-800 dark:bg-gray-900 sm:px-6">
@@ -22,7 +24,13 @@ export function Header({ onMenuClick }: HeaderProps) {
         <Menu className="h-5 w-5" />
       </button>
 
-      <div className="hidden lg:block" />
+      <div className="hidden lg:block">
+        {settings?.organizationName && (
+          <p className="text-sm font-semibold text-gray-900 dark:text-white">
+            {settings.organizationName}
+          </p>
+        )}
+      </div>
 
       <div className="flex items-center gap-2">
         <button

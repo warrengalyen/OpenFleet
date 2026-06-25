@@ -51,6 +51,7 @@ export interface PartUsageSummary {
 export interface PartUsageReport {
   totalParts: number
   totalInventoryValue: number
+  lowStockThreshold: number
   parts: PartUsageSummary[]
 }
 

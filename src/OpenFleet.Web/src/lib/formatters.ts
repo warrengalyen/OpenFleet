@@ -174,6 +174,7 @@ export const auditActionLabel: Record<AuditAction, string> = {
   DepartmentCreated: 'Department created',
   DepartmentUpdated: 'Department updated',
   DepartmentDeleted: 'Department deleted',
+  SettingsUpdated: 'Settings updated',
 }
 
 export const auditActionVariant: Record<AuditAction, BadgeVariant> = {
@@ -193,4 +194,5 @@ export const auditActionVariant: Record<AuditAction, BadgeVariant> = {
   DepartmentCreated: 'success',
   DepartmentUpdated: 'info',
   DepartmentDeleted: 'danger',
+  SettingsUpdated: 'info',
 }

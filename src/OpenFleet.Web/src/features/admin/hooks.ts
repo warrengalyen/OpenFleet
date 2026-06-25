@@ -3,7 +3,10 @@ import { auditService } from '@/services/audit.service'
 import { departmentsService } from '@/services/departments.service'
 import { usersService } from '@/services/users.service'
 import type { AuditHistoryFilter } from '@/types/audit'
+import { settingsService } from '@/services/settings.service'
+import { settingsKeys } from '@/hooks/useSettings'
 import type { CreateDepartmentRequest, UpdateDepartmentRequest } from '@/types/department'
+import type { UpdateApplicationSettingsRequest } from '@/types/settings'
 import type { CreateUserRequest, UpdateUserRequest } from '@/types/user'
 
 export const userKeys = {
@@ -123,6 +126,16 @@ export function useDeleteDepartment() {
     mutationFn: (id: string) => departmentsService.remove(id),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: adminDepartmentKeys.all })
+    },
+  })
+}
+
+export function useUpdateSettings() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (request: UpdateApplicationSettingsRequest) => settingsService.update(request),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: settingsKeys.all })
     },
   })
 }
