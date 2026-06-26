@@ -1,6 +1,7 @@
 import { http, HttpResponse } from 'msw'
 import { createTestLoginResponse, createTestUser } from '../fixtures/auth'
 import { createTestDepartment } from '../fixtures/departments'
+import { createTestSettings } from '../fixtures/settings'
 import { createTestWorkOrder } from '../fixtures/workOrders'
 
 const API = '/api'
@@ -92,6 +93,25 @@ export const handlers = [
     }),
   ),
 
+  http.get(`${API}/reports/parts-usage`, () =>
+    HttpResponse.json({
+      totalParts: 2,
+      totalInventoryValue: 100,
+      lowStockThreshold: 25,
+      parts: [
+        {
+          partId: 'part-1',
+          name: 'Oil Filter',
+          partNumber: 'OF-1',
+          vendorName: 'Vendor',
+          quantityOnHand: 5,
+          unitCost: 10,
+          totalValue: 50,
+        },
+      ],
+    }),
+  ),
+
   http.get(`${API}/vehicles`, () => HttpResponse.json([])),
 
   http.get(`${API}/departments`, () => HttpResponse.json(departments)),
@@ -155,5 +175,17 @@ export const handlers = [
     }
     departments.splice(index, 1)
     return new HttpResponse(null, { status: 204 })
+  }),
+
+  http.get(`${API}/settings`, () => HttpResponse.json(createTestSettings())),
+
+  http.put(`${API}/settings`, async ({ request }) => {
+    const body = (await request.json()) as ReturnType<typeof createTestSettings>
+    return HttpResponse.json(
+      createTestSettings({
+        ...body,
+        updatedAt: new Date().toISOString(),
+      }),
+    )
   }),
 ]
