@@ -16,6 +16,7 @@ describe('SettingsPage', () => {
 
     expect(await screen.findByRole('heading', { name: /settings/i })).toBeInTheDocument()
     expect(screen.getByDisplayValue('OpenFleet')).toBeInTheDocument()
+    expect(screen.getByLabelText(/default priority/i)).toHaveValue('Medium')
     expect(screen.getByLabelText(/organization name/i)).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /save settings/i })).toBeInTheDocument()
   })

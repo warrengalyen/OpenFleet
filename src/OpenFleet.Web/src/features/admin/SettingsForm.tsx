@@ -1,5 +1,7 @@
+import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { getApiValidationErrors } from '@/lib/api'
 import { Button } from '@/components/ui/Button'
 import { Checkbox } from '@/components/ui/Checkbox'
 import { FormField } from '@/components/ui/FormField'
@@ -44,16 +46,36 @@ export function SettingsForm({
     register,
     handleSubmit,
     reset,
+    setError,
     formState: { errors, isSubmitting, isDirty },
   } = useForm<SettingsFormValues>({
     resolver: zodResolver(settingsFormSchema),
     defaultValues,
   })
 
+  useEffect(() => {
+    reset(defaultValues)
+  }, [defaultValues, reset])
+
+  async function handleFormSubmit(values: SettingsFormValues) {
+    try {
+      await onSubmit(values)
+    } catch (err) {
+      const fieldErrors = getApiValidationErrors(err)
+      if (fieldErrors) {
+        for (const [field, message] of Object.entries(fieldErrors)) {
+          setError(field as keyof SettingsFormValues, { type: 'server', message })
+        }
+        return
+      }
+      throw err
+    }
+  }
+
   return (
     <form
       onSubmit={(e) => {
-        void handleSubmit(onSubmit)(e)
+        void handleSubmit(handleFormSubmit)(e)
       }}
       className="space-y-8"
       noValidate

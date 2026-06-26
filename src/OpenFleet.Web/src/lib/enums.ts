@@ -149,6 +149,11 @@ export function normalizeWorkOrderPriority(priority: unknown): WorkOrderPriority
   return normalizeEnum(priority, WORK_ORDER_PRIORITY_MAP)
 }
 
+export function serializeWorkOrderPriority(priority: WorkOrderPriority): number {
+  const index = WORK_ORDER_PRIORITY_MAP.values.indexOf(priority)
+  return index >= 0 ? index : 1
+}
+
 export function normalizeAssetStatus(status: unknown): AssetStatus {
   return normalizeEnum(status, ASSET_STATUS_MAP)
 }

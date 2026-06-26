@@ -6,6 +6,7 @@ import {
   normalizeUserRole,
   normalizeWorkOrderPriority,
   normalizeWorkOrderStatus,
+  serializeWorkOrderPriority,
 } from '@/lib/enums'
 
 describe('normalizeAssetStatus', () => {
@@ -48,7 +49,16 @@ describe('normalizeWorkOrderStatus', () => {
 describe('normalizeWorkOrderPriority', () => {
   it('maps numeric API values to priority strings', () => {
     expect(normalizeWorkOrderPriority(0)).toBe('Low')
+    expect(normalizeWorkOrderPriority(1)).toBe('Medium')
     expect(normalizeWorkOrderPriority(3)).toBe('Critical')
+  })
+})
+
+describe('serializeWorkOrderPriority', () => {
+  it('maps priority strings to numeric API values', () => {
+    expect(serializeWorkOrderPriority('Low')).toBe(0)
+    expect(serializeWorkOrderPriority('Medium')).toBe(1)
+    expect(serializeWorkOrderPriority('Critical')).toBe(3)
   })
 })
 

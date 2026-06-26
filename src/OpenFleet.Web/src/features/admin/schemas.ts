@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { normalizeWorkOrderPriority } from '@/lib/enums'
 
 const userRoleValues = [
   'Viewer',
@@ -53,9 +54,12 @@ export const settingsFormSchema = z.object({
     .string()
     .min(1, 'Organization name is required.')
     .max(200, 'Organization name must not exceed 200 characters.'),
-  defaultWorkOrderPriority: z.enum(workOrderPriorityValues, {
-    message: 'Default work order priority is required.',
-  }),
+  defaultWorkOrderPriority: z.preprocess(
+    (value) => normalizeWorkOrderPriority(value),
+    z.enum(workOrderPriorityValues, {
+      message: 'Default work order priority is required.',
+    }),
+  ),
   defaultWorkOrderDueDays: z.coerce
     .number()
     .int('Due days must be a whole number.')

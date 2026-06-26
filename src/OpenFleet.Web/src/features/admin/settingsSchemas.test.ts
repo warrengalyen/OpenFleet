@@ -29,4 +29,22 @@ describe('settingsFormSchema', () => {
     })
     expect(result.success).toBe(false)
   })
+
+  it('accepts numeric API priority values', () => {
+    const result = settingsFormSchema.safeParse({
+      organizationName: 'OpenFleet',
+      defaultWorkOrderPriority: 1,
+      defaultWorkOrderDueDays: '7',
+      autoCreateWorkOrderOnFailedInspection: true,
+      maintenanceReminderLeadDays: '7',
+      lowPartsStockThreshold: '25',
+      integrationRetryLimit: '3',
+      auditLogRetentionDays: '365',
+    })
+    expect(result.success).toBe(true)
+    if (result.success) {
+      expect(result.data.defaultWorkOrderPriority).toBe('Medium')
+      expect(result.data.defaultWorkOrderDueDays).toBe(7)
+    }
+  })
 })

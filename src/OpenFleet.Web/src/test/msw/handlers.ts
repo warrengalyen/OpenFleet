@@ -19,6 +19,12 @@ const departments = [
   }),
 ]
 
+let applicationSettings = createTestSettings({
+  defaultWorkOrderPriority: 1 as unknown as ReturnType<
+    typeof createTestSettings
+  >['defaultWorkOrderPriority'],
+})
+
 export const handlers = [
   http.post(`${API}/auth/login`, async ({ request }) => {
     const body = (await request.json()) as { email: string; password: string }
@@ -177,15 +183,34 @@ export const handlers = [
     return new HttpResponse(null, { status: 204 })
   }),
 
-  http.get(`${API}/settings`, () => HttpResponse.json(createTestSettings())),
+  http.get(`${API}/settings`, () => HttpResponse.json(applicationSettings)),
 
   http.put(`${API}/settings`, async ({ request }) => {
-    const body = (await request.json()) as ReturnType<typeof createTestSettings>
-    return HttpResponse.json(
-      createTestSettings({
-        ...body,
-        updatedAt: new Date().toISOString(),
-      }),
-    )
+    const body = (await request.json()) as Partial<typeof applicationSettings> & {
+      defaultWorkOrderPriority?: number | string
+    }
+    applicationSettings = createTestSettings({
+      ...applicationSettings,
+      organizationName: body.organizationName ?? applicationSettings.organizationName,
+      defaultWorkOrderDueDays:
+        body.defaultWorkOrderDueDays ?? applicationSettings.defaultWorkOrderDueDays,
+      autoCreateWorkOrderOnFailedInspection:
+        body.autoCreateWorkOrderOnFailedInspection ??
+        applicationSettings.autoCreateWorkOrderOnFailedInspection,
+      maintenanceReminderLeadDays:
+        body.maintenanceReminderLeadDays ?? applicationSettings.maintenanceReminderLeadDays,
+      lowPartsStockThreshold:
+        body.lowPartsStockThreshold ?? applicationSettings.lowPartsStockThreshold,
+      integrationRetryLimit:
+        body.integrationRetryLimit ?? applicationSettings.integrationRetryLimit,
+      auditLogRetentionDays:
+        body.auditLogRetentionDays ?? applicationSettings.auditLogRetentionDays,
+      defaultWorkOrderPriority:
+        typeof body.defaultWorkOrderPriority === 'number'
+          ? (['Low', 'Medium', 'High', 'Critical'][body.defaultWorkOrderPriority] as typeof applicationSettings.defaultWorkOrderPriority)
+          : (body.defaultWorkOrderPriority ?? applicationSettings.defaultWorkOrderPriority),
+      updatedAt: new Date().toISOString(),
+    })
+    return HttpResponse.json(applicationSettings)
   }),
 ]

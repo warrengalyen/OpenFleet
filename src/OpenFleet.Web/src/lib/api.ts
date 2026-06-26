@@ -77,10 +77,39 @@ export const tokenStorage = {
   },
 }
 
+function toValidationFieldName(apiKey: string): string | null {
+  if (apiKey === 'request') return null
+  if (apiKey.startsWith('$.')) return apiKey.slice(2)
+  if (!apiKey) return null
+  return apiKey.charAt(0).toLowerCase() + apiKey.slice(1)
+}
+
+/** Map API validation errors to form field names. */
+export function getApiValidationErrors(error: unknown): Record<string, string> | null {
+  const axiosError = error as AxiosError<ProblemDetails>
+  const apiErrors = axiosError?.response?.data?.errors
+  if (!apiErrors) return null
+
+  const mapped: Record<string, string> = {}
+  for (const [key, messages] of Object.entries(apiErrors)) {
+    const field = toValidationFieldName(key)
+    if (!field || !messages?.length) continue
+    mapped[field] = messages[0]
+  }
+
+  return Object.keys(mapped).length > 0 ? mapped : null
+}
+
 /** Extract a user-facing message from an API error. */
 export function getApiErrorMessage(error: unknown): string {
   const axiosError = error as AxiosError<ProblemDetails & { error?: string; message?: string }>
   const data = axiosError?.response?.data
+  const fieldErrors = getApiValidationErrors(error)
+
+  if (fieldErrors) {
+    const firstMessage = Object.values(fieldErrors)[0]
+    if (firstMessage) return firstMessage
+  }
 
   if (data?.detail) return data.detail
   if (data?.message) return data.message
