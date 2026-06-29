@@ -154,7 +154,7 @@ export function AuditPage() {
               {
                 key: 'changedBy',
                 header: 'Changed by',
-                render: (row) => row.changedBy ?? '—',
+                render: (row) => row.changedBy ?? '-',
               },
               {
                 key: 'createdAt',

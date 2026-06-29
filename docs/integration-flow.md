@@ -136,4 +136,4 @@ To replace a mock connector with a real HTTP integration:
    ```
 4. The `IntegrationSyncService` will automatically pick it up on the next cycle
 
-No changes to `IntegrationSyncService` or `IntegrationLogService` are needed — they work against the interface.
+No changes to `IntegrationSyncService` or `IntegrationLogService` are needed - they work against the interface.

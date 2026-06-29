@@ -73,7 +73,7 @@ export function VehicleMaintenanceTimeline({ vehicleId }: VehicleMaintenanceTime
         kind: 'inspection',
         id: inspection.id,
         date: inspection.inspectedAt,
-        title: `Inspection — ${inspectionStatusLabel[inspection.status]}`,
+        title: `Inspection - ${inspectionStatusLabel[inspection.status]}`,
         status: inspectionStatusLabel[inspection.status],
         statusVariant: inspectionStatusVariant[inspection.status],
         link: `/inspections/${inspection.id}`,

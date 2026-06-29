@@ -126,7 +126,7 @@ export function VendorDetailPage() {
           </CardHeader>
           <CardContent>
             <dl className="space-y-4">
-              <DetailRow label="Contact" value={vendor.contactName || '—'} />
+              <DetailRow label="Contact" value={vendor.contactName || '-'} />
               <DetailRow
                 label="Email"
                 value={
@@ -135,7 +135,7 @@ export function VendorDetailPage() {
                       {vendor.email}
                     </a>
                   ) : (
-                    '—'
+                    '-'
                   )
                 }
               />
@@ -147,7 +147,7 @@ export function VendorDetailPage() {
                       {vendor.phone}
                     </a>
                   ) : (
-                    '—'
+                    '-'
                   )
                 }
               />
@@ -156,7 +156,7 @@ export function VendorDetailPage() {
                 value={vendor.address ? (
                   <span className="whitespace-pre-wrap">{vendor.address}</span>
                 ) : (
-                  '—'
+                  '-'
                 )}
               />
               <DetailRow label="Created" value={formatDateTime(vendor.createdAt)} />

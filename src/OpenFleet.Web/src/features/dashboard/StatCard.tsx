@@ -45,7 +45,7 @@ export function StatCard({
         {isLoading || value === undefined ? (
           <div className="h-8 w-16 animate-pulse rounded bg-gray-200 dark:bg-gray-700" />
         ) : isError ? (
-          <p className="text-2xl font-bold text-red-500">—</p>
+          <p className="text-2xl font-bold text-red-500">-</p>
         ) : (
           <p className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
             {value}

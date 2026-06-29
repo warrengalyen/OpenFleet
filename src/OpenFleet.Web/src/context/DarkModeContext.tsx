@@ -19,7 +19,7 @@ const DarkModeContext = createContext<DarkModeContextValue>({
 
 /**
  * Read the class that the inline index.html script already applied.
- * Using classList instead of localStorage so the two stay in sync —
+ * Using classList instead of localStorage so the two stay in sync -
  * the script is the single source of truth on initial load.
  */
 function getInitialDark(): boolean {

@@ -148,7 +148,7 @@ export function MaintenanceScheduleEditPage() {
                       {schedule.vehicleDescription}
                     </Link>
                   ) : (
-                    '—'
+                    '-'
                   )
                 }
               />
@@ -163,7 +163,7 @@ export function MaintenanceScheduleEditPage() {
                       {schedule.assetDescription}
                     </Link>
                   ) : (
-                    '—'
+                    '-'
                   )
                 }
               />
@@ -172,12 +172,12 @@ export function MaintenanceScheduleEditPage() {
                 value={
                   schedule.mileageInterval
                     ? `${formatNumber(schedule.mileageInterval)} mi`
-                    : '—'
+                    : '-'
                 }
               />
               <DetailRow
                 label="Day interval"
-                value={schedule.dayInterval ? `${schedule.dayInterval} days` : '—'}
+                value={schedule.dayInterval ? `${schedule.dayInterval} days` : '-'}
               />
               <DetailRow
                 label="Last performed"
@@ -192,7 +192,7 @@ export function MaintenanceScheduleEditPage() {
                 value={
                   schedule.lastPerformedMileage != null
                     ? `${formatNumber(schedule.lastPerformedMileage)} mi`
-                    : '—'
+                    : '-'
                 }
               />
               <DetailRow
@@ -204,7 +204,7 @@ export function MaintenanceScheduleEditPage() {
                     : null,
                 ]
                   .filter(Boolean)
-                  .join(' / ') || '—'}
+                  .join(' / ') || '-'}
               />
             </dl>
           </CardContent>

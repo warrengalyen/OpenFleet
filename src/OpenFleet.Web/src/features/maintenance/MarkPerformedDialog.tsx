@@ -45,7 +45,7 @@ export function MarkPerformedDialog({
   }
 
   return (
-    <Dialog open={open} onClose={handleClose} title={`Mark performed — ${scheduleName}`}>
+    <Dialog open={open} onClose={handleClose} title={`Mark performed - ${scheduleName}`}>
       <form
         onSubmit={(e) => {
           void handleSubmit(handleFormSubmit)(e)

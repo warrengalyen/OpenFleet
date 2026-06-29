@@ -147,12 +147,12 @@ Vendors
 Integrations
 Reports
 Administration ▾
-  ├── Overview      (/admin)          — FleetManager+
-  ├── Users         (/admin/users)    — Administrator
-  ├── Roles         (/admin/roles)    — Administrator
-  ├── Departments   (/admin/departments) — Administrator
-  ├── Settings      (/admin/settings) — Administrator
-  └── Audit Logs    (/admin/audit)    — FleetManager+
+  ├── Overview      (/admin)          - FleetManager+
+  ├── Users         (/admin/users)    - Administrator
+  ├── Roles         (/admin/roles)    - Administrator
+  ├── Departments   (/admin/departments) - Administrator
+  ├── Settings      (/admin/settings) - Administrator
+  └── Audit Logs    (/admin/audit)    - FleetManager+
 ```
 
 ---

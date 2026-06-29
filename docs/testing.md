@@ -6,7 +6,7 @@ OpenFleet has 243 tests across five layers: domain, application, infrastructure,
 dotnet test
 ```
 
-No external dependencies are required — tests use EF Core In-Memory database.
+No external dependencies are required - tests use EF Core In-Memory database.
 
 ---
 
@@ -15,46 +15,46 @@ No external dependencies are required — tests use EF Core In-Memory database.
 ```
 tests/OpenFleet.Tests/
 ├── Domain/
-│   ├── VehicleTests.cs                      — entity defaults and property assignment
-│   ├── WorkOrderStatusRulesTests.cs          — valid/invalid status transitions
-│   ├── MaintenanceDueCalculatorTests.cs      — date/mileage due logic
-│   └── InspectionWorkOrderPolicyTests.cs     — auto-WO creation policy
+│   ├── VehicleTests.cs                      - entity defaults and property assignment
+│   ├── WorkOrderStatusRulesTests.cs          - valid/invalid status transitions
+│   ├── MaintenanceDueCalculatorTests.cs      - date/mileage due logic
+│   └── InspectionWorkOrderPolicyTests.cs     - auto-WO creation policy
 │
 ├── Application/
-│   ├── AuthServiceTests.cs                   — login, JWT generation, inactive users
-│   ├── AuditServiceTests.cs                  — audit log persistence and filtering
-│   ├── ReportingServiceTests.cs              — report aggregation math
-│   ├── IntegrationLogServiceTests.cs         — sync log create/update, retry tracking
-│   ├── VehicleValidatorTests.cs              — FluentValidation: VIN, plate, year, mileage
-│   ├── AssetValidatorTests.cs                — FluentValidation: asset tag, type
-│   ├── WorkOrderValidatorTests.cs            — title, target, labor hours, note content
-│   ├── InspectionValidatorTests.cs           — target, inspector, future date guard
-│   └── MaintenanceScheduleValidatorTests.cs  — name, interval requirements
+│   ├── AuthServiceTests.cs                   - login, JWT generation, inactive users
+│   ├── AuditServiceTests.cs                  - audit log persistence and filtering
+│   ├── ReportingServiceTests.cs              - report aggregation math
+│   ├── IntegrationLogServiceTests.cs         - sync log create/update, retry tracking
+│   ├── VehicleValidatorTests.cs              - FluentValidation: VIN, plate, year, mileage
+│   ├── AssetValidatorTests.cs                - FluentValidation: asset tag, type
+│   ├── WorkOrderValidatorTests.cs            - title, target, labor hours, note content
+│   ├── InspectionValidatorTests.cs           - target, inspector, future date guard
+│   └── MaintenanceScheduleValidatorTests.cs  - name, interval requirements
 │
 ├── Infrastructure/
-│   ├── OpenFleetDbContextTests.cs            — EF Core CRUD operations
-│   └── MockConnectorTests.cs                 — external integration mock outputs
+│   ├── OpenFleetDbContextTests.cs            - EF Core CRUD operations
+│   └── MockConnectorTests.cs                 - external integration mock outputs
 │
 ├── Api/
-│   └── ExceptionHandlingMiddlewareTests.cs   — 400/404/500 responses, correlationId injection
+│   └── ExceptionHandlingMiddlewareTests.cs   - 400/404/500 responses, correlationId injection
 │
 ├── Integration/
-│   ├── AuthIntegrationTests.cs               — login, /me endpoint, token shape
-│   ├── AuthorizationTests.cs                 — role guards across all controllers
-│   ├── VehiclesIntegrationTests.cs           — vehicle CRUD, filtering, validation
-│   ├── AssetsIntegrationTests.cs             — asset CRUD and validation
-│   ├── WorkOrdersIntegrationTests.cs         — work order lifecycle, status transitions
-│   ├── InspectionsIntegrationTests.cs        — inspection submission, auto-WO on failure
-│   ├── IntegrationsIntegrationTests.cs       — integration history, sync triggers
-│   └── ReportsIntegrationTests.cs            — all 8 report endpoints, auth enforcement
+│   ├── AuthIntegrationTests.cs               - login, /me endpoint, token shape
+│   ├── AuthorizationTests.cs                 - role guards across all controllers
+│   ├── VehiclesIntegrationTests.cs           - vehicle CRUD, filtering, validation
+│   ├── AssetsIntegrationTests.cs             - asset CRUD and validation
+│   ├── WorkOrdersIntegrationTests.cs         - work order lifecycle, status transitions
+│   ├── InspectionsIntegrationTests.cs        - inspection submission, auto-WO on failure
+│   ├── IntegrationsIntegrationTests.cs       - integration history, sync triggers
+│   └── ReportsIntegrationTests.cs            - all 8 report endpoints, auth enforcement
 │
 └── Helpers/
-    ├── OpenFleetWebFactory.cs                — WebApplicationFactory, JWT helper, test seeding
+    ├── OpenFleetWebFactory.cs                - WebApplicationFactory, JWT helper, test seeding
     └── Builders/
-        ├── DepartmentBuilder.cs              — fluent builder for Department entities
-        ├── VehicleBuilder.cs                 — fluent builder with unique VIN/plate counters
-        ├── WorkOrderBuilder.cs               — fluent builder with Completed() shortcut
-        └── InspectionBuilder.cs              — fluent builder with Failed() shortcut
+        ├── DepartmentBuilder.cs              - fluent builder for Department entities
+        ├── VehicleBuilder.cs                 - fluent builder with unique VIN/plate counters
+        ├── WorkOrderBuilder.cs               - fluent builder with Completed() shortcut
+        └── InspectionBuilder.cs              - fluent builder with Failed() shortcut
 ```
 
 ---
@@ -163,4 +163,4 @@ Tests run automatically on every push and pull request to `main` via `.github/wo
 3. Runs all tests with coverage collection
 4. Uploads coverage XML and TRX results as artifacts (14-day retention)
 
-No external services (PostgreSQL, Redis, etc.) are required in CI — tests are fully self-contained.
+No external services (PostgreSQL, Redis, etc.) are required in CI - tests are fully self-contained.

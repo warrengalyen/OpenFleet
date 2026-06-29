@@ -252,7 +252,7 @@ export function AssetsPage() {
             sortable: true,
             className: 'hidden lg:table-cell',
             headerClassName: 'hidden lg:table-cell',
-            render: (row) => row.departmentName ?? '—',
+            render: (row) => row.departmentName ?? '-',
           },
         ]}
         data={paginatedData}

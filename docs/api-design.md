@@ -82,10 +82,10 @@ Authorization: Bearer {token}
 ```
 
 Query parameters:
-- `status` — `Active`, `InMaintenance`, `Retired`, `Decommissioned`
-- `departmentId` — filter by department
-- `search` — searches VIN, make, model, license plate
-- `page`, `pageSize` — pagination
+- `status` - `Active`, `InMaintenance`, `Retired`, `Decommissioned`
+- `departmentId` - filter by department
+- `search` - searches VIN, make, model, license plate
+- `page`, `pageSize` - pagination
 
 ### Create vehicle
 
@@ -317,8 +317,8 @@ Content-Type: application/json
 ```
 
 Validation:
-- `name` — required, max 100 characters, unique (case-insensitive)
-- `code` — required, max 20 characters, uppercase alphanumeric, unique
+- `name` - required, max 100 characters, unique (case-insensitive)
+- `code` - required, max 20 characters, uppercase alphanumeric, unique
 
 ### Update department
 
@@ -368,8 +368,8 @@ All report endpoints require any authenticated role (`GET` only).
 | Endpoint | Purpose |
 |----------|---------|
 | `GET /health` | Combined check (all registered checks) |
-| `GET /health/live` | Liveness — always 200 while process is running |
-| `GET /health/ready` | Readiness — requires PostgreSQL healthy |
+| `GET /health/live` | Liveness - always 200 while process is running |
+| `GET /health/ready` | Readiness - requires PostgreSQL healthy |
 
 **Response format:**
 ```json
@@ -387,8 +387,8 @@ All report endpoints require any authenticated role (`GET` only).
 
 | Role | Read | Write WO/Inspection | Manage Schedules | Manage Users | Manage Departments | Audit |
 |------|------|---------------------|-----------------|--------------|-------------------|-------|
-| Viewer | ✓ | — | — | — | read | — |
-| Technician | ✓ | ✓ | — | — | read | — |
-| Supervisor | ✓ | ✓ | — | — | read | — |
-| FleetManager | ✓ | ✓ | ✓ | — | read | ✓ |
+| Viewer | ✓ | - | - | - | read | - |
+| Technician | ✓ | ✓ | - | - | read | - |
+| Supervisor | ✓ | ✓ | - | - | read | - |
+| FleetManager | ✓ | ✓ | ✓ | - | read | ✓ |
 | Administrator | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |

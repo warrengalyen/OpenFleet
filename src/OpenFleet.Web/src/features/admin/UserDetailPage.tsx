@@ -120,7 +120,7 @@ export function UserDetailPage() {
               label="Role"
               value={<Badge variant={roleBadgeVariant[user.role]}>{roleLabel[user.role]}</Badge>}
             />
-            <DetailRow label="Department" value={user.departmentName ?? '—'} />
+            <DetailRow label="Department" value={user.departmentName ?? '-'} />
             <DetailRow label="Created" value={formatDateTime(user.createdAt)} />
           </dl>
         </CardContent>

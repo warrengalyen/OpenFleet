@@ -141,20 +141,20 @@ try
         return context.Response.WriteAsync(result);
     }
 
-    // Combined health check — backward-compatible
+    // Combined health check - backward-compatible
     app.MapHealthChecks("/health", new HealthCheckOptions
     {
         ResponseWriter = WriteHealthResponse
     });
 
-    // Liveness probe — always 200 while the process is alive (no DB dependency)
+    // Liveness probe - always 200 while the process is alive (no DB dependency)
     app.MapHealthChecks("/health/live", new HealthCheckOptions
     {
         Predicate = _ => false, // skip all registered checks
         ResponseWriter = WriteHealthResponse
     });
 
-    // Readiness probe — requires PostgreSQL to be healthy
+    // Readiness probe - requires PostgreSQL to be healthy
     app.MapHealthChecks("/health/ready", new HealthCheckOptions
     {
         Predicate = check => check.Tags.Contains("db"),

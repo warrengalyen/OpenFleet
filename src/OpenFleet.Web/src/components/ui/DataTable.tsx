@@ -148,7 +148,7 @@ export function DataTable<T extends object>({
                       >
                         {col.render
                           ? col.render(row, i)
-                          : String((row as Record<string, unknown>)[col.key] ?? '—')}
+                          : String((row as Record<string, unknown>)[col.key] ?? '-')}
                       </td>
                     ))}
                   </tr>

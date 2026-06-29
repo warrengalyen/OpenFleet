@@ -155,7 +155,7 @@ export function UsersPage() {
               {
                 key: 'departmentName',
                 header: 'Department',
-                render: (row) => row.departmentName ?? '—',
+                render: (row) => row.departmentName ?? '-',
               },
               {
                 key: 'isActive',

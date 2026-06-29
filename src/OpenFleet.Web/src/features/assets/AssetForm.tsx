@@ -127,7 +127,7 @@ export function AssetForm({
 
         <FormField
           label="Assigned vehicle"
-          hint="Optional — link this asset to a fleet vehicle"
+          hint="Optional - link this asset to a fleet vehicle"
           error={errors.vehicleId?.message}
           className="sm:col-span-2"
         >

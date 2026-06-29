@@ -120,7 +120,7 @@ export function VendorsPage() {
             header: 'Contact',
             className: 'hidden md:table-cell',
             headerClassName: 'hidden md:table-cell',
-            render: (row) => row.contactName || '—',
+            render: (row) => row.contactName || '-',
           },
           {
             key: 'email',
@@ -133,7 +133,7 @@ export function VendorsPage() {
                   {row.email}
                 </a>
               ) : (
-                '—'
+                '-'
               ),
           },
           {

@@ -29,7 +29,7 @@ public static class ApiServiceExtensions
                 Scheme = "Bearer",
                 BearerFormat = "JWT",
                 In = ParameterLocation.Header,
-                Description = "Paste your JWT token below (without the 'Bearer ' prefix — Swagger adds it automatically)."
+                Description = "Paste your JWT token below (without the 'Bearer ' prefix - Swagger adds it automatically)."
             });
 
             options.AddSecurityRequirement(new OpenApiSecurityRequirement

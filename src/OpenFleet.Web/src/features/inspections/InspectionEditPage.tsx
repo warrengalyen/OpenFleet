@@ -31,7 +31,7 @@ export function InspectionEditPage() {
       ) {
         toast.success(
           'Inspection updated',
-          'Status changed to Failed — a work order was created automatically.',
+          'Status changed to Failed - a work order was created automatically.',
         )
       } else {
         toast.success('Inspection updated')

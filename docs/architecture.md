@@ -47,22 +47,22 @@ Every HTTP request passes through this middleware chain before reaching a contro
 HTTP Request
     │
     ▼
-CorrelationIdMiddleware        — reads/generates X-Correlation-ID header
+CorrelationIdMiddleware        - reads/generates X-Correlation-ID header
     │
     ▼
-ExceptionHandlingMiddleware    — catches DomainException, KeyNotFoundException, unhandled errors
+ExceptionHandlingMiddleware    - catches DomainException, KeyNotFoundException, unhandled errors
     │
     ▼
-UseSerilogRequestLogging       — logs method, path, status, elapsed time
+UseSerilogRequestLogging       - logs method, path, status, elapsed time
     │
     ▼
 Swagger UI (Development only)
     │
     ▼
-UseAuthentication               — validates JWT Bearer token
+UseAuthentication               - validates JWT Bearer token
     │
     ▼
-UseAuthorization                — enforces [Authorize(Roles = "...")] attributes
+UseAuthorization                - enforces [Authorize(Roles = "...")] attributes
     │
     ▼
 Controllers

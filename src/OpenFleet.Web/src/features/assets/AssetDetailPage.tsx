@@ -130,8 +130,8 @@ export function AssetDetailPage() {
           </CardHeader>
           <CardContent>
             <dl className="space-y-4">
-              <DetailRow label="Department" value={asset.departmentName ?? '—'} />
-              <DetailRow label="Assigned vehicle" value={asset.vehicleDescription ?? '—'} />
+              <DetailRow label="Department" value={asset.departmentName ?? '-'} />
+              <DetailRow label="Assigned vehicle" value={asset.vehicleDescription ?? '-'} />
               <DetailRow label="Purchase date" value={formatDate(asset.purchaseDate)} />
               <DetailRow label="Created" value={formatDate(asset.createdAt)} />
               <DetailRow label="Last updated" value={formatDateTime(asset.updatedAt)} />

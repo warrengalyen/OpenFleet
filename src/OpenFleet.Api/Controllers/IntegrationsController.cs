@@ -111,7 +111,7 @@ public class IntegrationsController : ControllerBase
             return Conflict(new { message = "Cannot retry a log entry that already succeeded." });
 
         if (existing.Status == IntegrationStatus.Pending)
-            return Conflict(new { message = "Log entry is still in Pending state — sync already in progress." });
+            return Conflict(new { message = "Log entry is still in Pending state - sync already in progress." });
 
         var connector = _connectors.FirstOrDefault(c => c.Source == existing.Source);
         if (connector is null)

@@ -86,7 +86,7 @@ Unauthorized users are redirected to `/unauthorized` with a clear message includ
 
 ### Unit / component (vitest-axe)
 
-Run the full unit suite — axe checks are included where components are tested:
+Run the full unit suite - axe checks are included where components are tested:
 
 ```bash
 cd src/OpenFleet.Web

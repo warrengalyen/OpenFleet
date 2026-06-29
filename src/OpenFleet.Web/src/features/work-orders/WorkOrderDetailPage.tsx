@@ -126,9 +126,9 @@ export function WorkOrderDetailPage() {
               )}
               <DetailRow
                 label="Vehicle"
-                value={workOrder.vehicleDescription ?? '—'}
+                value={workOrder.vehicleDescription ?? '-'}
               />
-              <DetailRow label="Asset" value={workOrder.assetDescription ?? '—'} />
+              <DetailRow label="Asset" value={workOrder.assetDescription ?? '-'} />
               <DetailRow label="Technician" value={workOrder.assignedUserName ?? 'Unassigned'} />
               <DetailRow label="Last updated" value={formatDateTime(workOrder.updatedAt)} />
               {workOrder.completedAt && (

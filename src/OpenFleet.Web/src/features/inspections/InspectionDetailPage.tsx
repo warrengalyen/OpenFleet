@@ -81,7 +81,7 @@ export function InspectionDetailPage() {
           role="alert"
           className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900 dark:border-amber-900 dark:bg-amber-950 dark:text-amber-200"
         >
-          This inspection is marked as failed. No linked work order was found — one may still be
+          This inspection is marked as failed. No linked work order was found - one may still be
           processing or was created separately.
         </div>
       )}
@@ -114,7 +114,7 @@ export function InspectionDetailPage() {
                       {inspection.vehicleDescription}
                     </Link>
                   ) : (
-                    '—'
+                    '-'
                   )
                 }
               />
@@ -129,7 +129,7 @@ export function InspectionDetailPage() {
                       {inspection.assetDescription}
                     </Link>
                   ) : (
-                    '—'
+                    '-'
                   )
                 }
               />

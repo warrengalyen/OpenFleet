@@ -26,7 +26,7 @@ export function AppLayout() {
         />
       )}
 
-      {/* Sidebar — always visible on lg+, drawer on mobile */}
+      {/* Sidebar - always visible on lg+, drawer on mobile */}
       <div
         className={[
           'fixed inset-y-0 left-0 z-30 w-60 transform transition-transform duration-200 ease-in-out lg:static lg:translate-x-0',

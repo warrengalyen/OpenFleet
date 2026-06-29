@@ -145,7 +145,7 @@ public class ExceptionHandlingMiddlewareTests
     [Fact]
     public async Task Missing_correlation_id_does_not_break_response()
     {
-        // No correlationId in Items — middleware should still return valid JSON
+        // No correlationId in Items - middleware should still return valid JSON
         var middleware = BuildMiddleware(new DomainException("Error without correlation ID."));
         var (status, body) = await InvokeAsync(middleware, correlationId: null);
 

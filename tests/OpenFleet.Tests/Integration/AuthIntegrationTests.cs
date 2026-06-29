@@ -59,7 +59,7 @@ public class AuthIntegrationTests
         var response = await client.GetAsync("/api/auth/me");
 
         // The sub claim from the test token is a random GUID not in the DB, so we may get 404
-        // but the request must get past the 401 gate first — a 404 is acceptable here.
+        // but the request must get past the 401 gate first - a 404 is acceptable here.
         Assert.NotEqual(HttpStatusCode.Unauthorized, response.StatusCode);
     }
 }

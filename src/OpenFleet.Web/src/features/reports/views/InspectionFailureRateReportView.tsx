@@ -85,7 +85,7 @@ export function InspectionFailureRateReportView() {
             {
               key: 'vehicleLabel',
               header: 'Vehicle',
-              render: (row) => row.vehicleLabel ?? '—',
+              render: (row) => row.vehicleLabel ?? '-',
             },
             {
               key: 'failedCount',

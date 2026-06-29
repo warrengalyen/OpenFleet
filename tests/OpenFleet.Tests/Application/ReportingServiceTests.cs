@@ -70,7 +70,7 @@ public class ReportingServiceTests : IDisposable
             new Inspection { VehicleId = VehicleBId, InspectorUserId = UserId, InspectedAt = DateTime.UtcNow.AddDays(-15), Status = InspectionStatus.NeedsReview }
         );
 
-        // Maintenance schedule — overdue by date
+        // Maintenance schedule - overdue by date
         _context.MaintenanceSchedules.Add(new MaintenanceSchedule
         {
             Name = "Annual Inspection",
@@ -89,7 +89,7 @@ public class ReportingServiceTests : IDisposable
     {
         var report = await _service.GetOpenWorkOrdersAsync();
 
-        // 3 open (Open + InProgress + WaitingForParts) — completed and cancelled excluded
+        // 3 open (Open + InProgress + WaitingForParts) - completed and cancelled excluded
         Assert.Equal(4, report.TotalOpen); // Open x2 + InProgress x1 + Waiting x1
         Assert.Equal(2, report.Open);
         Assert.Equal(1, report.InProgress);

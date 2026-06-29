@@ -86,7 +86,7 @@ export function VehicleDowntimeReportView() {
           {
             key: 'lastMaintenanceAt',
             header: 'Last maintenance',
-            render: (row) => (row.lastMaintenanceAt ? formatDate(row.lastMaintenanceAt) : '—'),
+            render: (row) => (row.lastMaintenanceAt ? formatDate(row.lastMaintenanceAt) : '-'),
           },
         ]}
         data={vehicles}

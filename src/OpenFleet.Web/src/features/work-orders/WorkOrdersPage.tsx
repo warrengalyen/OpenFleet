@@ -205,14 +205,14 @@ export function WorkOrdersPage() {
                 header: 'Technician',
                 className: 'hidden md:table-cell',
                 headerClassName: 'hidden md:table-cell',
-                render: (row) => row.assignedUserName ?? '—',
+                render: (row) => row.assignedUserName ?? '-',
               },
               {
                 key: 'vehicleDescription',
                 header: 'Target',
                 className: 'hidden lg:table-cell',
                 headerClassName: 'hidden lg:table-cell',
-                render: (row) => row.vehicleDescription ?? row.assetDescription ?? '—',
+                render: (row) => row.vehicleDescription ?? row.assetDescription ?? '-',
               },
               {
                 key: 'createdAt',

@@ -127,7 +127,7 @@ At least one of `VehicleId` or `AssetId` must be provided (enforced by FluentVal
 | Column | Type | Notes |
 |--------|------|-------|
 | Id | uuid | PK |
-| WorkOrderId | uuid | FK → WorkOrders (unique — one record per WO) |
+| WorkOrderId | uuid | FK → WorkOrders (unique - one record per WO) |
 | PerformedAt | timestamp | required |
 | OdometerReading | integer | required |
 | Notes | text | optional |

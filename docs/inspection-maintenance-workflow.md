@@ -10,9 +10,9 @@ An inspection captures the result of a physical check on a vehicle or asset. Eve
 
 | Status | Description |
 |---|---|
-| `Passed` | Inspection was successful — no issues found. |
-| `Failed` | Critical issue detected — a work order is automatically created. |
-| `NeedsReview` | Minor concern noted — flagged for follow-up but no automatic action taken. |
+| `Passed` | Inspection was successful - no issues found. |
+| `Failed` | Critical issue detected - a work order is automatically created. |
+| `NeedsReview` | Minor concern noted - flagged for follow-up but no automatic action taken. |
 
 ### Inspections are immutable records
 
@@ -78,11 +78,11 @@ DELETE /api/maintenance-schedules/{id}
 
 The `MaintenanceDueCalculator` domain service (in `OpenFleet.Domain.Services`) computes:
 
-- `IsDue(schedule, now, currentMileage)` — true if past date or mileage threshold
-- `NextDueDate(schedule)` — when the schedule is next due by date
-- `NextDueMileage(schedule)` — mileage at which service is due next
-- `DaysOverdue(schedule, now)` — how long past the due date (if applicable)
-- `MilesOverdue(schedule, currentMileage)` — how many miles past the due mileage (if applicable)
+- `IsDue(schedule, now, currentMileage)` - true if past date or mileage threshold
+- `NextDueDate(schedule)` - when the schedule is next due by date
+- `NextDueMileage(schedule)` - mileage at which service is due next
+- `DaysOverdue(schedule, now)` - how long past the due date (if applicable)
+- `MilesOverdue(schedule, currentMileage)` - how many miles past the due mileage (if applicable)
 
 ---
 

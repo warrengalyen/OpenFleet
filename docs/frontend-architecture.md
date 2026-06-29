@@ -117,7 +117,7 @@ Providers (QueryClient, Auth, DarkMode, Toast, ErrorBoundary)
 |-------|----------|
 | JWT storage | `localStorage` via `tokenStorage` in `lib/api.ts` |
 | Current user | `AuthContext` + `useAuth` hook |
-| Role policies | `lib/auth.ts` — mirrors `AuthorizationPolicies` on the API |
+| Role policies | `lib/auth.ts` - mirrors `AuthorizationPolicies` on the API |
 | Route guards | `routes/ProtectedRoute.tsx`, `routes/RoleProtectedRoute.tsx` |
 | Nav visibility | `Sidebar.tsx` filters items with `hasPolicy()` |
 
@@ -169,7 +169,7 @@ Production builds emit static assets to `dist/` for hosting behind any static fi
 
 ## Related Documentation
 
-- [Frontend Routes](frontend-routes.md) — full route map and access policies
-- [Frontend API Client](frontend-api-client.md) — Axios setup and service conventions
-- [Frontend Accessibility](frontend-accessibility.md) — a11y patterns and testing
-- [Screenshots](screenshots.md) — UI capture guide and placeholders
+- [Frontend Routes](frontend-routes.md) - full route map and access policies
+- [Frontend API Client](frontend-api-client.md) - Axios setup and service conventions
+- [Frontend Accessibility](frontend-accessibility.md) - a11y patterns and testing
+- [Screenshots](screenshots.md) - UI capture guide and placeholders

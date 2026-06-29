@@ -346,7 +346,7 @@ public static class DataSeeder
                 InspectorUserId = users[1].Id,
                 InspectedAt = DateTime.UtcNow.AddDays(-45),
                 Status = InspectionStatus.NeedsReview,
-                Notes = "Tire tread at 3mm — borderline. Recommend replacement within 30 days."
+                Notes = "Tire tread at 3mm - borderline. Recommend replacement within 30 days."
             }
         };
         await context.Inspections.AddRangeAsync(inspections);
@@ -440,7 +440,7 @@ public static class DataSeeder
 
         if (vendors.Count == 0)
         {
-            logger.LogInformation("No vendors found — seeding default vendors and parts.");
+            logger.LogInformation("No vendors found - seeding default vendors and parts.");
             vendors =
             [
                 new Vendor
@@ -464,7 +464,7 @@ public static class DataSeeder
 
         if (!await context.Parts.AnyAsync())
         {
-            logger.LogInformation("No parts found — seeding default parts inventory.");
+            logger.LogInformation("No parts found - seeding default parts inventory.");
             var parts = new List<Part>
             {
                 new()

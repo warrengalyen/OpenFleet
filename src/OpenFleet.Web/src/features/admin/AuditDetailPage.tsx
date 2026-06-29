@@ -77,8 +77,8 @@ export function AuditDetailPage() {
               }
             />
             <DetailRow label="Entity type" value={log.entityType} />
-            <DetailRow label="Entity ID" value={log.entityId ?? '—'} />
-            <DetailRow label="Changed by" value={log.changedBy ?? '—'} />
+            <DetailRow label="Entity ID" value={log.entityId ?? '-'} />
+            <DetailRow label="Changed by" value={log.changedBy ?? '-'} />
             <DetailRow label="Recorded at" value={formatDateTime(log.createdAt)} />
           </dl>
 

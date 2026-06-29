@@ -24,7 +24,7 @@ public class VehicleBuilder
     public VehicleBuilder()
     {
         var n = Interlocked.Increment(ref _counter);
-        // VIN: 17 chars, only [A-HJ-NPR-Z0-9] — pad with leading zeros
+        // VIN: 17 chars, only [A-HJ-NPR-Z0-9] - pad with leading zeros
         _vin = $"TEST{n:D13}";
         _licensePlate = $"TST-{n:D4}";
     }

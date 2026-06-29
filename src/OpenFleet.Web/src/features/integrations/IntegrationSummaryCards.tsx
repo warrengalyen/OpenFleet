@@ -60,7 +60,7 @@ export function IntegrationSummaryCards({ data, isLoading }: IntegrationSummaryC
             <div className="flex items-center gap-2">
               <card.icon className={`h-5 w-5 ${card.tone}`} />
               <span className="text-2xl font-semibold text-gray-900 dark:text-white">
-                {isLoading ? '—' : card.value}
+                {isLoading ? '-' : card.value}
               </span>
             </div>
           </CardContent>

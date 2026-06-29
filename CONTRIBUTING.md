@@ -21,7 +21,7 @@ Contributions, questions, and feedback are welcome. This is a portfolio project,
 - **Do not add business logic to controllers.** Controllers map HTTP → service results → HTTP. Business rules belong in `OpenFleet.Application` or `OpenFleet.Domain`.
 - **Use the `Result<T>` pattern** for service outcomes. Avoid throwing exceptions for expected failures (not found, invalid state).
 - **Add FluentValidation validators** for every new request DTO. Name them `<RequestName>Validator` in `OpenFleet.Application.Validators`.
-- **Register new services** in `Program.cs` — scoped for EF-dependent services, singleton for stateless helpers.
+- **Register new services** in `Program.cs` - scoped for EF-dependent services, singleton for stateless helpers.
 
 ### Code Style
 
@@ -29,7 +29,7 @@ Contributions, questions, and feedback are welcome. This is a portfolio project,
 - Async methods end in `Async`
 - No unused `using` statements
 - No `var` when the type is not obvious from the right-hand side
-- Comments only where the intent is non-obvious — do not narrate what the code does
+- Comments only where the intent is non-obvious - do not narrate what the code does
 
 ### Commits
 
@@ -54,7 +54,7 @@ Scope (optional): module name in parentheses
 - **Every new feature needs tests.** At minimum: one or two unit tests for business logic, and one integration test for the controller endpoint.
 - Integration tests go in `tests/OpenFleet.Tests/Integration/` and use `OpenFleetWebFactory`.
 - Use the fluent builders in `tests/OpenFleet.Tests/Helpers/Builders/` when creating test entities.
-- Do not use magic strings for roles — use `UserRole` enum or `AuthorizationPolicies` constants.
+- Do not use magic strings for roles - use `UserRole` enum or `AuthorizationPolicies` constants.
 
 ---
 

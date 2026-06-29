@@ -1,5 +1,5 @@
 /**
- * Auth hooks — re-exported from AuthContext for convenience.
+ * Auth hooks - re-exported from AuthContext for convenience.
  * All auth state lives in AuthProvider; these are thin accessors.
  */
 export { useAuth } from '@/context/AuthContext'

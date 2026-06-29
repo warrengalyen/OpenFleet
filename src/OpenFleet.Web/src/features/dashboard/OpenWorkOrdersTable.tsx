@@ -24,7 +24,7 @@ export function OpenWorkOrdersTable() {
       isEmpty={!!data && data.items.length === 0}
       emptyIcon={ClipboardList}
       emptyTitle="No open work orders"
-      emptyDescription="All caught up — no work orders require attention right now."
+      emptyDescription="All caught up - no work orders require attention right now."
     >
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
@@ -67,7 +67,7 @@ export function OpenWorkOrdersTable() {
                   </Badge>
                 </td>
                 <td className="px-4 py-3 text-gray-500 dark:text-gray-400">
-                  {wo.vehicleLabel ?? '—'}
+                  {wo.vehicleLabel ?? '-'}
                 </td>
                 <td className="hidden whitespace-nowrap px-4 py-3 text-gray-500 dark:text-gray-400 sm:table-cell">
                   {formatDate(wo.createdAt)}

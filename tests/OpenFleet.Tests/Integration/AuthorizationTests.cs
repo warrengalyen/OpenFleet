@@ -37,7 +37,7 @@ public class AuthorizationTests
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
 
-    // ------- Viewer role — read access -------
+    // ------- Viewer role - read access -------
 
     [Fact]
     public async Task GET_vehicles_with_Viewer_token_returns_200()
@@ -73,7 +73,7 @@ public class AuthorizationTests
         Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
     }
 
-    // ------- Viewer role — write blocked -------
+    // ------- Viewer role - write blocked -------
 
     [Fact]
     public async Task DELETE_vehicle_with_Viewer_token_returns_403()
@@ -91,7 +91,7 @@ public class AuthorizationTests
         Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
     }
 
-    // ------- Integration sync — FleetManager required -------
+    // ------- Integration sync - FleetManager required -------
 
     [Fact]
     public async Task POST_integrations_sync_with_Technician_token_returns_403()
@@ -112,7 +112,7 @@ public class AuthorizationTests
         Assert.NotEqual(HttpStatusCode.Unauthorized, response.StatusCode);
     }
 
-    // ------- Users endpoint — Admin only -------
+    // ------- Users endpoint - Admin only -------
 
     [Fact]
     public async Task GET_users_with_FleetManager_token_returns_403()
@@ -130,7 +130,7 @@ public class AuthorizationTests
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
 
-    // ------- Audit endpoint — FleetManager or above -------
+    // ------- Audit endpoint - FleetManager or above -------
 
     [Fact]
     public async Task GET_audit_with_Technician_token_returns_403()
@@ -148,7 +148,7 @@ public class AuthorizationTests
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
 
-    // ------- Maintenance schedules — FleetManager for writes -------
+    // ------- Maintenance schedules - FleetManager for writes -------
 
     [Fact]
     public async Task POST_maintenance_schedule_with_Technician_token_returns_403()

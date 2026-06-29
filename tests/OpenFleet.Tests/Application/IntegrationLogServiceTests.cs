@@ -98,14 +98,14 @@ public class IntegrationLogServiceTests : IDisposable
 
         await _service.RecordFailureAsync(log.Id, "Error 1");
         await _service.RecordFailureAsync(log.Id, "Error 2");
-        await _service.RecordFailureAsync(log.Id, "Error 3 — final");
+        await _service.RecordFailureAsync(log.Id, "Error 3 - final");
 
         var updated = await _context.IntegrationLogs.FindAsync(log.Id);
         Assert.NotNull(updated);
         Assert.Equal(IntegrationStatus.Failed, updated!.Status);
         Assert.Equal(3, updated.AttemptCount);
         Assert.Null(updated.NextRetryAt);
-        Assert.Equal("Error 3 — final", updated.ErrorMessage);
+        Assert.Equal("Error 3 - final", updated.ErrorMessage);
     }
 
     [Fact]

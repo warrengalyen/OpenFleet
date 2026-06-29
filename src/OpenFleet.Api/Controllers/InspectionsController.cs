@@ -86,7 +86,7 @@ public class InspectionsController : ControllerBase
     }
 
     /// <summary>
-    /// Inspections are immutable audit records — deletion is not supported.
+    /// Inspections are immutable audit records - deletion is not supported.
     /// </summary>
     [HttpDelete("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status405MethodNotAllowed)]

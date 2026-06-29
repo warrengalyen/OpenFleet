@@ -134,16 +134,16 @@ export function IntegrationDetailPage() {
               <DetailRow label="Status" value={<IntegrationStatusBadge status={log.status} />} />
               <DetailRow
                 label="Records processed"
-                value={log.recordsProcessed != null ? formatNumber(log.recordsProcessed) : '—'}
+                value={log.recordsProcessed != null ? formatNumber(log.recordsProcessed) : '-'}
               />
               <DetailRow label="Attempts" value={log.attemptCount} />
               <DetailRow
                 label="Last attempt"
-                value={log.lastAttemptAt ? formatDateTime(log.lastAttemptAt) : '—'}
+                value={log.lastAttemptAt ? formatDateTime(log.lastAttemptAt) : '-'}
               />
               <DetailRow
                 label="Next retry"
-                value={log.nextRetryAt ? formatDateTime(log.nextRetryAt) : '—'}
+                value={log.nextRetryAt ? formatDateTime(log.nextRetryAt) : '-'}
               />
               <DetailRow label="Created" value={formatDateTime(log.createdAt)} />
               <DetailRow label="Updated" value={formatDateTime(log.updatedAt)} />

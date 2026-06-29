@@ -93,7 +93,7 @@ export function MaintenanceScheduleList({ activeOnly }: MaintenanceScheduleListP
                   </Link>
                 )
               }
-              return '—'
+              return '-'
             },
           },
           {
@@ -105,7 +105,7 @@ export function MaintenanceScheduleList({ activeOnly }: MaintenanceScheduleListP
               const parts: string[] = []
               if (row.mileageInterval) parts.push(`${formatNumber(row.mileageInterval)} mi`)
               if (row.dayInterval) parts.push(`${row.dayInterval} days`)
-              return parts.join(' / ') || '—'
+              return parts.join(' / ') || '-'
             },
           },
           {
@@ -117,7 +117,7 @@ export function MaintenanceScheduleList({ activeOnly }: MaintenanceScheduleListP
               const parts: string[] = []
               if (row.nextDueDate) parts.push(formatDate(row.nextDueDate))
               if (row.nextDueMileage) parts.push(`${formatNumber(row.nextDueMileage)} mi`)
-              return parts.join(' / ') || '—'
+              return parts.join(' / ') || '-'
             },
           },
           {

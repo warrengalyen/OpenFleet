@@ -75,7 +75,7 @@ export function IntegrationHistoryTable({
           className: 'hidden md:table-cell',
           headerClassName: 'hidden md:table-cell',
           render: (row) =>
-            row.recordsProcessed != null ? formatNumber(row.recordsProcessed) : '—',
+            row.recordsProcessed != null ? formatNumber(row.recordsProcessed) : '-',
         },
         {
           key: 'errorMessage',
@@ -84,7 +84,7 @@ export function IntegrationHistoryTable({
           headerClassName: 'hidden lg:table-cell',
           render: (row) => (
             <span className="truncate text-red-600 dark:text-red-400">
-              {row.errorMessage ?? '—'}
+              {row.errorMessage ?? '-'}
             </span>
           ),
         },

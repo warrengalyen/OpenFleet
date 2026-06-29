@@ -48,7 +48,7 @@ export function RolesPage() {
             <code className="rounded bg-gray-100 px-1 py-0.5 text-xs dark:bg-gray-800">
               UserRole
             </code>{' '}
-            in the API. There is no separate roles endpoint — assign roles on the{' '}
+            in the API. There is no separate roles endpoint - assign roles on the{' '}
             <Link to="/admin/users" className="text-brand-600 hover:underline dark:text-brand-400">
               Users
             </Link>{' '}

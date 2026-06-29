@@ -27,7 +27,7 @@ export function InspectionCreatePage() {
       if (inspection.status === 'Failed' && inspection.generatedWorkOrderId) {
         toast.success(
           'Inspection logged',
-          'Failed result — a work order was created automatically.',
+          'Failed result - a work order was created automatically.',
         )
       } else {
         toast.success('Inspection logged')

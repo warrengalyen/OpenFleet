@@ -120,7 +120,7 @@ export function InspectionsPage() {
           {
             key: 'target',
             header: 'Vehicle / Asset',
-            render: (row) => row.vehicleDescription ?? row.assetDescription ?? '—',
+            render: (row) => row.vehicleDescription ?? row.assetDescription ?? '-',
           },
           {
             key: 'inspectorName',
@@ -144,7 +144,7 @@ export function InspectionsPage() {
                   Linked
                 </Link>
               ) : (
-                '—'
+                '-'
               ),
           },
         ]}

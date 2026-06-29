@@ -111,7 +111,7 @@ public class ReportingService
     public async Task<MaintenanceCostReport> GetMaintenanceCostByVehicleAsync(
         CancellationToken cancellationToken = default)
     {
-        // Materialize first, then order — GroupBy + computed projections aren't fully
+        // Materialize first, then order - GroupBy + computed projections aren't fully
         // translatable to SQL when used with subsequent OrderByDescending on EF Core 8.
         var raw = await _context.WorkOrders
             .AsNoTracking()
@@ -231,7 +231,7 @@ public class ReportingService
 
         double failureRate = total == 0 ? 0.0 : Math.Round((double)failed / total * 100, 1);
 
-        // Top vehicles by failed inspection count — materialize before ordering
+        // Top vehicles by failed inspection count - materialize before ordering
         // because computed projections on GroupBy aren't always translateable.
         var topFailedRaw = await _context.Inspections
             .AsNoTracking()

@@ -76,7 +76,7 @@ export function PartsUsageReportView() {
           columns={[
             { key: 'name', header: 'Part', sortable: true },
             { key: 'partNumber', header: 'Part #', sortable: true },
-            { key: 'vendorName', header: 'Vendor', render: (row) => row.vendorName ?? '—' },
+            { key: 'vendorName', header: 'Vendor', render: (row) => row.vendorName ?? '-' },
             {
               key: 'quantityOnHand',
               header: 'Qty',
