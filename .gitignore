@@ -401,3 +401,4 @@ FodyWeavers.xsd
 
 .env.local
 *.tsbuildinfo
+*.sh
