@@ -33,7 +33,7 @@ jobs:
           --configuration Release
           --collect:"XPlat Code Coverage"
           --results-directory ./coverage
-          --logger "github"
+          --logger "GitHubActions"
           --logger "trx;LogFileName=test-results.trx"
 
       - name: Upload coverage report
