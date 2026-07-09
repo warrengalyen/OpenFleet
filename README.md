@@ -1,5 +1,9 @@
 # OpenFleet
 
+[![CI](https://github.com/warrengalyen/OpenFleet/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/warrengalyen/OpenFleet/actions/workflows/ci.yml)
+[![Backend](https://img.shields.io/github/actions/workflow/status/warrengalyen/OpenFleet/ci.yml?branch=main&job=Build%20%26%20Test%20(.NET%208)&label=.NET%208)](https://github.com/warrengalyen/OpenFleet/actions/workflows/ci.yml)
+[![Frontend](https://img.shields.io/github/actions/workflow/status/warrengalyen/OpenFleet/ci.yml?branch=main&job=Frontend%20Tests%20(Vitest%20%26%20Playwright)&label=Frontend)](https://github.com/warrengalyen/OpenFleet/actions/workflows/ci.yml)
+
 **A full-stack fleet and maintenance management system built with .NET 8 and React.**
 
 OpenFleet is an open source application for managing vehicles, maintenance, inspections, work orders, inventory, vendors, reporting, and fleet operations. It combines a .NET 8 REST API with a React frontend and focuses on building a maintainable, well-tested business application using modern development practices.
