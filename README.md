@@ -8,7 +8,9 @@
 
 OpenFleet is an open source application for managing vehicles, maintenance, inspections, work orders, inventory, vendors, reporting, and fleet operations. It combines a .NET 8 REST API with a React frontend and focuses on building a maintainable, well-tested business application using modern development practices.
 
-> 📸 Dashboard screenshots coming soon.
+![Dashboard overview](docs/images/dashboard-overview.png)
+
+More screenshots: [docs/screenshots.md](docs/screenshots.md)
 
 ---
 
