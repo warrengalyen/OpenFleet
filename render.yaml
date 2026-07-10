@@ -56,6 +56,11 @@ services:
           name: openfleet-web
           type: web
           envVarKey: RENDER_EXTERNAL_URL
+      # Custom domain (must match the browser Origin exactly, including scheme)
+      - key: Cors__AllowedOrigins__1
+        value: https://openfleet.mechanikadesign.com
+      - key: Cors__AllowedOrigins__2
+        value: http://openfleet.mechanikadesign.com
 
   # ── React SPA (Vite static site) ─────────────────────────────
   - type: web

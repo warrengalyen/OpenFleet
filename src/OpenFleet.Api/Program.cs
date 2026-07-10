@@ -104,8 +104,12 @@ try
     builder.Services.AddSwagger();
     builder.Services.AddInfrastructure(builder.Configuration);
 
-    var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
-        ?? [];
+    var allowedOrigins = (builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
+        ?? [])
+        .Select(o => o.TrimEnd('/'))
+        .Where(o => !string.IsNullOrWhiteSpace(o))
+        .Distinct(StringComparer.OrdinalIgnoreCase)
+        .ToArray();
     // Local Vite defaults when nothing is configured (e.g. plain docker compose).
     if (allowedOrigins.Length == 0 && builder.Environment.IsDevelopment())
     {
