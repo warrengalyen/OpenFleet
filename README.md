@@ -1,18 +1,34 @@
 # OpenFleet
 
-[![CI](https://github.com/warrengalyen/OpenFleet/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/warrengalyen/OpenFleet/actions/workflows/ci.yml)
-[![Backend](https://img.shields.io/github/actions/workflow/status/warrengalyen/OpenFleet/ci.yml?branch=main&job=Build%20%26%20Test%20(.NET%208)&label=.NET%208)](https://github.com/warrengalyen/OpenFleet/actions/workflows/ci.yml)
-[![Frontend](https://img.shields.io/github/actions/workflow/status/warrengalyen/OpenFleet/ci.yml?branch=main&job=Frontend%20Tests%20(Vitest%20%26%20Playwright)&label=Frontend)](https://github.com/warrengalyen/OpenFleet/actions/workflows/ci.yml)
+[CI](https://github.com/warrengalyen/OpenFleet/actions/workflows/ci.yml)
+[Backend](https://github.com/warrengalyen/OpenFleet/actions/workflows/ci.yml)
+[Frontend](https://github.com/warrengalyen/OpenFleet/actions/workflows/ci.yml)
 
 **A full-stack fleet and maintenance management system built with .NET 8 and React.**
 
 OpenFleet is an open source application for managing vehicles, maintenance, inspections, work orders, inventory, vendors, reporting, and fleet operations. It combines a .NET 8 REST API with a React frontend and focuses on building a maintainable, well-tested business application using modern development practices.
 
-![Dashboard overview](docs/images/dashboard-overview.png)
+## Live Demo
+
+Try the hosted demo: [http://openfleet.mechanikadesign.com/](http://openfleet.mechanikadesign.com/)
+
+
+| Email                                             | Password    | Role             |
+| ------------------------------------------------- | ----------- | ---------------- |
+| [viewer@openfleet.io](mailto:viewer@openfleet.io) | Viewer@1234 | Read-only Viewer |
+
+
+The demo runs on Render’s free tier:
+
+- **Cold start:** The API spins down after about 15 minutes of inactivity. The first request after idle can take around **30–60 seconds** to wake up.
+
+Dashboard overview
 
 More screenshots: [docs/screenshots.md](docs/screenshots.md)
 
 ---
+
+
 
 ## Why OpenFleet?
 
@@ -157,13 +173,15 @@ Open:
 - Frontend: [http://localhost:5173](http://localhost:5173)
 - Swagger: [http://localhost:8080/swagger](http://localhost:8080/swagger)
 
-Default administrator account:
+Default administrator account (local development):
 
 
 | Email                                           | Password   |
 | ----------------------------------------------- | ---------- |
 | [admin@openfleet.io](mailto:admin@openfleet.io) | Admin@1234 |
 
+
+For the hosted demo, use the Viewer account in [Live Demo](#live-demo) above.
 
 ---
 
