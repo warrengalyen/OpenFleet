@@ -399,7 +399,7 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 
-.env.local
+.env
 *.tsbuildinfo
 *.sh
 *.trx

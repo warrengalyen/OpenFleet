@@ -1,0 +1,65 @@
+# OpenFleet Render Blueprint
+# Dashboard: New → Blueprint → connect this repo
+
+services:
+  # ── .NET 8 API (Docker) ──────────────────────────────────────
+  - type: web
+    name: openfleet-api
+    runtime: docker
+    plan: free
+    dockerfilePath: ./src/OpenFleet.Api/Dockerfile
+    dockerContext: .
+    healthCheckPath: /health/live
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: PORT
+        value: "8080"
+      - key: ASPNETCORE_URLS
+        value: http://0.0.0.0:8080
+      - key: ConnectionStrings__DefaultConnection
+        fromDatabase:
+          name: openfleet-db
+          property: connectionString
+      - key: Jwt__Secret
+        generateValue: true
+      - key: Jwt__Issuer
+        value: OpenFleet.Api
+      - key: Jwt__Audience
+        value: OpenFleet.Clients
+      - key: Jwt__ExpiryHours
+        value: "8"
+      # Allow browser calls from the static site (cross-origin)
+      - key: Cors__AllowedOrigins__0
+        fromService:
+          name: openfleet-web
+          type: web
+          envVarKey: RENDER_EXTERNAL_URL
+
+  # ── React SPA (Vite static site) ─────────────────────────────
+  - type: web
+    name: openfleet-web
+    runtime: static
+    rootDir: src/OpenFleet.Web
+    buildCommand: npm ci && npm run build
+    staticPublishPath: dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      # Baked into the client bundle at build time
+      - key: VITE_API_BASE_URL
+        fromService:
+          name: openfleet-api
+          type: web
+          envVarKey: RENDER_EXTERNAL_URL
+
+databases:
+  - name: openfleet-db
+    databaseName: openfleet
+    user: openfleet
+    plan: free # expires after 30 days; 1 free DB per workspace
+    ipAllowList: [] # private network only (API connects via internal URL)

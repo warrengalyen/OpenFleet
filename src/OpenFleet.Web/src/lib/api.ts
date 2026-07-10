@@ -5,8 +5,10 @@ import { getTokenExpiry, isExpired } from './auth'
 const AUTH_TOKEN_KEY = 'openfleet_token'
 const AUTH_EXPIRES_KEY = 'openfleet_token_expires'
 
+const apiOrigin = (import.meta.env.VITE_API_BASE_URL ?? '').replace(/\/$/, '')
+
 export const api = axios.create({
-  baseURL: '/api',
+  baseURL: `${apiOrigin}/api`,
   headers: { 'Content-Type': 'application/json' },
 })
 
