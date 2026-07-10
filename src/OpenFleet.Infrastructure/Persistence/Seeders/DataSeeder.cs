@@ -18,6 +18,7 @@ public static class DataSeeder
         {
             logger.LogInformation("Database already seeded. Ensuring parts and vendors demo data...");
             await EnsureInventorySeedDataAsync(context, logger);
+            await EnsureDemoViewerUserAsync(context, logger);
             return;
         }
 
@@ -71,6 +72,16 @@ public static class DataSeeder
                 Email = "admin@openfleet.io",
                 PasswordHash = BcryptNet.HashPassword("Admin@1234"),
                 Role = UserRole.Administrator,
+                IsActive = true,
+                DepartmentId = departments[0].Id
+            },
+            new()
+            {
+                Id = Guid.Parse("22222222-0000-0000-0000-000000000005"),
+                FirstName = "Dana", LastName = "Nguyen",
+                Email = "viewer@openfleet.io",
+                PasswordHash = BcryptNet.HashPassword("Viewer@1234"),
+                Role = UserRole.Viewer,
                 IsActive = true,
                 DepartmentId = departments[0].Id
             }
@@ -429,6 +440,41 @@ public static class DataSeeder
 
         await context.SaveChangesAsync();
         logger.LogInformation("Database seeding complete.");
+    }
+
+    /// <summary>
+    /// Ensures a read-only Viewer demo account exists for public/demo environments.
+    /// </summary>
+    public static async Task EnsureDemoViewerUserAsync(OpenFleetDbContext context, ILogger logger)
+    {
+        const string viewerEmail = "viewer@openfleet.io";
+        if (await context.Users.AnyAsync(u => u.Email == viewerEmail))
+            return;
+
+        var departmentId = await context.Departments
+            .OrderBy(d => d.Code)
+            .Select(d => d.Id)
+            .FirstOrDefaultAsync();
+
+        if (departmentId == Guid.Empty)
+        {
+            logger.LogWarning("Cannot seed demo Viewer user - no departments exist.");
+            return;
+        }
+
+        await context.Users.AddAsync(new User
+        {
+            Id = Guid.Parse("22222222-0000-0000-0000-000000000005"),
+            FirstName = "Dana",
+            LastName = "Nguyen",
+            Email = viewerEmail,
+            PasswordHash = BcryptNet.HashPassword("Viewer@1234"),
+            Role = UserRole.Viewer,
+            IsActive = true,
+            DepartmentId = departmentId
+        });
+        await context.SaveChangesAsync();
+        logger.LogInformation("Seeded demo Viewer user {Email}.", viewerEmail);
     }
 
     /// <summary>

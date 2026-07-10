@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/Input'
 import { FormField } from '@/components/ui/FormField'
 import { LoadingSpinner } from '@/components/LoadingSpinner'
 import { useDocumentTitle } from '@/hooks/useDocumentTitle'
+import { getDemoLoginCredentials } from './demoCredentials'
 
 export function LoginPage() {
   useDocumentTitle('Sign in')
@@ -17,6 +18,7 @@ export function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
+  const demoCredentials = getDemoLoginCredentials()
 
   useEffect(() => {
     if (tokenStorage.isValid() && isAuthenticated) {
@@ -84,7 +86,7 @@ export function LoginPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 autoComplete="email"
-                placeholder="admin@openfleet.io"
+                placeholder={demoCredentials.email}
                 leftIcon={<Mail className="h-4 w-4" />}
               />
             </FormField>
@@ -117,13 +119,13 @@ export function LoginPage() {
           </form>
 
           <p className="mt-6 text-center text-xs text-gray-500 dark:text-gray-400">
-            Default:{' '}
+            {demoCredentials.label}:{' '}
             <code className="rounded bg-gray-100 px-1 py-0.5 dark:bg-gray-800">
-              admin@openfleet.io
+              {demoCredentials.email}
             </code>{' '}
             /{' '}
             <code className="rounded bg-gray-100 px-1 py-0.5 dark:bg-gray-800">
-              Admin@1234
+              {demoCredentials.password}
             </code>
           </p>
         </div>
