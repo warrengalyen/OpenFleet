@@ -134,7 +134,7 @@ PostgreSQL
 Clone the repository.
 
 ```bash
-git clone https://github.com/yourusername/OpenFleet.git
+git clone https://github.com/warrengalyen/OpenFleet.git
 cd OpenFleet
 ```
 

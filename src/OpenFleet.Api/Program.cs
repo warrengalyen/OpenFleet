@@ -104,6 +104,12 @@ try
 
     var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
         ?? [];
+    // Local Vite defaults when nothing is configured (e.g. plain docker compose).
+    if (allowedOrigins.Length == 0 && builder.Environment.IsDevelopment())
+    {
+        allowedOrigins = ["http://localhost:5173", "http://127.0.0.1:5173"];
+    }
+
     if (allowedOrigins.Length > 0)
     {
         builder.Services.AddCors(options =>
