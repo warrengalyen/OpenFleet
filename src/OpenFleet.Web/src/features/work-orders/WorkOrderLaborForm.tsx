@@ -1,6 +1,6 @@
 import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
 import { getApiErrorMessage } from '@/lib/api'
+import { zodFormResolver } from '@/lib/form'
 import { useToast } from '@/components/ui/Toaster'
 import { Button } from '@/components/ui/Button'
 import { FormField } from '@/components/ui/FormField'
@@ -27,7 +27,7 @@ export function WorkOrderLaborForm({ workOrder }: WorkOrderLaborFormProps) {
     reset,
     formState: { errors, isSubmitting },
   } = useForm<LaborFormValues>({
-    resolver: zodResolver(laborFormSchema),
+    resolver: zodFormResolver(laborFormSchema),
     defaultValues: { hours: 0 },
   })
 

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { render, screen, waitFor } from '@testing-library/react'
+import { screen, waitFor } from '@testing-library/react'
 import { IntegrationFailuresPanel } from '@/features/dashboard/IntegrationFailuresPanel'
 import { renderWithProviders } from '@/test/render'
 

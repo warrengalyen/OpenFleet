@@ -1,9 +1,6 @@
 import { Badge } from '@/components/ui/Badge'
-import {
-  integrationStatusLabel,
-  integrationStatusVariant,
-  type IntegrationStatus,
-} from '@/lib/integrations'
+import { integrationStatusLabel, integrationStatusVariant } from '@/lib/integrations'
+import type { IntegrationStatus } from '@/types'
 
 interface IntegrationStatusBadgeProps {
   status: IntegrationStatus

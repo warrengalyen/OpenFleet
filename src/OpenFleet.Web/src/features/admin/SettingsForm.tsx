@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
 import { getApiValidationErrors } from '@/lib/api'
+import { zodFormResolver } from '@/lib/form'
 import { Button } from '@/components/ui/Button'
 import { Checkbox } from '@/components/ui/Checkbox'
 import { FormField } from '@/components/ui/FormField'
@@ -49,7 +49,7 @@ export function SettingsForm({
     setError,
     formState: { errors, isSubmitting, isDirty },
   } = useForm<SettingsFormValues>({
-    resolver: zodResolver(settingsFormSchema),
+    resolver: zodFormResolver(settingsFormSchema),
     defaultValues,
   })
 

@@ -1,9 +1,9 @@
 import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
 import { Dialog, DialogBody, DialogFooter } from '@/components/ui/Dialog'
 import { Button } from '@/components/ui/Button'
 import { FormField } from '@/components/ui/FormField'
 import { Input } from '@/components/ui/Input'
+import { zodFormResolver } from '@/lib/form'
 import { markPerformedSchema, type MarkPerformedFormValues } from './schemas'
 
 interface MarkPerformedDialogProps {
@@ -27,7 +27,7 @@ export function MarkPerformedDialog({
     reset,
     formState: { errors, isSubmitting },
   } = useForm<MarkPerformedFormValues>({
-    resolver: zodResolver(markPerformedSchema),
+    resolver: zodFormResolver(markPerformedSchema),
     defaultValues: {
       performedAt: new Date().toISOString().slice(0, 16),
       mileage: undefined,

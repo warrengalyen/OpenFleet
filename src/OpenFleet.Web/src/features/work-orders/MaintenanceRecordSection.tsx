@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
 import { useQueryClient } from '@tanstack/react-query'
 import { Wrench } from 'lucide-react'
 import { getApiErrorMessage } from '@/lib/api'
+import { zodFormResolver } from '@/lib/form'
 import { formatDate, formatNumber } from '@/lib/formatters'
 import { useToast } from '@/components/ui/Toaster'
 import { Button } from '@/components/ui/Button'
@@ -33,7 +33,7 @@ export function MaintenanceRecordSection({ workOrder }: MaintenanceRecordSection
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<MaintenanceRecordFormValues>({
-    resolver: zodResolver(maintenanceRecordSchema),
+    resolver: zodFormResolver(maintenanceRecordSchema),
     defaultValues: {
       performedAt: new Date().toISOString().slice(0, 16),
       odometerReading: 0,

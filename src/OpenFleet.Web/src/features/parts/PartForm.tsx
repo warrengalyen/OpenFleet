@@ -1,6 +1,6 @@
 import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
 import { Button } from '@/components/ui/Button'
+import { zodFormResolver } from '@/lib/form'
 import { FormField } from '@/components/ui/FormField'
 import { Input } from '@/components/ui/Input'
 import { Select } from '@/components/ui/Select'
@@ -33,7 +33,7 @@ export function PartForm({ defaultValues, onSubmit, submitLabel, isLoading }: Pa
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<PartFormValues>({
-    resolver: zodResolver(partFormSchema),
+    resolver: zodFormResolver(partFormSchema),
     defaultValues: {
       name: '',
       partNumber: '',

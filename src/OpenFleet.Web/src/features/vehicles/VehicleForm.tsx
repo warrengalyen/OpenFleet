@@ -1,6 +1,6 @@
 import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
 import { Button } from '@/components/ui/Button'
+import { zodFormResolver } from '@/lib/form'
 import { FormField } from '@/components/ui/FormField'
 import { Input } from '@/components/ui/Input'
 import { Select } from '@/components/ui/Select'
@@ -48,7 +48,7 @@ export function VehicleForm({
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<VehicleFormValues>({
-    resolver: zodResolver(vehicleFormSchema),
+    resolver: zodFormResolver(vehicleFormSchema),
     defaultValues: {
       vin: '',
       licensePlate: '',

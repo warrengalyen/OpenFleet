@@ -1,5 +1,4 @@
 import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
 import { Button } from '@/components/ui/Button'
 import { FormField } from '@/components/ui/FormField'
 import { Input } from '@/components/ui/Input'
@@ -7,6 +6,7 @@ import { Select } from '@/components/ui/Select'
 import { Textarea } from '@/components/ui/Textarea'
 import { useAssets } from '@/features/assets/hooks'
 import { useVehicles } from '@/features/vehicles/hooks'
+import { zodFormResolver } from '@/lib/form'
 import type { MaintenanceScheduleResponse } from '@/types'
 import { maintenanceScheduleFormSchema, type MaintenanceScheduleFormValues } from './schemas'
 
@@ -44,7 +44,7 @@ export function MaintenanceScheduleForm({
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<MaintenanceScheduleFormValues>({
-    resolver: zodResolver(maintenanceScheduleFormSchema),
+    resolver: zodFormResolver(maintenanceScheduleFormSchema),
     defaultValues: {
       name: '',
       description: undefined,

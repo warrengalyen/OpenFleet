@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
-import { Pencil, Plus, Search, Trash2 } from 'lucide-react'
+import { Pencil, Trash2 } from 'lucide-react'
 import { PageTitle } from '@/components/layout/PageTitle'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'

@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { Link, useNavigate, useSearchParams } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { Plus, Search, Users } from 'lucide-react'
 import { PageTitle } from '@/components/layout/PageTitle'
 import { DataTable } from '@/components/ui/DataTable'
