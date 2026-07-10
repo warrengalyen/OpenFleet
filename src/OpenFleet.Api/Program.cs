@@ -29,10 +29,12 @@ try
 {
     var builder = WebApplication.CreateBuilder(args);
 
-    // Render/Heroku/Neon provide postgresql:// URIs; Npgsql EF expects keyword form.
-    builder.Configuration["ConnectionStrings:DefaultConnection"] =
-        PostgresConnectionStringNormalizer.Normalize(
-            builder.Configuration.GetConnectionString("DefaultConnection"));
+    // Render provides Database__* parts (preferred) or a postgresql:// URI.
+    var connectionString = PostgresConnectionStringNormalizer.Resolve(builder.Configuration);
+    builder.Configuration["ConnectionStrings:DefaultConnection"] = connectionString;
+    Log.Information(
+        "PostgreSQL host configured as {Host}",
+        new Npgsql.NpgsqlConnectionStringBuilder(connectionString).Host);
 
     builder.Host.UseSerilog((context, services, configuration) => configuration
         .ReadFrom.Configuration(context.Configuration)

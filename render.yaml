@@ -1,5 +1,6 @@
 # OpenFleet Render Blueprint
 # Dashboard: New → Blueprint → connect this repo
+# API and Postgres must share the same region for private-network DNS.
 
 services:
   # ── .NET 8 API (Docker) ──────────────────────────────────────
@@ -7,6 +8,7 @@ services:
     name: openfleet-api
     runtime: docker
     plan: free
+    region: oregon
     dockerfilePath: ./src/OpenFleet.Api/Dockerfile
     dockerContext: .
     healthCheckPath: /health/live
@@ -17,10 +19,29 @@ services:
         value: "8080"
       - key: ASPNETCORE_URLS
         value: http://0.0.0.0:8080
-      - key: ConnectionStrings__DefaultConnection
+      - key: Database__Host
         fromDatabase:
           name: openfleet-db
-          property: connectionString
+          property: host
+      - key: Database__Port
+        fromDatabase:
+          name: openfleet-db
+          property: port
+      - key: Database__Name
+        fromDatabase:
+          name: openfleet-db
+          property: database
+      - key: Database__User
+        fromDatabase:
+          name: openfleet-db
+          property: user
+      - key: Database__Password
+        fromDatabase:
+          name: openfleet-db
+          property: password
+      # Used to expand short dpg-* hosts to *.oregon-postgres.render.com
+      - key: Database__Region
+        value: oregon
       - key: Jwt__Secret
         generateValue: true
       - key: Jwt__Issuer
@@ -62,4 +83,4 @@ databases:
     databaseName: openfleet
     user: openfleet
     plan: free # expires after 30 days; 1 free DB per workspace
-    ipAllowList: [] # private network only (API connects via internal URL)
+    region: oregon
