@@ -1,8 +1,6 @@
 # OpenFleet
 
-[CI](https://github.com/warrengalyen/OpenFleet/actions/workflows/ci.yml)
-[Backend](https://github.com/warrengalyen/OpenFleet/actions/workflows/ci.yml)
-[Frontend](https://github.com/warrengalyen/OpenFleet/actions/workflows/ci.yml)
+![CI Status](https://github.com/warrengalyen/OpenFleet/actions/workflows/ci.yml/badge.svg)
 
 **A full-stack fleet and maintenance management system built with .NET 8 and React.**
 
@@ -22,7 +20,8 @@ The demo runs on Render’s free tier:
 
 - **Cold start:** The API spins down after about 15 minutes of inactivity. The first request after idle can take around **30–60 seconds** to wake up.
 
-Dashboard overview
+
+![Dashboard overview](docs/images/dashboard-overview.png)
 
 More screenshots: [docs/screenshots.md](docs/screenshots.md)
 
