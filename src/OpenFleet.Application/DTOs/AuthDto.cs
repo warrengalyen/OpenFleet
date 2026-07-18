@@ -20,6 +20,15 @@ public record CurrentUserResponse(
     Guid UserId,
     string Email,
     UserRole Role,
+    string FirstName,
+    string LastName,
     string FullName,
     Guid DepartmentId
+);
+
+public record UpdateProfileRequest(
+    string? FirstName,
+    string? LastName,
+    string? CurrentPassword,
+    string? NewPassword
 );

@@ -45,6 +45,10 @@ The response interceptor clears the session and redirects to `/login` on HTTP 40
 
 `GET /api/auth/me` is called on app load when a valid token exists. The result is stored in `AuthContext`.
 
+### Update profile
+
+`authService.updateProfile(request)` calls `PUT /api/auth/profile` with optional `firstName`, `lastName`, `currentPassword`, and `newPassword`. On success, the Profile page updates the `['auth','me']` cache so the header display name refreshes.
+
 ---
 
 ## Token Storage

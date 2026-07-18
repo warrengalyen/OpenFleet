@@ -9,6 +9,9 @@ import { LoginPage } from '@/features/auth/LoginPage'
 import { NotFoundPage } from '@/features/errors/NotFoundPage'
 import { UnauthorizedPage } from '@/features/errors/UnauthorizedPage'
 
+// Profile
+import { ProfilePage } from '@/features/profile/ProfilePage'
+
 // Dashboard
 import { DashboardPage } from '@/features/dashboard/DashboardPage'
 
@@ -83,6 +86,7 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <Navigate to="/dashboard" replace /> },
       { path: 'dashboard', element: <DashboardPage /> },
+      { path: 'profile', element: <ProfilePage /> },
       { path: 'vehicles', element: <VehiclesPage /> },
       {
         path: 'vehicles/new',

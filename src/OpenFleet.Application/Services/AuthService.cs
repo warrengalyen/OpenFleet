@@ -7,6 +7,8 @@ using Microsoft.IdentityModel.Tokens;
 using OpenFleet.Application.Common;
 using OpenFleet.Application.DTOs;
 using OpenFleet.Application.Interfaces;
+using OpenFleet.Domain.Entities;
+using OpenFleet.Domain.Enums;
 
 namespace OpenFleet.Application.Services;
 
@@ -14,11 +16,16 @@ public class AuthService
 {
     private readonly IOpenFleetDbContext _context;
     private readonly JwtSettings _jwtSettings;
+    private readonly AuditService _auditService;
 
-    public AuthService(IOpenFleetDbContext context, IOptions<JwtSettings> jwtSettings)
+    public AuthService(
+        IOpenFleetDbContext context,
+        IOptions<JwtSettings> jwtSettings,
+        AuditService auditService)
     {
         _context = context;
         _jwtSettings = jwtSettings.Value;
+        _auditService = auditService;
     }
 
     public async Task<Result<LoginResponse>> LoginAsync(
@@ -59,14 +66,67 @@ public class AuthService
             .AsNoTracking()
             .FirstOrDefaultAsync(u => u.Id == userId, cancellationToken);
 
-        return user is null ? null : new CurrentUserResponse(
+        return user is null ? null : ToCurrentUserResponse(user);
+    }
+
+    public async Task<Result<CurrentUserResponse>> UpdateProfileAsync(
+        Guid userId,
+        UpdateProfileRequest request,
+        string? updatedBy = null,
+        CancellationToken cancellationToken = default)
+    {
+        var user = await _context.Users.FindAsync([userId], cancellationToken);
+        if (user is null || !user.IsActive)
+            return Result<CurrentUserResponse>.NotFound("User not found.");
+
+        var oldSnapshot = $"FirstName={user.FirstName}, LastName={user.LastName}";
+        var passwordChanged = false;
+
+        if (request.FirstName is not null)
+            user.FirstName = request.FirstName.Trim();
+
+        if (request.LastName is not null)
+            user.LastName = request.LastName.Trim();
+
+        if (!string.IsNullOrWhiteSpace(request.NewPassword))
+        {
+            if (string.IsNullOrWhiteSpace(request.CurrentPassword)
+                || !BCrypt.Net.BCrypt.Verify(request.CurrentPassword, user.PasswordHash))
+            {
+                return Result<CurrentUserResponse>.Failure(
+                    "Current password is incorrect.",
+                    ErrorCode.Validation);
+            }
+
+            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.NewPassword);
+            passwordChanged = true;
+        }
+
+        await _context.SaveChangesAsync(cancellationToken);
+
+        var newSnapshot = $"FirstName={user.FirstName}, LastName={user.LastName}";
+        await _auditService.LogAsync(
+            AuditAction.UserUpdated,
+            "User",
+            user.Id,
+            updatedBy,
+            oldValue: oldSnapshot,
+            newValue: passwordChanged ? $"{newSnapshot}, PasswordChanged=true" : newSnapshot,
+            cancellationToken: cancellationToken);
+
+        return Result<CurrentUserResponse>.Success(ToCurrentUserResponse(user));
+    }
+
+    private static CurrentUserResponse ToCurrentUserResponse(User user) =>
+        new(
             user.Id,
             user.Email,
             user.Role,
+            user.FirstName,
+            user.LastName,
             $"{user.FirstName} {user.LastName}",
             user.DepartmentId
         );
-    }
 
     private string GenerateToken(Guid userId, string email, string role, DateTime expiresAt)
     {

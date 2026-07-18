@@ -39,6 +39,45 @@ Use the `token` value as a Bearer token in subsequent requests:
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ```
 
+### Current user
+
+```http
+GET /api/auth/me
+Authorization: Bearer …
+```
+
+**Response:**
+```json
+{
+  "userId": "22222222-0000-0000-0000-000000000004",
+  "email": "admin@openfleet.io",
+  "role": "Administrator",
+  "firstName": "Admin",
+  "lastName": "User",
+  "fullName": "Admin User",
+  "departmentId": "aaaaaaaa-0000-0000-0000-000000000001"
+}
+```
+
+### Update profile
+
+Any authenticated user can update their own display name and/or password.
+
+```http
+PUT /api/auth/profile
+Authorization: Bearer …
+Content-Type: application/json
+
+{
+  "firstName": "Warren",
+  "lastName": "Galyen",
+  "currentPassword": "Admin@1234",
+  "newPassword": "NewPass@1234"
+}
+```
+
+All fields are optional, but at least one of `firstName`, `lastName`, or `newPassword` must be provided. When changing password, `currentPassword` is required. Returns the updated current-user profile (same shape as `GET /api/auth/me`).
+
 ---
 
 ## Error Responses

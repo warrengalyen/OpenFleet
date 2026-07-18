@@ -1,6 +1,11 @@
 import { api, tokenStorage } from '@/lib/api'
 import { normalizeUserRole } from '@/lib/auth'
-import type { CurrentUserResponse, LoginRequest, LoginResponse } from '@/types'
+import type {
+  CurrentUserResponse,
+  LoginRequest,
+  LoginResponse,
+  UpdateProfileRequest,
+} from '@/types'
 
 function normalizeAuthUser<T extends { role: unknown }>(user: T): T & { role: CurrentUserResponse['role'] } {
   return { ...user, role: normalizeUserRole(user.role) }
@@ -15,6 +20,11 @@ export const authService = {
 
   async me(): Promise<CurrentUserResponse> {
     const { data } = await api.get<CurrentUserResponse>('/auth/me')
+    return normalizeAuthUser(data)
+  },
+
+  async updateProfile(request: UpdateProfileRequest): Promise<CurrentUserResponse> {
+    const { data } = await api.put<CurrentUserResponse>('/auth/profile', request)
     return normalizeAuthUser(data)
   },
 

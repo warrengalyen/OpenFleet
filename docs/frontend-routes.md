@@ -22,6 +22,7 @@ Base URL in development: `http://localhost:5173`
 |------|------|--------|
 | `/` | Redirect → `/dashboard` | Any authenticated |
 | `/dashboard` | DashboardPage | Any authenticated |
+| `/profile` | ProfilePage | Any authenticated |
 
 ---
 

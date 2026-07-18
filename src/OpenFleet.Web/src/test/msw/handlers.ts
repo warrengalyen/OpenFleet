@@ -39,6 +39,32 @@ export const handlers = [
 
   http.get(`${API}/auth/me`, () => HttpResponse.json(createTestUser())),
 
+  http.put(`${API}/auth/profile`, async ({ request }) => {
+    const body = (await request.json()) as {
+      firstName?: string
+      lastName?: string
+      currentPassword?: string
+      newPassword?: string
+    }
+
+    if (body.newPassword && body.currentPassword === 'wrong') {
+      return HttpResponse.json(
+        { title: 'Bad Request', detail: 'Current password is incorrect.', error: 'Current password is incorrect.' },
+        { status: 400 },
+      )
+    }
+
+    const firstName = body.firstName ?? 'Admin'
+    const lastName = body.lastName ?? 'User'
+    return HttpResponse.json(
+      createTestUser({
+        firstName,
+        lastName,
+        fullName: `${firstName} ${lastName}`,
+      }),
+    )
+  }),
+
   http.get(`${API}/workorders`, () =>
     HttpResponse.json([createTestWorkOrder()]),
   ),

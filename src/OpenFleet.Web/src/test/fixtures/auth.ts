@@ -20,6 +20,8 @@ export function createTestUser(
     userId: 'user-1',
     email: 'admin@openfleet.io',
     role: 'Administrator',
+    firstName: 'Admin',
+    lastName: 'User',
     fullName: 'Admin User',
     departmentId: 'dept-1',
     ...overrides,

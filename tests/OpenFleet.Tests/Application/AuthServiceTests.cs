@@ -14,6 +14,8 @@ public class AuthServiceTests : IDisposable
     private readonly OpenFleetDbContext _context;
     private readonly AuthService _service;
     private static readonly Guid AdminDeptId = Guid.NewGuid();
+    private static readonly Guid AdminUserId = Guid.NewGuid();
+    private static readonly Guid InactiveUserId = Guid.NewGuid();
 
     public AuthServiceTests()
     {
@@ -30,7 +32,8 @@ public class AuthServiceTests : IDisposable
             ExpiryHours = 1
         });
 
-        _service = new AuthService(_context, jwtSettings);
+        var auditService = new AuditService(_context);
+        _service = new AuthService(_context, jwtSettings, auditService);
         SeedUsers();
     }
 
@@ -44,7 +47,7 @@ public class AuthServiceTests : IDisposable
         _context.Users.AddRange(
             new User
             {
-                Id = Guid.NewGuid(),
+                Id = AdminUserId,
                 FirstName = "Admin",
                 LastName = "User",
                 Email = "admin@openfleet.io",
@@ -55,7 +58,7 @@ public class AuthServiceTests : IDisposable
             },
             new User
             {
-                Id = Guid.NewGuid(),
+                Id = InactiveUserId,
                 FirstName = "Inactive",
                 LastName = "User",
                 Email = "inactive@openfleet.io",
@@ -109,13 +112,14 @@ public class AuthServiceTests : IDisposable
     [Fact]
     public async Task GetCurrentUserAsync_returns_profile_for_existing_user()
     {
-        var user = await _context.Users.FirstAsync(u => u.Email == "admin@openfleet.io");
-
-        var profile = await _service.GetCurrentUserAsync(user.Id);
+        var profile = await _service.GetCurrentUserAsync(AdminUserId);
 
         Assert.NotNull(profile);
         Assert.Equal("admin@openfleet.io", profile!.Email);
         Assert.Equal(UserRole.Administrator, profile.Role);
+        Assert.Equal("Admin", profile.FirstName);
+        Assert.Equal("User", profile.LastName);
+        Assert.Equal("Admin User", profile.FullName);
     }
 
     [Fact]
@@ -124,5 +128,74 @@ public class AuthServiceTests : IDisposable
         var profile = await _service.GetCurrentUserAsync(Guid.NewGuid());
 
         Assert.Null(profile);
+    }
+
+    [Fact]
+    public async Task UpdateProfileAsync_updates_display_name()
+    {
+        var result = await _service.UpdateProfileAsync(
+            AdminUserId,
+            new UpdateProfileRequest("Warren", "Galyen", null, null),
+            "admin@openfleet.io");
+
+        Assert.True(result.IsSuccess);
+        Assert.Equal("Warren", result.Value!.FirstName);
+        Assert.Equal("Galyen", result.Value.LastName);
+        Assert.Equal("Warren Galyen", result.Value.FullName);
+
+        var stored = await _context.Users.AsNoTracking().FirstAsync(u => u.Id == AdminUserId);
+        Assert.Equal("Warren", stored.FirstName);
+        Assert.Equal("Galyen", stored.LastName);
+    }
+
+    [Fact]
+    public async Task UpdateProfileAsync_changes_password_when_current_password_valid()
+    {
+        var result = await _service.UpdateProfileAsync(
+            AdminUserId,
+            new UpdateProfileRequest(null, null, "Admin@1234", "NewPass@1234"),
+            "admin@openfleet.io");
+
+        Assert.True(result.IsSuccess);
+
+        var login = await _service.LoginAsync(new LoginRequest("admin@openfleet.io", "NewPass@1234"));
+        Assert.True(login.IsSuccess);
+
+        var oldLogin = await _service.LoginAsync(new LoginRequest("admin@openfleet.io", "Admin@1234"));
+        Assert.False(oldLogin.IsSuccess);
+    }
+
+    [Fact]
+    public async Task UpdateProfileAsync_wrong_current_password_returns_failure()
+    {
+        var result = await _service.UpdateProfileAsync(
+            AdminUserId,
+            new UpdateProfileRequest(null, null, "WrongPass!", "NewPass@1234"));
+
+        Assert.False(result.IsSuccess);
+        Assert.Equal(ErrorCode.Validation, result.Code);
+        Assert.Contains("Current password", result.Error!, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public async Task UpdateProfileAsync_unknown_user_returns_not_found()
+    {
+        var result = await _service.UpdateProfileAsync(
+            Guid.NewGuid(),
+            new UpdateProfileRequest("A", "B", null, null));
+
+        Assert.False(result.IsSuccess);
+        Assert.Equal(ErrorCode.NotFound, result.Code);
+    }
+
+    [Fact]
+    public async Task UpdateProfileAsync_inactive_user_returns_not_found()
+    {
+        var result = await _service.UpdateProfileAsync(
+            InactiveUserId,
+            new UpdateProfileRequest("A", "B", null, null));
+
+        Assert.False(result.IsSuccess);
+        Assert.Equal(ErrorCode.NotFound, result.Code);
     }
 }

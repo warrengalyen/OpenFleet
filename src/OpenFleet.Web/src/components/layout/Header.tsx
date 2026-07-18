@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { LogOut, User, Menu, Sun, Moon } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
 import { useSettings } from '@/hooks/useSettings'
@@ -46,7 +47,11 @@ export function Header({ onMenuClick }: HeaderProps) {
           <>
             <div className="mx-1 h-6 w-px bg-gray-200 dark:bg-gray-700" />
 
-            <div className="flex items-center gap-2">
+            <Link
+              to="/profile"
+              title="Edit profile"
+              className="flex items-center gap-2 rounded-lg px-1.5 py-1 transition-colors hover:bg-gray-100 dark:hover:bg-gray-800"
+            >
               <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-100 dark:bg-brand-950">
                 <User className="h-4 w-4 text-brand-600 dark:text-brand-400" />
               </div>
@@ -59,7 +64,7 @@ export function Header({ onMenuClick }: HeaderProps) {
                   {roleLabel[user.role]}
                 </Badge>
               </div>
-            </div>
+            </Link>
 
             <div className="mx-1 h-6 w-px bg-gray-200 dark:bg-gray-700" />
 

@@ -10,7 +10,7 @@ This roadmap lists potential improvements for OpenFleet. The project is a portfo
 - [ ] **PDF export** - work order detail and vehicle maintenance history as downloadable PDFs
 - [ ] **Pagination metadata** - add `totalCount`, `pageCount` envelope to all paginated list responses
 - [ ] **Soft delete on vehicles and assets** - retire without hard delete; filter by `IsDeleted` flag
-- [ ] **User profile update** - `PUT /api/auth/profile` for password change and display name
+- [x] **User profile update** - `PUT /api/auth/profile` for password change and display name
 
 
 
