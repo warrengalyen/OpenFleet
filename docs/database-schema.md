@@ -64,8 +64,9 @@ AuditLog          (standalone, soft references via EntityId Guid?)
 | LastName | varchar(100) | required |
 | Email | varchar(256) | required, unique |
 | PasswordHash | text | BCrypt hash |
-| Role | varchar(50) | stored as string (enum name) |
+| Role | text | enum stored as string |
 | IsActive | boolean | default true |
+| IsDemoUser | boolean | default false; blocks self-service profile/password changes |
 | DepartmentId | uuid | FK → Departments |
 
 ### Vehicles

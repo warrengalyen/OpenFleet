@@ -55,7 +55,8 @@ Authorization: Bearer …
   "firstName": "Admin",
   "lastName": "User",
   "fullName": "Admin User",
-  "departmentId": "aaaaaaaa-0000-0000-0000-000000000001"
+  "departmentId": "aaaaaaaa-0000-0000-0000-000000000001",
+  "isDemoUser": false
 }
 ```
 
@@ -77,6 +78,23 @@ Content-Type: application/json
 ```
 
 All fields are optional, but at least one of `firstName`, `lastName`, or `newPassword` must be provided. When changing password, `currentPassword` is required. Returns the updated current-user profile (same shape as `GET /api/auth/me`).
+
+#### Demo account restriction
+
+Accounts with `isDemoUser: true` (the public shared Viewer login) cannot change profile name or password. The API returns **403 Forbidden** as RFC 7807 ProblemDetails:
+
+```json
+{
+  "type": "https://httpstatuses.io/403",
+  "title": "Demo account restriction",
+  "status": 403,
+  "detail": "Profile changes are unavailable for the shared demo account."
+}
+```
+
+Password attempts use detail `Password changes are unavailable for the shared demo account.`
+
+Backend enforcement is authoritative: the UI disables controls for demo users, but clients must not rely on that alone. Mark additional public demo accounts by setting `IsDemoUser = true` in seed data (do not hard-code email checks in authorization logic).
 
 ---
 

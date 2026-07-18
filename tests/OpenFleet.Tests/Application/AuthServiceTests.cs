@@ -16,6 +16,8 @@ public class AuthServiceTests : IDisposable
     private static readonly Guid AdminDeptId = Guid.NewGuid();
     private static readonly Guid AdminUserId = Guid.NewGuid();
     private static readonly Guid InactiveUserId = Guid.NewGuid();
+    private static readonly Guid DemoUserId = Guid.NewGuid();
+    private static readonly Guid FlaggedNonViewerId = Guid.NewGuid();
 
     public AuthServiceTests()
     {
@@ -54,6 +56,7 @@ public class AuthServiceTests : IDisposable
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin@1234"),
                 Role = UserRole.Administrator,
                 IsActive = true,
+                IsDemoUser = false,
                 DepartmentId = AdminDeptId
             },
             new User
@@ -65,6 +68,32 @@ public class AuthServiceTests : IDisposable
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword("Fleet@1234"),
                 Role = UserRole.Viewer,
                 IsActive = false,
+                IsDemoUser = false,
+                DepartmentId = AdminDeptId
+            },
+            new User
+            {
+                Id = DemoUserId,
+                FirstName = "Dana",
+                LastName = "Nguyen",
+                Email = "viewer@openfleet.io",
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword("Viewer@1234"),
+                Role = UserRole.Viewer,
+                IsActive = true,
+                IsDemoUser = true,
+                DepartmentId = AdminDeptId
+            },
+            // Same protection must apply based on IsDemoUser, not email.
+            new User
+            {
+                Id = FlaggedNonViewerId,
+                FirstName = "Flagged",
+                LastName = "Account",
+                Email = "flagged-demo@example.com",
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword("Flagged@1234"),
+                Role = UserRole.Technician,
+                IsActive = true,
+                IsDemoUser = true,
                 DepartmentId = AdminDeptId
             }
         );
@@ -120,6 +149,17 @@ public class AuthServiceTests : IDisposable
         Assert.Equal("Admin", profile.FirstName);
         Assert.Equal("User", profile.LastName);
         Assert.Equal("Admin User", profile.FullName);
+        Assert.False(profile.IsDemoUser);
+    }
+
+    [Fact]
+    public async Task GetCurrentUserAsync_includes_demo_user_status()
+    {
+        var profile = await _service.GetCurrentUserAsync(DemoUserId);
+
+        Assert.NotNull(profile);
+        Assert.True(profile!.IsDemoUser);
+        Assert.Equal("viewer@openfleet.io", profile.Email);
     }
 
     [Fact]
@@ -197,5 +237,54 @@ public class AuthServiceTests : IDisposable
 
         Assert.False(result.IsSuccess);
         Assert.Equal(ErrorCode.NotFound, result.Code);
+    }
+
+    [Fact]
+    public async Task UpdateProfileAsync_demo_user_profile_change_returns_forbidden()
+    {
+        var result = await _service.UpdateProfileAsync(
+            DemoUserId,
+            new UpdateProfileRequest("Hacked", "Name", null, null));
+
+        Assert.False(result.IsSuccess);
+        Assert.Equal(ErrorCode.Forbidden, result.Code);
+        Assert.Equal(AuthService.DemoProfileRestrictionDetail, result.Error);
+
+        var stored = await _context.Users.AsNoTracking().FirstAsync(u => u.Id == DemoUserId);
+        Assert.Equal("Dana", stored.FirstName);
+        Assert.Equal("Nguyen", stored.LastName);
+    }
+
+    [Fact]
+    public async Task UpdateProfileAsync_demo_user_password_change_returns_forbidden()
+    {
+        var originalHash = (await _context.Users.AsNoTracking().FirstAsync(u => u.Id == DemoUserId)).PasswordHash;
+
+        var result = await _service.UpdateProfileAsync(
+            DemoUserId,
+            new UpdateProfileRequest(null, null, "Viewer@1234", "Hacked@1234"));
+
+        Assert.False(result.IsSuccess);
+        Assert.Equal(ErrorCode.Forbidden, result.Code);
+        Assert.Equal(AuthService.DemoPasswordRestrictionDetail, result.Error);
+
+        var stored = await _context.Users.AsNoTracking().FirstAsync(u => u.Id == DemoUserId);
+        Assert.Equal(originalHash, stored.PasswordHash);
+        Assert.True(BCrypt.Net.BCrypt.Verify("Viewer@1234", stored.PasswordHash));
+    }
+
+    [Fact]
+    public async Task UpdateProfileAsync_restriction_uses_IsDemoUser_not_email()
+    {
+        var result = await _service.UpdateProfileAsync(
+            FlaggedNonViewerId,
+            new UpdateProfileRequest("Nope", "Nope", null, null));
+
+        Assert.False(result.IsSuccess);
+        Assert.Equal(ErrorCode.Forbidden, result.Code);
+
+        var stored = await _context.Users.AsNoTracking().FirstAsync(u => u.Id == FlaggedNonViewerId);
+        Assert.Equal("Flagged", stored.FirstName);
+        Assert.Equal("Account", stored.LastName);
     }
 }

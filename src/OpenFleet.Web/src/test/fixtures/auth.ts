@@ -24,6 +24,7 @@ export function createTestUser(
     lastName: 'User',
     fullName: 'Admin User',
     departmentId: 'dept-1',
+    isDemoUser: false,
     ...overrides,
   }
 }

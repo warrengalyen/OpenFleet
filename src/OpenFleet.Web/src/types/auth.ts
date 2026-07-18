@@ -27,6 +27,7 @@ export interface CurrentUserResponse {
   lastName: string
   fullName: string
   departmentId: string
+  isDemoUser: boolean
 }
 
 export interface UpdateProfileRequest {

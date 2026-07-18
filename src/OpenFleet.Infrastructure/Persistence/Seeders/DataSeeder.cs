@@ -83,6 +83,7 @@ public static class DataSeeder
                 PasswordHash = BcryptNet.HashPassword("Viewer@1234"),
                 Role = UserRole.Viewer,
                 IsActive = true,
+                IsDemoUser = true,
                 DepartmentId = departments[0].Id
             }
         };
@@ -443,13 +444,24 @@ public static class DataSeeder
     }
 
     /// <summary>
-    /// Ensures a read-only Viewer demo account exists for public/demo environments.
+    /// Ensures a read-only Viewer demo account exists for public/demo environments
+    /// and that its <see cref="User.IsDemoUser"/> flag stays set.
     /// </summary>
     public static async Task EnsureDemoViewerUserAsync(OpenFleetDbContext context, ILogger logger)
     {
+        // Email is used only here to locate the initial public demo account.
         const string viewerEmail = "viewer@openfleet.io";
-        if (await context.Users.AnyAsync(u => u.Email == viewerEmail))
+        var existing = await context.Users.FirstOrDefaultAsync(u => u.Email == viewerEmail);
+        if (existing is not null)
+        {
+            if (!existing.IsDemoUser)
+            {
+                existing.IsDemoUser = true;
+                await context.SaveChangesAsync();
+                logger.LogInformation("Marked existing demo Viewer user {Email} as IsDemoUser.", viewerEmail);
+            }
             return;
+        }
 
         var departmentId = await context.Departments
             .OrderBy(d => d.Code)
@@ -471,6 +483,7 @@ public static class DataSeeder
             PasswordHash = BcryptNet.HashPassword("Viewer@1234"),
             Role = UserRole.Viewer,
             IsActive = true,
+            IsDemoUser = true,
             DepartmentId = departmentId
         });
         await context.SaveChangesAsync();

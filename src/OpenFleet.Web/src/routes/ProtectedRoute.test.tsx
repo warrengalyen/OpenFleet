@@ -74,6 +74,7 @@ describe('ProtectedRoute', () => {
         lastName: 'User',
         fullName: 'Admin User',
         departmentId: 'dept-1',
+        isDemoUser: false,
       },
       isAuthenticated: true,
       isLoading: false,

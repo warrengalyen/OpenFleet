@@ -5,7 +5,8 @@ public enum ErrorCode
     NotFound,
     Conflict,
     Validation,
-    InvalidOperation
+    InvalidOperation,
+    Forbidden
 }
 
 public class Result<T>
@@ -33,6 +34,7 @@ public class Result<T>
     public static Result<T> NotFound(string error) => new(error, ErrorCode.NotFound);
     public static Result<T> Conflict(string error) => new(error, ErrorCode.Conflict);
     public static Result<T> Invalid(string error) => new(error, ErrorCode.InvalidOperation);
+    public static Result<T> Forbidden(string error) => new(error, ErrorCode.Forbidden);
 }
 
 public class Result
@@ -53,4 +55,5 @@ public class Result
     public static Result NotFound(string error) => new(false, error, ErrorCode.NotFound);
     public static Result Conflict(string error) => new(false, error, ErrorCode.Conflict);
     public static Result Invalid(string error) => new(false, error, ErrorCode.InvalidOperation);
+    public static Result Forbidden(string error) => new(false, error, ErrorCode.Forbidden);
 }

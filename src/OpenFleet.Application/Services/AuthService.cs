@@ -14,6 +14,12 @@ namespace OpenFleet.Application.Services;
 
 public class AuthService
 {
+    public const string DemoProfileRestrictionDetail =
+        "Profile changes are unavailable for the shared demo account.";
+
+    public const string DemoPasswordRestrictionDetail =
+        "Password changes are unavailable for the shared demo account.";
+
     private readonly IOpenFleetDbContext _context;
     private readonly JwtSettings _jwtSettings;
     private readonly AuditService _auditService;
@@ -79,6 +85,26 @@ public class AuthService
         if (user is null || !user.IsActive)
             return Result<CurrentUserResponse>.NotFound("User not found.");
 
+        if (user.IsDemoUser)
+        {
+            var passwordAttempt = !string.IsNullOrWhiteSpace(request.NewPassword);
+            var detail = passwordAttempt
+                ? DemoPasswordRestrictionDetail
+                : DemoProfileRestrictionDetail;
+
+            await _auditService.LogAsync(
+                AuditAction.UserUpdated,
+                "User",
+                user.Id,
+                updatedBy,
+                notes: passwordAttempt
+                    ? "Rejected demo-account password change attempt."
+                    : "Rejected demo-account profile change attempt.",
+                cancellationToken: cancellationToken);
+
+            return Result<CurrentUserResponse>.Forbidden(detail);
+        }
+
         var oldSnapshot = $"FirstName={user.FirstName}, LastName={user.LastName}";
         var passwordChanged = false;
 
@@ -125,7 +151,8 @@ public class AuthService
             user.FirstName,
             user.LastName,
             $"{user.FirstName} {user.LastName}",
-            user.DepartmentId
+            user.DepartmentId,
+            user.IsDemoUser
         );
 
     private string GenerateToken(Guid userId, string email, string role, DateTime expiresAt)

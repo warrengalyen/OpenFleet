@@ -25,6 +25,7 @@ export function userToProfileFormValues(user: CurrentUserResponse): ProfileFormV
 }
 
 export function ProfileForm({ user, onSubmit, isLoading }: ProfileFormProps) {
+  const isDemoUser = user.isDemoUser
   const {
     register,
     handleSubmit,
@@ -41,6 +42,8 @@ export function ProfileForm({ user, onSubmit, isLoading }: ProfileFormProps) {
   }, [user, reset])
 
   async function handleFormSubmit(values: ProfileFormValues) {
+    if (isDemoUser) return
+
     const request: UpdateProfileRequest = {
       firstName: values.firstName.trim(),
       lastName: values.lastName.trim(),
@@ -66,13 +69,13 @@ export function ProfileForm({ user, onSubmit, isLoading }: ProfileFormProps) {
         for (const [field, message] of Object.entries(fieldErrors)) {
           setError(field as keyof ProfileFormValues, { type: 'server', message })
         }
-        return
       }
-      throw err
+      // Parent page surfaces non-field API errors (including 403) via toast.
     }
   }
 
   const busy = isLoading || isSubmitting
+  const canSubmit = !isDemoUser && isDirty && !busy
 
   return (
     <form
@@ -82,6 +85,16 @@ export function ProfileForm({ user, onSubmit, isLoading }: ProfileFormProps) {
       className="space-y-8"
       noValidate
     >
+      {isDemoUser && (
+        <div
+          role="status"
+          aria-live="polite"
+          className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-100"
+        >
+          Profile and password changes are disabled for the shared demo account.
+        </div>
+      )}
+
       <section className="space-y-5">
         <div>
           <h2 className="text-base font-semibold text-gray-900 dark:text-white">Display name</h2>
@@ -92,10 +105,18 @@ export function ProfileForm({ user, onSubmit, isLoading }: ProfileFormProps) {
 
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
           <FormField label="First name" required error={errors.firstName?.message}>
-            <Input {...register('firstName')} autoComplete="given-name" />
+            <Input
+              {...register('firstName')}
+              autoComplete="given-name"
+              disabled={isDemoUser}
+            />
           </FormField>
           <FormField label="Last name" required error={errors.lastName?.message}>
-            <Input {...register('lastName')} autoComplete="family-name" />
+            <Input
+              {...register('lastName')}
+              autoComplete="family-name"
+              disabled={isDemoUser}
+            />
           </FormField>
         </div>
 
@@ -117,25 +138,32 @@ export function ProfileForm({ user, onSubmit, isLoading }: ProfileFormProps) {
             {...register('currentPassword')}
             type="password"
             autoComplete="current-password"
+            disabled={isDemoUser}
           />
         </FormField>
 
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
           <FormField label="New password" error={errors.newPassword?.message}>
-            <Input {...register('newPassword')} type="password" autoComplete="new-password" />
+            <Input
+              {...register('newPassword')}
+              type="password"
+              autoComplete="new-password"
+              disabled={isDemoUser}
+            />
           </FormField>
           <FormField label="Confirm new password" error={errors.confirmPassword?.message}>
             <Input
               {...register('confirmPassword')}
               type="password"
               autoComplete="new-password"
+              disabled={isDemoUser}
             />
           </FormField>
         </div>
       </section>
 
       <div className="flex justify-end border-t border-gray-200 pt-6 dark:border-gray-800">
-        <Button type="submit" disabled={busy || !isDirty}>
+        <Button type="submit" disabled={!canSubmit}>
           {busy ? 'Saving…' : 'Save profile'}
         </Button>
       </div>

@@ -69,6 +69,37 @@ public class UserManagementService
         if (user is null)
             return Result<UserResponse>.NotFound($"User {id} not found.");
 
+        if (user.IsDemoUser)
+        {
+            if (request.IsActive == false)
+            {
+                await _auditService.LogAsync(
+                    AuditAction.UserUpdated,
+                    "User",
+                    user.Id,
+                    updatedBy,
+                    notes: "Rejected demo-account deactivation attempt via user update.",
+                    cancellationToken: cancellationToken);
+
+                return Result<UserResponse>.Forbidden(
+                    "The shared demo account cannot be deactivated.");
+            }
+
+            if (request.FirstName is not null || request.LastName is not null)
+            {
+                await _auditService.LogAsync(
+                    AuditAction.UserUpdated,
+                    "User",
+                    user.Id,
+                    updatedBy,
+                    notes: "Rejected demo-account profile change attempt via admin user update.",
+                    cancellationToken: cancellationToken);
+
+                return Result<UserResponse>.Forbidden(
+                    AuthService.DemoProfileRestrictionDetail);
+            }
+        }
+
         var oldSnapshot = $"Role={user.Role}, IsActive={user.IsActive}";
 
         if (request.FirstName is not null) user.FirstName = request.FirstName;
@@ -99,6 +130,20 @@ public class UserManagementService
         var user = await _context.Users.FindAsync([id], cancellationToken);
         if (user is null)
             return Result<UserResponse>.NotFound($"User {id} not found.");
+
+        if (user.IsDemoUser)
+        {
+            await _auditService.LogAsync(
+                AuditAction.UserDeactivated,
+                "User",
+                user.Id,
+                deactivatedBy,
+                notes: "Rejected demo-account deactivation attempt.",
+                cancellationToken: cancellationToken);
+
+            return Result<UserResponse>.Forbidden(
+                "The shared demo account cannot be deactivated.");
+        }
 
         user.IsActive = false;
         await _context.SaveChangesAsync(cancellationToken);

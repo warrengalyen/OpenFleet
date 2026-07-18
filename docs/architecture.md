@@ -142,7 +142,11 @@ Both services use scoped DI lifetime (create a scope per run) to safely access `
 
 ## Database
 
-PostgreSQL 16 via `Npgsql.EntityFrameworkCore.PostgreSQL`. All migrations are code-first (EF Core). The `DataSeeder` runs on startup only if the database is empty, seeding departments, users, vehicles, work orders, inspections, and integration logs for development use.
+PostgreSQL 16 via `Npgsql.EntityFrameworkCore.PostgreSQL`. All migrations are code-first (EF Core). The `DataSeeder` runs on startup only if the database is empty, seeding departments, users, vehicles, work orders, inspections, and integration logs for development use. On already-seeded databases it still ensures inventory demo data and that the public Viewer account has `IsDemoUser = true`.
+
+### Protected demo accounts
+
+`User.IsDemoUser` marks shared public demo logins. When `true`, self-service profile and password updates via `PUT /api/auth/profile` are rejected with **403** ProblemDetails (backend is authoritative). Admin deactivation and name changes for demo users are also blocked. Normal users (`IsDemoUser = false`) retain full self-service profile updates. Create additional protected demo accounts by setting `IsDemoUser = true` in seed data—do not authorize by hard-coded email in application services.
 
 See [database-schema.md](database-schema.md) for the entity relationship overview.
 

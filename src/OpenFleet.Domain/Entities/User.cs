@@ -10,6 +10,8 @@ public class User : BaseEntity
     public UserRole Role { get; set; }
     public string PasswordHash { get; set; } = string.Empty;
     public bool IsActive { get; set; } = true;
+    /// <summary>When true, self-service profile/password changes are blocked for the shared public demo account.</summary>
+    public bool IsDemoUser { get; set; }
     public Guid DepartmentId { get; set; }
 
     public Department Department { get; set; } = null!;

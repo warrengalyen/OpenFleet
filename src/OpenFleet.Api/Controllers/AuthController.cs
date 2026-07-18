@@ -12,6 +12,8 @@ namespace OpenFleet.Api.Controllers;
 [Produces("application/json")]
 public class AuthController : ControllerBase
 {
+    public const string DemoRestrictionTitle = "Demo account restriction";
+
     private readonly AuthService _authService;
 
     public AuthController(AuthService authService)
@@ -54,6 +56,7 @@ public class AuthController : ControllerBase
     [HttpPut("profile")]
     [Authorize]
     [ProducesResponseType(typeof(CurrentUserResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -86,6 +89,11 @@ public class AuthController : ControllerBase
         {
             ErrorCode.NotFound => NotFound(new { error }),
             ErrorCode.Conflict => Conflict(new { error }),
+            ErrorCode.Forbidden => Problem(
+                detail: error,
+                statusCode: StatusCodes.Status403Forbidden,
+                title: DemoRestrictionTitle,
+                type: "https://httpstatuses.io/403"),
             _ => BadRequest(new { error })
         };
 }

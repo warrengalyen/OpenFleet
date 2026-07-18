@@ -23,7 +23,8 @@ public record CurrentUserResponse(
     string FirstName,
     string LastName,
     string FullName,
-    Guid DepartmentId
+    Guid DepartmentId,
+    bool IsDemoUser
 );
 
 public record UpdateProfileRequest(

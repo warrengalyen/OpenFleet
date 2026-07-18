@@ -94,6 +94,11 @@ public class UsersController : ControllerBase
         {
             ErrorCode.NotFound => NotFound(new { error }),
             ErrorCode.Conflict => Conflict(new { error }),
+            ErrorCode.Forbidden => Problem(
+                detail: error,
+                statusCode: StatusCodes.Status403Forbidden,
+                title: AuthController.DemoRestrictionTitle,
+                type: "https://httpstatuses.io/403"),
             _ => BadRequest(new { error })
         };
 }

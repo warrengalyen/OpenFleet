@@ -49,6 +49,8 @@ The response interceptor clears the session and redirects to `/login` on HTTP 40
 
 `authService.updateProfile(request)` calls `PUT /api/auth/profile` with optional `firstName`, `lastName`, `currentPassword`, and `newPassword`. On success, the Profile page updates the `['auth','me']` cache so the header display name refreshes.
 
+When `isDemoUser` is `true` on the current-user response, the Profile page disables name and password fields and shows an informational message. The backend still rejects restricted updates with **403** ProblemDetails; the Axios interceptor does **not** log the user out on 403 (only on 401).
+
 ---
 
 ## Token Storage
