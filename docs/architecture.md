@@ -17,6 +17,7 @@ OpenFleet is structured as a Clean Architecture monolith with clear layer bounda
 ┌──────────────────────────▼───────────────────────────────┐
 │  OpenFleet.Application                                   │
 │  Services · DTOs · Validators · Interfaces · Common      │
+│  Reports (IPdfExportService, PdfExportResult, models)    │
 │                                                          │
 │  Depends on: Domain only                                 │
 └──────────────────────────┬───────────────────────────────┘
@@ -32,10 +33,19 @@ OpenFleet is structured as a Clean Architecture monolith with clear layer bounda
 │  OpenFleet.Infrastructure                                │
 │  EF Core DbContext · Migrations · Seeders                │
 │  Background Services · External Connectors               │
+│  Reports (QuestPDF documents, theme, QuestPdfExportService)│
 │                                                          │
 │  Implements Application interfaces                       │
 └──────────────────────────────────────────────────────────┘
 ```
+
+PDF export is generated server-side with [QuestPDF](https://www.questpdf.com/). Application owns contracts and immutable report models under `Application/Reports/`. Infrastructure owns QuestPDF document templates, shared components, styling, and `QuestPdfExportService`. The API registers `IPdfExportService` and configures the QuestPDF license at startup:
+
+```csharp
+QuestPDF.Settings.License = LicenseType.Community;
+```
+
+OpenFleet is an open-source portfolio demo and is configured for the QuestPDF Community license. Re-verify [QuestPDF licensing](https://www.questpdf.com/license/) before commercial redistribution; use a commercial license if the project no longer qualifies.
 
 ---
 

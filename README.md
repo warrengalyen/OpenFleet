@@ -54,6 +54,7 @@ OpenFleet models those workflows while keeping the codebase approachable for dev
 | Audit Log              | Immutable audit history                                                            |
 | Integrations           | Mock external integrations                                                         |
 | Reporting              | Dashboard and operational reporting endpoints                                      |
+| PDF export             | Work order detail and vehicle maintenance history via QuestPDF (Community license) |
 | Observability          | Structured logging, health checks, correlation IDs                                 |
 | Testing                | Unit, integration, and middleware tests                                            |
 | CI                     | GitHub Actions                                                                     |
@@ -68,7 +69,7 @@ OpenFleet models those workflows while keeping the codebase approachable for dev
 | -------------- | ----------------------------------------------- |
 | Dashboard      | KPIs, charts, alerts, and operational summaries |
 | Fleet          | Vehicle and asset management                    |
-| Operations     | Work orders, inspections, maintenance           |
+| Operations     | Work orders, inspections, maintenance, PDF export   |
 | Inventory      | Parts and vendor management                     |
 | Reports        | Operational reporting with filtering and export |
 | Administration | Users, departments, settings, audit logs        |
@@ -100,6 +101,7 @@ Rather than focusing on individual CRUD screens, OpenFleet models the workflows 
 | Layer            | Technology                                |
 | ---------------- | ----------------------------------------- |
 | API              | .NET 8, ASP.NET Core, EF Core, PostgreSQL |
+| PDF generation   | QuestPDF (Community license; see docs/architecture.md) |
 | Frontend         | React, TypeScript, Vite                   |
 | State Management | TanStack Query                            |
 | Styling          | Tailwind CSS                              |

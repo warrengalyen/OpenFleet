@@ -1,4 +1,5 @@
 import { api } from '@/lib/api'
+import { downloadBlobResponse } from '@/lib/download'
 import { normalizeVehicleStatus } from '@/lib/enums'
 import type {
   CreateVehicleRequest,
@@ -37,5 +38,12 @@ export const vehiclesService = {
 
   async remove(id: string): Promise<void> {
     await api.delete(`/vehicles/${id}`)
+  },
+
+  async downloadMaintenanceHistoryPdf(id: string): Promise<void> {
+    const response = await api.get<Blob>(`/vehicles/${id}/maintenance-history/pdf`, {
+      responseType: 'blob',
+    })
+    downloadBlobResponse(response, `vehicle-${id}-maintenance-history.pdf`)
   },
 }

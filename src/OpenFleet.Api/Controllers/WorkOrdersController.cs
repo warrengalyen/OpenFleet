@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using OpenFleet.Application.Common;
 using OpenFleet.Application.DTOs;
 using OpenFleet.Application.Interfaces;
+using OpenFleet.Application.Reports;
 using OpenFleet.Application.Services;
 using OpenFleet.Domain.Enums;
 
@@ -18,15 +19,18 @@ public class WorkOrdersController : ControllerBase
 {
     private readonly WorkOrderService _service;
     private readonly IOpenFleetDbContext _context;
+    private readonly IPdfExportService _pdfExportService;
     private readonly ILogger<WorkOrdersController> _logger;
 
     public WorkOrdersController(
         WorkOrderService service,
         IOpenFleetDbContext context,
+        IPdfExportService pdfExportService,
         ILogger<WorkOrdersController> logger)
     {
         _service = service;
         _context = context;
+        _pdfExportService = pdfExportService;
         _logger = logger;
     }
 
@@ -93,6 +97,21 @@ public class WorkOrdersController : ControllerBase
             return NotFound();
 
         return Ok(WorkOrderService.ToResponse(workOrder));
+    }
+
+    /// <summary>Downloads a PDF of the work order detail.</summary>
+    [HttpGet("{id:guid}/pdf")]
+    [Produces("application/pdf")]
+    [ProducesResponseType(typeof(FileContentResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetPdf(Guid id, CancellationToken cancellationToken)
+    {
+        var result = await _pdfExportService.GenerateWorkOrderAsync(id, cancellationToken);
+        if (result is null)
+            return NotFound();
+
+        return File(result.Content, result.ContentType, result.FileName);
     }
 
     /// <summary>Creates a new work order.</summary>

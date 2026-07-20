@@ -73,6 +73,19 @@ export const handlers = [
     HttpResponse.json(createTestWorkOrder({ id: String(params.id) })),
   ),
 
+  http.get(`${API}/workorders/:id/pdf`, () => {
+    const bytes = new Uint8Array([0x25, 0x50, 0x44, 0x46, 0x2d, 0x31, 0x2e, 0x34]) // %PDF-1.4
+    return new HttpResponse(bytes, {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/pdf',
+        'Content-Disposition': `attachment; filename="work-order-Brake-inspection.pdf"; filename*=UTF-8''work-order-Brake-inspection.pdf`,
+      },
+    })
+  }),
+
+  http.get(`${API}/workorders/:id/notes`, () => HttpResponse.json([])),
+
   http.patch(`${API}/workorders/:id/status`, async ({ params, request }) => {
     const body = (await request.json()) as { newStatus: string }
     return HttpResponse.json(
@@ -146,6 +159,38 @@ export const handlers = [
   ),
 
   http.get(`${API}/vehicles`, () => HttpResponse.json([])),
+
+  http.get(`${API}/vehicles/:id`, ({ params }) =>
+    HttpResponse.json({
+      id: String(params.id),
+      vin: '1HGCM82633A004352',
+      licensePlate: '8ABC123',
+      make: 'Ford',
+      model: 'Transit',
+      year: 2022,
+      mileage: 15000,
+      status: 'Active',
+      departmentId: 'dept-1',
+      departmentName: 'Operations',
+      createdAt: '2026-01-01T00:00:00Z',
+      updatedAt: '2026-01-01T00:00:00Z',
+    }),
+  ),
+
+  http.get(`${API}/vehicles/:id/maintenance-history/pdf`, () => {
+    const bytes = new Uint8Array([0x25, 0x50, 0x44, 0x46, 0x2d, 0x31, 0x2e, 0x34])
+    return new HttpResponse(bytes, {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/pdf',
+        'Content-Disposition': `attachment; filename="vehicle-8ABC123-maintenance-history.pdf"`,
+      },
+    })
+  }),
+
+  http.get(`${API}/inspections`, () => HttpResponse.json([])),
+
+  http.get(`${API}/maintenance-schedules`, () => HttpResponse.json([])),
 
   http.get(`${API}/departments`, () => HttpResponse.json(departments)),
 

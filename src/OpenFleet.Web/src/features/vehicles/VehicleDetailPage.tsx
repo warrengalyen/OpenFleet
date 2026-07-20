@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
-import { ArrowLeft, Pencil, Trash2 } from 'lucide-react'
+import { ArrowLeft, Download, Pencil, Trash2 } from 'lucide-react'
 import { PageTitle } from '@/components/layout/PageTitle'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
@@ -10,6 +10,7 @@ import { LoadingSpinner } from '@/components/LoadingSpinner'
 import { useAuth } from '@/hooks/useAuth'
 import { AuthPolicy } from '@/lib/auth'
 import { getApiErrorMessage } from '@/lib/api'
+import { getBlobApiErrorMessage } from '@/lib/download'
 import {
   formatDate,
   formatDateTime,
@@ -18,6 +19,7 @@ import {
   vehicleStatusVariant,
 } from '@/lib/formatters'
 import { useToast } from '@/components/ui/Toaster'
+import { vehiclesService } from '@/services/vehicles.service'
 import { useDeleteVehicle, useVehicle } from './hooks'
 import { VehicleMaintenanceTimeline } from './VehicleMaintenanceTimeline'
 
@@ -39,6 +41,7 @@ export function VehicleDetailPage() {
   const canWrite = hasPolicy(AuthPolicy.TechnicianOrAbove)
   const toast = useToast()
   const [deleteOpen, setDeleteOpen] = useState(false)
+  const [exportingPdf, setExportingPdf] = useState(false)
 
   const { data: vehicle, isLoading, isError, refetch } = useVehicle(id)
   const deleteVehicle = useDeleteVehicle()
@@ -71,6 +74,18 @@ export function VehicleDetailPage() {
     }
   }
 
+  async function handleExportPdf() {
+    if (exportingPdf) return
+    setExportingPdf(true)
+    try {
+      await vehiclesService.downloadMaintenanceHistoryPdf(id)
+    } catch (err) {
+      toast.error('Failed to export PDF', await getBlobApiErrorMessage(err))
+    } finally {
+      setExportingPdf(false)
+    }
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
@@ -87,20 +102,26 @@ export function VehicleDetailPage() {
         />
       </div>
 
-      {canWrite && (
-        <div className="flex flex-wrap gap-2">
-          <Button variant="secondary" onClick={() => navigate(`/vehicles/${id}/edit`)}>
-            <Pencil className="h-4 w-4" />
-            Edit
-          </Button>
-          {vehicle.status !== 'Retired' && (
-            <Button variant="danger" onClick={() => setDeleteOpen(true)}>
-              <Trash2 className="h-4 w-4" />
-              Retire
+      <div className="flex flex-wrap gap-2">
+        <Button variant="secondary" loading={exportingPdf} onClick={() => void handleExportPdf()}>
+          <Download className="h-4 w-4" />
+          Export PDF
+        </Button>
+        {canWrite && (
+          <>
+            <Button variant="secondary" onClick={() => navigate(`/vehicles/${id}/edit`)}>
+              <Pencil className="h-4 w-4" />
+              Edit
             </Button>
-          )}
-        </div>
-      )}
+            {vehicle.status !== 'Retired' && (
+              <Button variant="danger" onClick={() => setDeleteOpen(true)}>
+                <Trash2 className="h-4 w-4" />
+                Retire
+              </Button>
+            )}
+          </>
+        )}
+      </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <Card>

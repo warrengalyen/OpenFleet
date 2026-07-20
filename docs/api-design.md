@@ -171,6 +171,25 @@ Query parameters:
 
 Soft-deleted vehicles (`IsDeleted = true`) are excluded from list and get-by-id responses.
 
+### Download vehicle maintenance history PDF
+
+```http
+GET /api/vehicles/{id}/maintenance-history/pdf
+Authorization: Bearer {token}
+```
+
+**Auth:** Same as vehicle detail — any authenticated role (`Viewer` through `Administrator`). Soft-deleted vehicles return `404`.
+
+**Success:** `200` with `Content-Type: application/pdf` and `Content-Disposition: attachment; filename="..."`.
+
+Preferred filename uses a sanitized license plate (`vehicle-{plate}-maintenance-history.pdf`); falls back to the vehicle GUID when the plate is empty after sanitization.
+
+The PDF includes organization name (from application settings), vehicle identity, a **Maintenance History** section (inspections, work orders, maintenance records), and an **Upcoming Maintenance** section (active schedules).
+
+**Errors:** `401` unauthenticated, `404` missing or soft-deleted.
+
+When the SPA and API use different origins, CORS exposes `Content-Disposition` so the browser can read the download filename (`Access-Control-Expose-Headers: Content-Disposition`).
+
 ### Create vehicle
 
 ```http
@@ -211,6 +230,23 @@ Sets `IsDeleted = true` and `Status = Decommissioned`. Returns `204 No Content`.
 ---
 
 ## Work Orders
+
+### Download work order PDF
+
+```http
+GET /api/workorders/{id}/pdf
+Authorization: Bearer {token}
+```
+
+**Auth:** Same as work order detail — any authenticated role (`Viewer` through `Administrator`).
+
+**Success:** `200` with `Content-Type: application/pdf` and `Content-Disposition: attachment; filename="..."`.
+
+Preferred filename uses a sanitized work order title (`work-order-{title}.pdf`); falls back to the work order GUID when the title is empty after sanitization.
+
+The PDF includes organization name, status/priority, description, vehicle/asset/assignee, labor hours, dates, notes, and linked maintenance record when present.
+
+**Errors:** `401` unauthenticated, `404` missing work order.
 
 ### Create work order
 

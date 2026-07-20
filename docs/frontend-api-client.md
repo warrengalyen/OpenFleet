@@ -82,6 +82,23 @@ The API returns [RFC 7807](https://datatracker.ietf.org/doc/html/rfc7807) Proble
 
 Use `getApiErrorMessage(error)` to extract a user-facing string. Priority: `detail` → `message` → `title` → `error` → generic fallback.
 
+### Blob downloads (PDF export)
+
+Work order and vehicle maintenance history PDFs use `responseType: 'blob'`:
+
+- `workOrdersService.downloadPdf(id)` → `GET /workorders/{id}/pdf`
+- `vehiclesService.downloadMaintenanceHistoryPdf(id)` → `GET /vehicles/{id}/maintenance-history/pdf`
+
+Shared helpers live in `src/lib/download.ts`:
+
+| Helper | Purpose |
+|--------|---------|
+| `downloadBlobResponse` | Parse `Content-Disposition` (including `filename*=UTF-8''...`), trigger download, revoke object URL in `finally` |
+| `getProblemDetailsFromBlob` | Parse RFC 7807 ProblemDetails from blob or JSON error bodies |
+| `getBlobApiErrorMessage` | User-facing message for blob download failures |
+
+When the API and SPA are on different origins, the API must expose `Content-Disposition` via CORS so the filename is visible to JavaScript.
+
 ### TanStack Query retry policy
 
 Queries do not retry on 401, 403, or 404. Other errors retry up to twice.

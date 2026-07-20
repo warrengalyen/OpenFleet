@@ -1,4 +1,5 @@
 import { api } from '@/lib/api'
+import { downloadBlobResponse } from '@/lib/download'
 import {
   normalizeWorkOrderPriority,
   normalizeWorkOrderStatus,
@@ -79,5 +80,12 @@ export const workOrdersService = {
       request,
     )
     return data
+  },
+
+  async downloadPdf(id: string): Promise<void> {
+    const response = await api.get<Blob>(`/workorders/${id}/pdf`, {
+      responseType: 'blob',
+    })
+    downloadBlobResponse(response, `work-order-${id}.pdf`)
   },
 }

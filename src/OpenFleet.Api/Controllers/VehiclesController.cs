@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using OpenFleet.Application.Common;
 using OpenFleet.Application.DTOs;
 using OpenFleet.Application.Interfaces;
+using OpenFleet.Application.Reports;
 using OpenFleet.Application.Services;
 using OpenFleet.Domain.Entities;
 using OpenFleet.Domain.Enums;
@@ -18,15 +19,18 @@ namespace OpenFleet.Api.Controllers;
 public class VehiclesController : ControllerBase
 {
     private readonly IOpenFleetDbContext _context;
+    private readonly IPdfExportService _pdfExportService;
     private readonly ILogger<VehiclesController> _logger;
     private readonly AuditService _auditService;
 
     public VehiclesController(
         IOpenFleetDbContext context,
+        IPdfExportService pdfExportService,
         ILogger<VehiclesController> logger,
         AuditService auditService)
     {
         _context = context;
+        _pdfExportService = pdfExportService;
         _logger = logger;
         _auditService = auditService;
     }
@@ -102,6 +106,21 @@ public class VehiclesController : ControllerBase
             return NotFound();
 
         return Ok(ToResponse(vehicle));
+    }
+
+    /// <summary>Downloads a PDF of the vehicle maintenance history.</summary>
+    [HttpGet("{id:guid}/maintenance-history/pdf")]
+    [Produces("application/pdf")]
+    [ProducesResponseType(typeof(FileContentResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetMaintenanceHistoryPdf(Guid id, CancellationToken cancellationToken)
+    {
+        var result = await _pdfExportService.GenerateVehicleMaintenanceHistoryAsync(id, cancellationToken);
+        if (result is null)
+            return NotFound();
+
+        return File(result.Content, result.ContentType, result.FileName);
     }
 
     /// <summary>Creates a new vehicle.</summary>

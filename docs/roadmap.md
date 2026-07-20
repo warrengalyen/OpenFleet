@@ -7,7 +7,7 @@ This roadmap lists potential improvements for OpenFleet. The project is a portfo
 ## Near-Term
 
 - [ ] **Real-time notifications** - SignalR hub for work order status changes and overdue maintenance alerts
-- [ ] **PDF export** - work order detail and vehicle maintenance history as downloadable PDFs
+- [x] **PDF export** - work order detail and vehicle maintenance history as downloadable PDFs
 - [x] **Pagination metadata** - add `totalCount`, `pageCount` envelope to all paginated list responses
 - [x] **Soft delete on vehicles and assets** - retire without hard delete; filter by `IsDeleted` flag
 - [x] **User profile update** - `PUT /api/auth/profile` for password change and display name

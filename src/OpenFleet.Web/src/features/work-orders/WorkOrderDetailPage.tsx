@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
-import { ArrowLeft, Pencil } from 'lucide-react'
+import { ArrowLeft, Download, Pencil } from 'lucide-react'
 import { PageTitle } from '@/components/layout/PageTitle'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
@@ -10,6 +10,7 @@ import { LoadingSpinner } from '@/components/LoadingSpinner'
 import { useAuth } from '@/hooks/useAuth'
 import { AuthPolicy } from '@/lib/auth'
 import { getApiErrorMessage } from '@/lib/api'
+import { getBlobApiErrorMessage } from '@/lib/download'
 import {
   formatDate,
   formatDateTime,
@@ -19,6 +20,7 @@ import {
   workOrderStatusVariant,
 } from '@/lib/formatters'
 import { useToast } from '@/components/ui/Toaster'
+import { workOrdersService } from '@/services/workOrders.service'
 import { useCancelWorkOrder, useWorkOrder } from './hooks'
 import { WorkOrderStatusActions } from './WorkOrderStatusActions'
 import { WorkOrderNotes } from './WorkOrderNotes'
@@ -41,6 +43,7 @@ export function WorkOrderDetailPage() {
   const canWrite = hasPolicy(AuthPolicy.TechnicianOrAbove)
   const toast = useToast()
   const [cancelOpen, setCancelOpen] = useState(false)
+  const [exportingPdf, setExportingPdf] = useState(false)
 
   const { data: workOrder, isLoading, isError, refetch } = useWorkOrder(id)
   const cancelWorkOrder = useCancelWorkOrder()
@@ -75,6 +78,18 @@ export function WorkOrderDetailPage() {
     }
   }
 
+  async function handleExportPdf() {
+    if (exportingPdf) return
+    setExportingPdf(true)
+    try {
+      await workOrdersService.downloadPdf(id)
+    } catch (err) {
+      toast.error('Failed to export PDF', await getBlobApiErrorMessage(err))
+    } finally {
+      setExportingPdf(false)
+    }
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
@@ -97,19 +112,25 @@ export function WorkOrderDetailPage() {
         </Badge>
       </div>
 
-      {canWrite && !isTerminal && (
-        <div className="flex flex-wrap gap-2">
-          <Button variant="secondary" onClick={() => navigate(`/work-orders/${id}/edit`)}>
-            <Pencil className="h-4 w-4" />
-            Edit
-          </Button>
-          {workOrder.allowedNextStatuses.includes('Cancelled') && (
-            <Button variant="danger" onClick={() => setCancelOpen(true)}>
-              Cancel work order
+      <div className="flex flex-wrap gap-2">
+        <Button variant="secondary" loading={exportingPdf} onClick={() => void handleExportPdf()}>
+          <Download className="h-4 w-4" />
+          Export PDF
+        </Button>
+        {canWrite && !isTerminal && (
+          <>
+            <Button variant="secondary" onClick={() => navigate(`/work-orders/${id}/edit`)}>
+              <Pencil className="h-4 w-4" />
+              Edit
             </Button>
-          )}
-        </div>
-      )}
+            {workOrder.allowedNextStatuses.includes('Cancelled') && (
+              <Button variant="danger" onClick={() => setCancelOpen(true)}>
+                Cancel work order
+              </Button>
+            )}
+          </>
+        )}
+      </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <Card>

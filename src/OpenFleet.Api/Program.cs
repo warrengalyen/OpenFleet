@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using OpenFleet.Application.Common;
 using OpenFleet.Application.Interfaces;
+using OpenFleet.Application.Reports;
 using OpenFleet.Application.Services;
 using OpenFleet.Application.Validators;
 using OpenFleet.Infrastructure.BackgroundServices;
@@ -19,6 +20,8 @@ using OpenFleet.Infrastructure.Extensions;
 using OpenFleet.Infrastructure.Integrations;
 using OpenFleet.Infrastructure.Persistence;
 using OpenFleet.Infrastructure.Persistence.Seeders;
+using OpenFleet.Infrastructure.Reports;
+using QuestPDF.Infrastructure;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
@@ -99,6 +102,10 @@ try
     builder.Services.AddScoped<IExternalIntegrationConnector, VendorRepairConnector>();
     builder.Services.AddScoped<IExternalIntegrationConnector, PartsSupplierConnector>();
     builder.Services.AddScoped<IExternalIntegrationConnector, ExternalAssetConnector>();
+    // OpenFleet is an open-source portfolio demo and qualifies for QuestPDF Community.
+    // Re-verify https://www.questpdf.com/license/ before changing this for commercial use.
+    QuestPDF.Settings.License = LicenseType.Community;
+    builder.Services.AddScoped<IPdfExportService, QuestPdfExportService>();
     builder.Services.AddHostedService<MaintenanceDueCheckerService>();
     builder.Services.AddHostedService<IntegrationSyncService>();
     builder.Services.AddSwagger();
@@ -123,7 +130,8 @@ try
             options.AddDefaultPolicy(policy =>
                 policy.WithOrigins(allowedOrigins)
                     .AllowAnyHeader()
-                    .AllowAnyMethod());
+                    .AllowAnyMethod()
+                    .WithExposedHeaders("Content-Disposition"));
         });
     }
 
