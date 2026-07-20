@@ -27,8 +27,6 @@ More screenshots: [docs/screenshots.md](docs/screenshots.md)
 
 ---
 
-
-
 ## Why OpenFleet?
 
 Fleet management is a good example of a business domain with connected workflows rather than isolated CRUD operations. A single inspection can generate a work order, update maintenance history, affect inventory, and appear in operational reports.

@@ -9,6 +9,7 @@ public class Asset : BaseEntity
     public string Type { get; set; } = string.Empty;
     public AssetCondition Condition { get; set; } = AssetCondition.Good;
     public AssetStatus Status { get; set; } = AssetStatus.Available;
+    public bool IsDeleted { get; set; }
     public DateTime PurchaseDate { get; set; }
     public Guid? DepartmentId { get; set; }
     public Guid? VehicleId { get; set; }

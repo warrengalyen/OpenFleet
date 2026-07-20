@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using OpenFleet.Application.DTOs;
 using OpenFleet.Domain.Entities;
@@ -126,7 +127,7 @@ public class VehiclesIntegrationTests
     }
 
     [Fact]
-    public async Task DELETE_vehicle_sets_status_retired_and_returns_204()
+    public async Task DELETE_vehicle_soft_deletes_and_returns_204()
     {
         var deptId = await SeedDepartmentAsync();
 
@@ -148,7 +149,15 @@ public class VehiclesIntegrationTests
         Assert.Equal(HttpStatusCode.NoContent, deleteResponse.StatusCode);
 
         var getResponse = await _client.GetAsync($"/api/vehicles/{created.Id}");
-        var vehicle = await getResponse.Content.ReadFromJsonAsync<VehicleResponse>();
-        Assert.Equal(VehicleStatus.Retired, vehicle!.Status);
+        Assert.Equal(HttpStatusCode.NotFound, getResponse.StatusCode);
+
+        using var scope = _factory.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<OpenFleetDbContext>();
+        var vehicle = await db.Vehicles
+            .IgnoreQueryFilters()
+            .FirstOrDefaultAsync(v => v.Id == created.Id);
+        Assert.NotNull(vehicle);
+        Assert.True(vehicle!.IsDeleted);
+        Assert.Equal(VehicleStatus.Retired, vehicle.Status);
     }
 }

@@ -144,6 +144,8 @@ Query parameters:
 - `search` - searches VIN, make, model, license plate
 - `page`, `pageSize` - pagination
 
+Soft-deleted vehicles (`IsDeleted = true`) are excluded from list and get-by-id responses.
+
 ### Create vehicle
 
 ```http
@@ -162,6 +164,24 @@ Content-Type: application/json
   "departmentId": "11111111-0000-0000-0000-000000000001"
 }
 ```
+
+### Soft-delete vehicle
+
+```http
+DELETE /api/vehicles/{id}
+Authorization: Bearer {token}
+```
+
+Sets `IsDeleted = true` and `Status = Retired`. Returns `204 No Content`. Subsequent GET returns `404`. Soft-deleted VIN/license plate values may be reused.
+
+### Soft-delete asset
+
+```http
+DELETE /api/assets/{id}
+Authorization: Bearer {token}
+```
+
+Sets `IsDeleted = true` and `Status = Decommissioned`. Returns `204 No Content`. Subsequent GET returns `404`. Soft-deleted asset tags may be reused.
 
 ---
 

@@ -11,6 +11,7 @@ public class Vehicle : BaseEntity
     public int Year { get; set; }
     public int Mileage { get; set; }
     public VehicleStatus Status { get; set; } = VehicleStatus.Active;
+    public bool IsDeleted { get; set; }
     public Guid DepartmentId { get; set; }
 
     public Department Department { get; set; } = null!;

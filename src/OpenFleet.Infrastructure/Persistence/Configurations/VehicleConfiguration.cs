@@ -10,14 +10,20 @@ public class VehicleConfiguration : IEntityTypeConfiguration<Vehicle>
     {
         builder.HasKey(v => v.Id);
         builder.Property(v => v.VIN).IsRequired().HasMaxLength(17);
-        builder.HasIndex(v => v.VIN).IsUnique();
+        builder.HasIndex(v => v.VIN)
+            .IsUnique()
+            .HasFilter("\"IsDeleted\" = false");
         builder.Property(v => v.LicensePlate).IsRequired().HasMaxLength(20);
-        builder.HasIndex(v => v.LicensePlate).IsUnique();
+        builder.HasIndex(v => v.LicensePlate)
+            .IsUnique()
+            .HasFilter("\"IsDeleted\" = false");
         builder.Property(v => v.Make).IsRequired().HasMaxLength(100);
         builder.Property(v => v.Model).IsRequired().HasMaxLength(100);
         builder.Property(v => v.Year).IsRequired();
         builder.Property(v => v.Mileage).IsRequired();
         builder.Property(v => v.Status).IsRequired();
+        builder.Property(v => v.IsDeleted).IsRequired().HasDefaultValue(false);
+        builder.HasQueryFilter(v => !v.IsDeleted);
 
         builder.HasOne(v => v.Department)
             .WithMany(d => d.Vehicles)

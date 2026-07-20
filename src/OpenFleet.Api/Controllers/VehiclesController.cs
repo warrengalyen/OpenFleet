@@ -214,7 +214,7 @@ public class VehiclesController : ControllerBase
         return Ok(ToResponse(updated));
     }
 
-    /// <summary>Soft-deletes a vehicle by setting its status to Retired.</summary>
+    /// <summary>Soft-deletes a vehicle by setting IsDeleted and status to Retired.</summary>
     [HttpDelete("{id:guid}")]
     [Authorize(Roles = AuthorizationPolicies.TechnicianOrAbove)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -227,10 +227,11 @@ public class VehiclesController : ControllerBase
         if (vehicle is null)
             return NotFound();
 
+        vehicle.IsDeleted = true;
         vehicle.Status = VehicleStatus.Retired;
         await _context.SaveChangesAsync(cancellationToken);
 
-        _logger.LogInformation("Vehicle retired: {VehicleId}", id);
+        _logger.LogInformation("Vehicle soft-deleted: {VehicleId}", id);
 
         return NoContent();
     }

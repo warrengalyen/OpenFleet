@@ -64,7 +64,7 @@ export function AssetDetailPage() {
   async function handleDelete() {
     try {
       await deleteAsset.mutateAsync(id)
-      toast.success('Asset decommissioned', 'The asset status has been set to Decommissioned.')
+      toast.success('Asset decommissioned', 'The asset has been removed from the active fleet.')
       navigate('/assets')
     } catch (err) {
       toast.error('Failed to decommission asset', getApiErrorMessage(err))
@@ -145,7 +145,7 @@ export function AssetDetailPage() {
         onClose={() => setDeleteOpen(false)}
         onConfirm={handleDelete}
         title="Decommission asset?"
-        description={`This will set ${asset.name} (${asset.assetTag}) to Decommissioned status.`}
+        description={`This will remove ${asset.name} (${asset.assetTag}) from the active fleet. The record is retained for history.`}
         confirmLabel="Decommission"
         variant="danger"
       />

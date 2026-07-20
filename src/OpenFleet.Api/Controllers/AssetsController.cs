@@ -201,7 +201,7 @@ public class AssetsController : ControllerBase
         return Ok(ToResponse(updated));
     }
 
-    /// <summary>Soft-deletes an asset by setting its status to Decommissioned.</summary>
+    /// <summary>Soft-deletes an asset by setting IsDeleted and status to Decommissioned.</summary>
     [HttpDelete("{id:guid}")]
     [Authorize(Roles = AuthorizationPolicies.TechnicianOrAbove)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -214,10 +214,11 @@ public class AssetsController : ControllerBase
         if (asset is null)
             return NotFound();
 
+        asset.IsDeleted = true;
         asset.Status = AssetStatus.Decommissioned;
         await _context.SaveChangesAsync(cancellationToken);
 
-        _logger.LogInformation("Asset decommissioned: {AssetId}", id);
+        _logger.LogInformation("Asset soft-deleted: {AssetId}", id);
 
         return NoContent();
     }

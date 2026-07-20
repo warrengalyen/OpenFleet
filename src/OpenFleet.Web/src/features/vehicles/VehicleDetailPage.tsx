@@ -64,7 +64,7 @@ export function VehicleDetailPage() {
   async function handleDelete() {
     try {
       await deleteVehicle.mutateAsync(id)
-      toast.success('Vehicle retired', 'The vehicle status has been set to Retired.')
+      toast.success('Vehicle retired', 'The vehicle has been removed from the active fleet.')
       navigate('/vehicles')
     } catch (err) {
       toast.error('Failed to retire vehicle', getApiErrorMessage(err))
@@ -143,7 +143,7 @@ export function VehicleDetailPage() {
         onClose={() => setDeleteOpen(false)}
         onConfirm={handleDelete}
         title="Retire vehicle?"
-        description={`This will set ${vehicle.year} ${vehicle.make} ${vehicle.model} to Retired status. This action can be reversed by editing the vehicle.`}
+        description={`This will remove ${vehicle.year} ${vehicle.make} ${vehicle.model} from the active fleet. The record is retained for history.`}
         confirmLabel="Retire vehicle"
         variant="danger"
       />

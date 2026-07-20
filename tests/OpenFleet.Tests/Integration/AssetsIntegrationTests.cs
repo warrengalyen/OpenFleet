@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using OpenFleet.Application.DTOs;
 using OpenFleet.Domain.Entities;
@@ -113,7 +114,7 @@ public class AssetsIntegrationTests
     }
 
     [Fact]
-    public async Task DELETE_asset_sets_status_decommissioned_and_returns_204()
+    public async Task DELETE_asset_soft_deletes_and_returns_204()
     {
         var deptId = await SeedDepartmentAsync("A03");
 
@@ -124,7 +125,15 @@ public class AssetsIntegrationTests
         Assert.Equal(HttpStatusCode.NoContent, deleteResponse.StatusCode);
 
         var getResponse = await _client.GetAsync($"/api/assets/{created.Id}");
-        var asset = await getResponse.Content.ReadFromJsonAsync<AssetResponse>();
-        Assert.Equal(AssetStatus.Decommissioned, asset!.Status);
+        Assert.Equal(HttpStatusCode.NotFound, getResponse.StatusCode);
+
+        using var scope = _factory.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<OpenFleetDbContext>();
+        var asset = await db.Assets
+            .IgnoreQueryFilters()
+            .FirstOrDefaultAsync(a => a.Id == created.Id);
+        Assert.NotNull(asset);
+        Assert.True(asset!.IsDeleted);
+        Assert.Equal(AssetStatus.Decommissioned, asset.Status);
     }
 }

@@ -74,13 +74,14 @@ AuditLog          (standalone, soft references via EntityId Guid?)
 | Column | Type | Notes |
 |--------|------|-------|
 | Id | uuid | PK |
-| VIN | varchar(17) | required, unique |
-| LicensePlate | varchar(20) | required, unique |
+| VIN | varchar(17) | required, unique among non-deleted |
+| LicensePlate | varchar(20) | required, unique among non-deleted |
 | Make | varchar(100) | required |
 | Model | varchar(100) | required |
 | Year | integer | required |
 | Mileage | integer | required |
-| Status | integer | enum: Active=0, InMaintenance=1, Retired=2, Decommissioned=3 |
+| Status | integer | enum: Active=0, InMaintenance=1, OutOfService, Retired |
+| IsDeleted | boolean | false = active; true = soft-deleted (hidden from queries) |
 | DepartmentId | uuid | FK → Departments |
 
 ### Assets
@@ -88,11 +89,12 @@ AuditLog          (standalone, soft references via EntityId Guid?)
 | Column | Type | Notes |
 |--------|------|-------|
 | Id | uuid | PK |
-| AssetTag | varchar(50) | required, unique |
+| AssetTag | varchar(50) | required, unique among non-deleted |
 | Name | varchar(200) | required |
 | Type | varchar(100) | required |
 | Condition | integer | enum: New, Good, Fair, Poor, Damaged |
-| Status | integer | enum: Available, InUse, UnderRepair, Decommissioned |
+| Status | integer | enum: Available, InUse, UnderMaintenance, Decommissioned |
+| IsDeleted | boolean | false = active; true = soft-deleted (hidden from queries) |
 | PurchaseDate | timestamp | optional |
 | DepartmentId | uuid | FK → Departments |
 | VehicleId | uuid | FK → Vehicles (optional, asset assigned to vehicle) |

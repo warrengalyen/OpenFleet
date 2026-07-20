@@ -11,10 +11,14 @@ public class AssetConfiguration : IEntityTypeConfiguration<Asset>
         builder.HasKey(a => a.Id);
         builder.Property(a => a.Name).IsRequired().HasMaxLength(200);
         builder.Property(a => a.AssetTag).IsRequired().HasMaxLength(50);
-        builder.HasIndex(a => a.AssetTag).IsUnique();
+        builder.HasIndex(a => a.AssetTag)
+            .IsUnique()
+            .HasFilter("\"IsDeleted\" = false");
         builder.Property(a => a.Type).IsRequired().HasMaxLength(100);
         builder.Property(a => a.Condition).IsRequired();
         builder.Property(a => a.Status).IsRequired();
+        builder.Property(a => a.IsDeleted).IsRequired().HasDefaultValue(false);
+        builder.HasQueryFilter(a => !a.IsDeleted);
 
         builder.HasOne(a => a.Department)
             .WithMany()
