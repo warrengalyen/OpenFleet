@@ -19,7 +19,7 @@ describe('IntegrationFailuresPanel', () => {
 
     server.use(
       http.get('/api/integrations', () =>
-        HttpResponse.json({ items: [], page: 1, pageSize: 5, totalCount: 0 }),
+        HttpResponse.json({ items: [], page: 1, pageSize: 5, totalCount: 0, pageCount: 0 }),
       ),
     )
 

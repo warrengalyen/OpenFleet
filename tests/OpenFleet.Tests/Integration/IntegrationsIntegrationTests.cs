@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
+using OpenFleet.Application.Common;
 using OpenFleet.Application.DTOs;
 using OpenFleet.Domain.Enums;
 using OpenFleet.Tests.Helpers;
@@ -22,10 +23,11 @@ public class IntegrationsIntegrationTests
         var response = await _client.GetAsync("/api/integrations");
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
-        var body = await response.Content.ReadFromJsonAsync<IntegrationHistoryResponse>();
+        var body = await response.Content.ReadFromJsonAsync<PagedResult<IntegrationLogResponse>>();
         Assert.NotNull(body);
         Assert.NotNull(body!.Items);
         Assert.True(body.PageSize > 0);
+        Assert.True(body.PageCount >= 0);
     }
 
     [Theory]
@@ -55,9 +57,10 @@ public class IntegrationsIntegrationTests
         var response = await _client.GetAsync("/api/integrations?source=ExternalAsset");
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
-        var body = await response.Content.ReadFromJsonAsync<IntegrationHistoryResponse>();
+        var body = await response.Content.ReadFromJsonAsync<PagedResult<IntegrationLogResponse>>();
         Assert.NotNull(body);
         Assert.True(body!.TotalCount >= 1);
+        Assert.True(body.PageCount >= 1);
         Assert.All(body.Items, i => Assert.Equal(IntegrationSource.ExternalAsset, i.Source));
     }
 
@@ -132,7 +135,7 @@ public class IntegrationsIntegrationTests
         var response = await _client.GetAsync("/api/integrations?status=Success");
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
-        var body = await response.Content.ReadFromJsonAsync<IntegrationHistoryResponse>();
+        var body = await response.Content.ReadFromJsonAsync<PagedResult<IntegrationLogResponse>>();
         Assert.NotNull(body);
         Assert.All(body!.Items, i => Assert.Equal(IntegrationStatus.Success, i.Status));
     }

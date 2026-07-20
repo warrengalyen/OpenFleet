@@ -122,6 +122,7 @@ export const handlers = [
       page: 1,
       pageSize: 5,
       totalCount: 1,
+      pageCount: 1,
     }),
   ),
 

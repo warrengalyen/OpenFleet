@@ -167,7 +167,7 @@ public class IntegrationLogService
         return log is null ? null : ToResponse(log);
     }
 
-    public async Task<IntegrationHistoryResponse> GetHistoryAsync(
+    public async Task<PagedResult<IntegrationLogResponse>> GetHistoryAsync(
         IntegrationHistoryFilter filter,
         CancellationToken cancellationToken = default)
     {
@@ -187,7 +187,7 @@ public class IntegrationLogService
             .Select(l => ToResponse(l))
             .ToListAsync(cancellationToken);
 
-        return new IntegrationHistoryResponse(items, totalCount, filter.Page, filter.PageSize);
+        return PagedResult<IntegrationLogResponse>.Create(items, totalCount, filter.Page, filter.PageSize);
     }
 
     public static IntegrationLogResponse ToResponse(IntegrationLog l) => new(

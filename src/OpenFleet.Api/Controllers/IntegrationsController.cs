@@ -30,7 +30,7 @@ public class IntegrationsController : ControllerBase
 
     /// <summary>List integration history with optional filtering and pagination.</summary>
     [HttpGet]
-    [ProducesResponseType(typeof(IntegrationHistoryResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(PagedResult<IntegrationLogResponse>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetHistory(
         [FromQuery] IntegrationSource? source,
         [FromQuery] IntegrationStatus? status,

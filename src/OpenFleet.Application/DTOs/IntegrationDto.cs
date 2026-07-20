@@ -29,10 +29,3 @@ public record IntegrationHistoryFilter(
     int Page = 1,
     int PageSize = 50
 );
-
-public record IntegrationHistoryResponse(
-    IReadOnlyList<IntegrationLogResponse> Items,
-    int TotalCount,
-    int Page,
-    int PageSize
-);

@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using OpenFleet.Application.Common;
 using OpenFleet.Application.DTOs;
 using OpenFleet.Application.Interfaces;
 using OpenFleet.Domain.Entities;
@@ -41,7 +42,7 @@ public class AuditService
         await _context.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<IReadOnlyList<AuditLogResponse>> GetHistoryAsync(
+    public async Task<PagedResult<AuditLogResponse>> GetHistoryAsync(
         AuditHistoryFilter filter,
         CancellationToken cancellationToken = default)
     {
@@ -53,12 +54,16 @@ public class AuditService
         if (filter.DateFrom.HasValue) query = query.Where(l => l.CreatedAt >= filter.DateFrom.Value);
         if (filter.DateTo.HasValue) query = query.Where(l => l.CreatedAt <= filter.DateTo.Value);
 
-        return await query
+        var totalCount = await query.CountAsync(cancellationToken);
+
+        var items = await query
             .OrderByDescending(l => l.CreatedAt)
             .Skip((filter.Page - 1) * filter.PageSize)
             .Take(filter.PageSize)
             .Select(l => ToResponse(l))
             .ToListAsync(cancellationToken);
+
+        return PagedResult<AuditLogResponse>.Create(items, totalCount, filter.Page, filter.PageSize);
     }
 
     public async Task<AuditLogResponse?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)

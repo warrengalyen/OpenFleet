@@ -38,8 +38,9 @@ export function AuditPage() {
 
   const { data, isLoading, isError, refetch, isFetching } = useAuditLogs(filter)
   const loadFailed = isQueryLoadFailure(isError, data)
-  const logs = data ?? []
-  const hasMore = logs.length === PAGE_SIZE
+  const logs = data?.items ?? []
+  const totalCount = data?.totalCount ?? 0
+  const pageCount = data?.pageCount ?? 0
 
   function updateParams(updates: Record<string, string | null>) {
     const next = new URLSearchParams(searchParams)
@@ -171,6 +172,8 @@ export function AuditPage() {
           <div className="flex items-center justify-between border-t border-gray-100 pt-4 dark:border-gray-800">
             <p className="text-sm text-gray-500 dark:text-gray-400">
               Page {page}
+              {pageCount > 0 ? ` of ${pageCount}` : ''}
+              {totalCount > 0 ? ` · ${totalCount} total` : ''}
               {isFetching && !isLoading ? ' · Refreshing…' : ''}
             </p>
             <div className="flex gap-2">
@@ -185,7 +188,7 @@ export function AuditPage() {
               <Button
                 variant="secondary"
                 size="sm"
-                disabled={!hasMore}
+                disabled={page >= pageCount}
                 onClick={() => updateParams({ page: String(page + 1) })}
               >
                 Next

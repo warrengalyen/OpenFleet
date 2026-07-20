@@ -1,3 +1,5 @@
+import type { PagedResult } from './pagination'
+
 export type AuditAction =
   | 'VehicleUpdated'
   | 'WorkOrderStatusChanged'
@@ -38,3 +40,5 @@ export interface AuditHistoryFilter {
   page?: number
   pageSize?: number
 }
+
+export type AuditHistoryResponse = PagedResult<AuditLogResponse>

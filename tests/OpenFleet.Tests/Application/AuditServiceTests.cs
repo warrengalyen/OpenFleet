@@ -59,8 +59,10 @@ public class AuditServiceTests : IDisposable
         var results = await _service.GetHistoryAsync(
             new AuditHistoryFilter(AuditAction.VehicleUpdated, null, null, null, null));
 
-        Assert.Equal(2, results.Count);
-        Assert.All(results, r => Assert.Equal(AuditAction.VehicleUpdated, r.Action));
+        Assert.Equal(2, results.TotalCount);
+        Assert.Equal(2, results.Items.Count);
+        Assert.Equal(1, results.PageCount);
+        Assert.All(results.Items, r => Assert.Equal(AuditAction.VehicleUpdated, r.Action));
     }
 
     [Fact]
@@ -75,8 +77,9 @@ public class AuditServiceTests : IDisposable
         var results = await _service.GetHistoryAsync(
             new AuditHistoryFilter(null, targetId, null, null, null));
 
-        Assert.Single(results);
-        Assert.Equal(targetId, results[0].EntityId);
+        Assert.Equal(1, results.TotalCount);
+        Assert.Single(results.Items);
+        Assert.Equal(targetId, results.Items[0].EntityId);
     }
 
     [Fact]
@@ -89,7 +92,24 @@ public class AuditServiceTests : IDisposable
             DateTime.UtcNow.AddMinutes(-1),
             DateTime.UtcNow.AddMinutes(1)));
 
-        Assert.NotEmpty(results);
+        Assert.True(results.TotalCount > 0);
+        Assert.NotEmpty(results.Items);
+    }
+
+    [Fact]
+    public async Task GetHistoryAsync_returns_pagination_metadata()
+    {
+        for (var i = 0; i < 5; i++)
+            await _service.LogAsync(AuditAction.VehicleUpdated, "Vehicle");
+
+        var results = await _service.GetHistoryAsync(
+            new AuditHistoryFilter(null, null, null, null, null, Page: 1, PageSize: 2));
+
+        Assert.Equal(5, results.TotalCount);
+        Assert.Equal(2, results.Items.Count);
+        Assert.Equal(1, results.Page);
+        Assert.Equal(2, results.PageSize);
+        Assert.Equal(3, results.PageCount);
     }
 
     [Fact]

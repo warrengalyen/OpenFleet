@@ -24,7 +24,7 @@ public class AuditController : ControllerBase
     /// Returns filtered audit history. Supports filtering by action, entityId, entityType, and date range.
     /// </summary>
     [HttpGet]
-    [ProducesResponseType(typeof(IReadOnlyList<AuditLogResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(PagedResult<AuditLogResponse>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetHistory(
         [FromQuery] AuditAction? action,
         [FromQuery] Guid? entityId,

@@ -6,6 +6,32 @@ Interactive docs: **http://localhost:8080** (when running in Development)
 
 ---
 
+## Pagination
+
+Server-paginated list endpoints return a shared envelope:
+
+```json
+{
+  "items": [ ],
+  "totalCount": 42,
+  "page": 1,
+  "pageSize": 50,
+  "pageCount": 1
+}
+```
+
+| Field | Meaning |
+|-------|---------|
+| `items` | Current page of results |
+| `totalCount` | Total matching rows (all pages) |
+| `page` | Current 1-based page |
+| `pageSize` | Page size requested |
+| `pageCount` | `ceil(totalCount / pageSize)` |
+
+Used by `GET /api/integrations` and `GET /api/audit`. Query params: `page` (default 1), `pageSize` (default 50).
+
+---
+
 ## Authentication
 
 All endpoints except `POST /api/auth/login` require a Bearer token.
@@ -134,7 +160,7 @@ Validation errors return `ValidationProblemDetails` with per-field error arrays:
 ### List vehicles
 
 ```http
-GET /api/vehicles?status=Active&departmentId={id}&search=ford&page=1&pageSize=20
+GET /api/vehicles?status=Active&departmentId={id}&search=ford
 Authorization: Bearer {token}
 ```
 
@@ -142,7 +168,6 @@ Query parameters:
 - `status` - `Active`, `InMaintenance`, `Retired`, `Decommissioned`
 - `departmentId` - filter by department
 - `search` - searches VIN, make, model, license plate
-- `page`, `pageSize` - pagination
 
 Soft-deleted vehicles (`IsDeleted = true`) are excluded from list and get-by-id responses.
 

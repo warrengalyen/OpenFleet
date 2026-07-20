@@ -177,5 +177,6 @@ public class IntegrationLogServiceTests : IDisposable
 
         Assert.Equal(5, history.TotalCount);
         Assert.Equal(3, history.Items.Count);
+        Assert.Equal(2, history.PageCount);
     }
 }

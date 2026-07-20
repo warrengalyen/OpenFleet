@@ -198,10 +198,10 @@ export function IntegrationsPage() {
             onRetry={() => void refetch()}
           />
 
-          {history && history.totalCount > INTEGRATION_PAGE_SIZE && (
+          {history && history.pageCount > 1 && (
             <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
               <span>
-                Page {history.page} · {history.totalCount} total
+                Page {history.page} of {history.pageCount} · {history.totalCount} total
               </span>
               <div className="flex gap-2">
                 <Button
@@ -215,7 +215,7 @@ export function IntegrationsPage() {
                 <Button
                   variant="secondary"
                   size="sm"
-                  disabled={page * INTEGRATION_PAGE_SIZE >= history.totalCount}
+                  disabled={page >= history.pageCount}
                   onClick={() => updateParams({ page: String(page + 1) })}
                 >
                   Next

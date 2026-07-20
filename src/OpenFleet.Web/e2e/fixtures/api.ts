@@ -131,6 +131,7 @@ export async function mockDashboardReports(page: Page) {
         page: 1,
         pageSize: 5,
         totalCount: 1,
+        pageCount: 1,
       }),
     })
   })

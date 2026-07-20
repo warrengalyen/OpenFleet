@@ -1,3 +1,5 @@
+import type { PagedResult } from './pagination'
+
 export type IntegrationSource =
   | 'FuelUsage'
   | 'VendorRepair'
@@ -23,12 +25,7 @@ export interface IntegrationLogResponse {
   updatedAt: string
 }
 
-export interface IntegrationHistoryResponse {
-  items: IntegrationLogResponse[]
-  totalCount: number
-  page: number
-  pageSize: number
-}
+export type IntegrationHistoryResponse = PagedResult<IntegrationLogResponse>
 
 export interface IntegrationHistoryFilter {
   source?: IntegrationSource
