@@ -1,5 +1,10 @@
 import { api } from '@/lib/api'
-import { normalizeAssetCondition, normalizeAssetStatus } from '@/lib/enums'
+import {
+  normalizeAssetCondition,
+  normalizeAssetStatus,
+  serializeAssetCondition,
+  serializeAssetStatus,
+} from '@/lib/enums'
 import type {
   AssetFilterRequest,
   AssetResponse,
@@ -27,12 +32,24 @@ export const assetsService = {
   },
 
   async create(request: CreateAssetRequest): Promise<AssetResponse> {
-    const { data } = await api.post<AssetResponse>('/assets', request)
+    const { data } = await api.post<AssetResponse>('/assets', {
+      ...request,
+      status: serializeAssetStatus(request.status),
+      condition: serializeAssetCondition(request.condition),
+    })
     return normalizeAsset(data)
   },
 
   async update(id: string, request: UpdateAssetRequest): Promise<AssetResponse> {
-    const { data } = await api.put<AssetResponse>(`/assets/${id}`, request)
+    const { data } = await api.put<AssetResponse>(`/assets/${id}`, {
+      ...request,
+      status:
+        request.status !== undefined ? serializeAssetStatus(request.status) : request.status,
+      condition:
+        request.condition !== undefined
+          ? serializeAssetCondition(request.condition)
+          : request.condition,
+    })
     return normalizeAsset(data)
   },
 

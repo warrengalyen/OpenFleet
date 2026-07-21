@@ -1,6 +1,6 @@
 import { api } from '@/lib/api'
 import { downloadBlobResponse } from '@/lib/download'
-import { normalizeVehicleStatus } from '@/lib/enums'
+import { normalizeVehicleStatus, serializeVehicleStatus } from '@/lib/enums'
 import type {
   CreateVehicleRequest,
   UpdateVehicleRequest,
@@ -27,12 +27,19 @@ export const vehiclesService = {
   },
 
   async create(request: CreateVehicleRequest): Promise<VehicleResponse> {
-    const { data } = await api.post<VehicleResponse>('/vehicles', request)
+    const { data } = await api.post<VehicleResponse>('/vehicles', {
+      ...request,
+      status: serializeVehicleStatus(request.status),
+    })
     return normalizeVehicle(data)
   },
 
   async update(id: string, request: UpdateVehicleRequest): Promise<VehicleResponse> {
-    const { data } = await api.put<VehicleResponse>(`/vehicles/${id}`, request)
+    const { data } = await api.put<VehicleResponse>(`/vehicles/${id}`, {
+      ...request,
+      status:
+        request.status !== undefined ? serializeVehicleStatus(request.status) : request.status,
+    })
     return normalizeVehicle(data)
   },
 

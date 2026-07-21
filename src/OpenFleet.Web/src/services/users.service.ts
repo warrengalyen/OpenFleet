@@ -1,5 +1,6 @@
 import { api } from '@/lib/api'
 import { normalizeUserRole } from '@/lib/auth'
+import { serializeUserRole } from '@/lib/enums'
 import type { CreateUserRequest, UpdateUserRequest, UserResponse } from '@/types/user'
 
 function normalizeUser(user: UserResponse): UserResponse {
@@ -18,12 +19,18 @@ export const usersService = {
   },
 
   async create(request: CreateUserRequest): Promise<UserResponse> {
-    const { data } = await api.post<UserResponse>('/users', request)
+    const { data } = await api.post<UserResponse>('/users', {
+      ...request,
+      role: serializeUserRole(request.role),
+    })
     return normalizeUser(data)
   },
 
   async update(id: string, request: UpdateUserRequest): Promise<UserResponse> {
-    const { data } = await api.put<UserResponse>(`/users/${id}`, request)
+    const { data } = await api.put<UserResponse>(`/users/${id}`, {
+      ...request,
+      role: request.role !== undefined ? serializeUserRole(request.role) : request.role,
+    })
     return normalizeUser(data)
   },
 

@@ -6,9 +6,15 @@ import {
   normalizeUserRole,
   normalizeWorkOrderPriority,
   normalizeWorkOrderStatus,
+  serializeAssetCondition,
+  serializeAssetStatus,
+  serializeInspectionStatus,
+  serializeUserRole,
+  serializeVehicleStatus,
   serializeWorkOrderPriority,
   serializeWorkOrderStatus,
 } from '@/lib/enums'
+
 
 describe('normalizeAssetStatus', () => {
   it('maps numeric API values to status strings', () => {
@@ -70,6 +76,38 @@ describe('serializeWorkOrderStatus', () => {
     expect(serializeWorkOrderStatus('WaitingForParts')).toBe(2)
     expect(serializeWorkOrderStatus('Completed')).toBe(3)
     expect(serializeWorkOrderStatus('Cancelled')).toBe(4)
+  })
+})
+
+describe('serializeVehicleStatus', () => {
+  it('maps vehicle status strings to numeric API values', () => {
+    expect(serializeVehicleStatus('Active')).toBe(0)
+    expect(serializeVehicleStatus('InMaintenance')).toBe(1)
+    expect(serializeVehicleStatus('Retired')).toBe(3)
+  })
+})
+
+describe('serializeAssetEnums', () => {
+  it('maps asset status and condition to numeric API values', () => {
+    expect(serializeAssetStatus('Available')).toBe(0)
+    expect(serializeAssetStatus('UnderMaintenance')).toBe(2)
+    expect(serializeAssetCondition('New')).toBe(0)
+    expect(serializeAssetCondition('Damaged')).toBe(4)
+  })
+})
+
+describe('serializeInspectionStatus', () => {
+  it('maps inspection status strings to numeric API values', () => {
+    expect(serializeInspectionStatus('Passed')).toBe(0)
+    expect(serializeInspectionStatus('Failed')).toBe(1)
+    expect(serializeInspectionStatus('NeedsReview')).toBe(2)
+  })
+})
+
+describe('serializeUserRole', () => {
+  it('maps user role strings to numeric API values', () => {
+    expect(serializeUserRole('Viewer')).toBe(0)
+    expect(serializeUserRole('Administrator')).toBe(4)
   })
 })
 

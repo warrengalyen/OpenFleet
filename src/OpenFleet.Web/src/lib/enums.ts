@@ -159,6 +159,31 @@ export function serializeWorkOrderPriority(priority: WorkOrderPriority): number 
   return index >= 0 ? index : 1
 }
 
+export function serializeVehicleStatus(status: VehicleStatus): number {
+  const index = VEHICLE_STATUS_MAP.values.indexOf(status)
+  return index >= 0 ? index : 0
+}
+
+export function serializeAssetStatus(status: AssetStatus): number {
+  const index = ASSET_STATUS_MAP.values.indexOf(status)
+  return index >= 0 ? index : 0
+}
+
+export function serializeAssetCondition(condition: AssetCondition): number {
+  const index = ASSET_CONDITION_MAP.values.indexOf(condition)
+  return index >= 0 ? index : 1
+}
+
+export function serializeInspectionStatus(status: InspectionStatus): number {
+  const index = INSPECTION_STATUS_MAP.values.indexOf(status)
+  return index >= 0 ? index : 0
+}
+
+export function serializeUserRole(role: UserRole): number {
+  const index = USER_ROLE_MAP.values.indexOf(role)
+  return index >= 0 ? index : 0
+}
+
 export function normalizeAssetStatus(status: unknown): AssetStatus {
   return normalizeEnum(status, ASSET_STATUS_MAP)
 }

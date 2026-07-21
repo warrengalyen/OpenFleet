@@ -1,5 +1,5 @@
 import { api } from '@/lib/api'
-import { normalizeInspectionStatus } from '@/lib/enums'
+import { normalizeInspectionStatus, serializeInspectionStatus } from '@/lib/enums'
 import type {
   CreateInspectionRequest,
   InspectionFilterRequest,
@@ -26,12 +26,21 @@ export const inspectionsService = {
   },
 
   async create(request: CreateInspectionRequest): Promise<InspectionResponse> {
-    const { data } = await api.post<InspectionResponse>('/inspections', request)
+    const { data } = await api.post<InspectionResponse>('/inspections', {
+      ...request,
+      status: serializeInspectionStatus(request.status),
+    })
     return normalizeInspection(data)
   },
 
   async update(id: string, request: UpdateInspectionRequest): Promise<InspectionResponse> {
-    const { data } = await api.put<InspectionResponse>(`/inspections/${id}`, request)
+    const { data } = await api.put<InspectionResponse>(`/inspections/${id}`, {
+      ...request,
+      status:
+        request.status !== undefined
+          ? serializeInspectionStatus(request.status)
+          : request.status,
+    })
     return normalizeInspection(data)
   },
 }
