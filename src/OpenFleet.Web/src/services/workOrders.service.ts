@@ -3,6 +3,8 @@ import { downloadBlobResponse } from '@/lib/download'
 import {
   normalizeWorkOrderPriority,
   normalizeWorkOrderStatus,
+  serializeWorkOrderPriority,
+  serializeWorkOrderStatus,
 } from '@/lib/enums'
 import type {
   AddNoteRequest,
@@ -38,12 +40,23 @@ export const workOrdersService = {
   },
 
   async create(request: CreateWorkOrderRequest): Promise<WorkOrderResponse> {
-    const { data } = await api.post<WorkOrderResponse>('/workorders', request)
+    const { data } = await api.post<WorkOrderResponse>('/workorders', {
+      ...request,
+      priority: request.priority
+        ? serializeWorkOrderPriority(request.priority)
+        : request.priority,
+    })
     return normalizeWorkOrder(data)
   },
 
   async update(id: string, request: UpdateWorkOrderRequest): Promise<WorkOrderResponse> {
-    const { data } = await api.put<WorkOrderResponse>(`/workorders/${id}`, request)
+    const { data } = await api.put<WorkOrderResponse>(`/workorders/${id}`, {
+      ...request,
+      priority:
+        request.priority !== undefined
+          ? serializeWorkOrderPriority(request.priority)
+          : request.priority,
+    })
     return normalizeWorkOrder(data)
   },
 
@@ -52,7 +65,9 @@ export const workOrdersService = {
   },
 
   async transitionStatus(id: string, request: TransitionStatusRequest): Promise<WorkOrderResponse> {
-    const { data } = await api.patch<WorkOrderResponse>(`/workorders/${id}/status`, request)
+    const { data } = await api.patch<WorkOrderResponse>(`/workorders/${id}/status`, {
+      newStatus: serializeWorkOrderStatus(request.newStatus),
+    })
     return normalizeWorkOrder(data)
   },
 

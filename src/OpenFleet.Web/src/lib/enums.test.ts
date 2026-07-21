@@ -7,6 +7,7 @@ import {
   normalizeWorkOrderPriority,
   normalizeWorkOrderStatus,
   serializeWorkOrderPriority,
+  serializeWorkOrderStatus,
 } from '@/lib/enums'
 
 describe('normalizeAssetStatus', () => {
@@ -59,6 +60,16 @@ describe('serializeWorkOrderPriority', () => {
     expect(serializeWorkOrderPriority('Low')).toBe(0)
     expect(serializeWorkOrderPriority('Medium')).toBe(1)
     expect(serializeWorkOrderPriority('Critical')).toBe(3)
+  })
+})
+
+describe('serializeWorkOrderStatus', () => {
+  it('maps status strings to numeric API values', () => {
+    expect(serializeWorkOrderStatus('Open')).toBe(0)
+    expect(serializeWorkOrderStatus('InProgress')).toBe(1)
+    expect(serializeWorkOrderStatus('WaitingForParts')).toBe(2)
+    expect(serializeWorkOrderStatus('Completed')).toBe(3)
+    expect(serializeWorkOrderStatus('Cancelled')).toBe(4)
   })
 })
 

@@ -292,9 +292,11 @@ Authorization: Bearer {token}
 Content-Type: application/json
 
 {
-  "newStatus": "InProgress"
+  "newStatus": 1
 }
 ```
+
+`newStatus` is the numeric enum (`0` Open, `1` InProgress, `2` WaitingForParts, `3` Completed, `4` Cancelled).
 
 Invalid transitions return `400 Domain Error`.
 
