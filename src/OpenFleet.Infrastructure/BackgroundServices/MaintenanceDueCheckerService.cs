@@ -1,7 +1,9 @@
+using System.Collections.Concurrent;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using OpenFleet.Application.DTOs;
 using OpenFleet.Application.Interfaces;
 using OpenFleet.Domain.Services;
 
@@ -12,6 +14,7 @@ public class MaintenanceDueCheckerService : BackgroundService
     private readonly IServiceScopeFactory _scopeFactory;
     private readonly ILogger<MaintenanceDueCheckerService> _logger;
     private readonly TimeSpan _checkInterval;
+    private readonly ConcurrentDictionary<Guid, byte> _alertedScheduleIds = new();
 
     public MaintenanceDueCheckerService(
         IServiceScopeFactory scopeFactory,
@@ -21,6 +24,9 @@ public class MaintenanceDueCheckerService : BackgroundService
         _logger = logger;
         _checkInterval = TimeSpan.FromHours(1);
     }
+
+    /// <summary>Exposes alerted IDs for tests.</summary>
+    internal ConcurrentDictionary<Guid, byte> AlertedScheduleIds => _alertedScheduleIds;
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
@@ -41,11 +47,16 @@ public class MaintenanceDueCheckerService : BackgroundService
         }
     }
 
-    private async Task CheckMaintenanceDueAsync(CancellationToken cancellationToken)
+    /// <summary>Runs a single due check (also used by tests).</summary>
+    internal Task CheckMaintenanceDueAsync(CancellationToken cancellationToken) =>
+        CheckMaintenanceDueCoreAsync(cancellationToken);
+
+    private async Task CheckMaintenanceDueCoreAsync(CancellationToken cancellationToken)
     {
         using var scope = _scopeFactory.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<IOpenFleetDbContext>();
         var settingsProvider = scope.ServiceProvider.GetRequiredService<IApplicationSettingsProvider>();
+        var notificationPublisher = scope.ServiceProvider.GetRequiredService<INotificationPublisher>();
 
         var now = DateTime.UtcNow;
         var settings = await settingsProvider.GetValuesAsync(cancellationToken);
@@ -66,8 +77,30 @@ public class MaintenanceDueCheckerService : BackgroundService
             {
                 dueCount++;
                 LogDueSchedule(schedule, now, currentMileage);
+
+                if (_alertedScheduleIds.TryAdd(schedule.Id, 0))
+                {
+                    var daysOverdue = MaintenanceDueCalculator.DaysOverdue(schedule, now);
+                    var milesOverdue = MaintenanceDueCalculator.MilesOverdue(schedule, currentMileage);
+                    var target = schedule.Vehicle is not null
+                        ? $"{schedule.Vehicle.Year} {schedule.Vehicle.Make} {schedule.Vehicle.Model}"
+                        : schedule.Asset?.Name ?? "Unknown";
+
+                    await notificationPublisher.PublishMaintenanceOverdueAsync(
+                        new MaintenanceOverdueNotification(
+                            schedule.Id,
+                            schedule.Name,
+                            target,
+                            daysOverdue?.TotalDays,
+                            milesOverdue,
+                            DateTimeOffset.UtcNow),
+                        cancellationToken);
+                }
+
                 continue;
             }
+
+            _alertedScheduleIds.TryRemove(schedule.Id, out _);
 
             if (MaintenanceDueCalculator.IsDueOrWithinLeadDays(
                     schedule, now, settings.MaintenanceReminderLeadDays, currentMileage))

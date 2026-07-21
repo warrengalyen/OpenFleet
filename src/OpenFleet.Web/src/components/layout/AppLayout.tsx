@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react'
 import { Outlet } from 'react-router-dom'
+import { useRealtimeNotifications } from '@/hooks/useRealtimeNotifications'
 import { Sidebar } from './Sidebar'
 import { Header } from './Header'
 
@@ -7,6 +8,7 @@ export function AppLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const closeSidebar = useCallback(() => setSidebarOpen(false), [])
   const openSidebar = useCallback(() => setSidebarOpen(true), [])
+  useRealtimeNotifications()
 
   return (
     <div className="flex h-screen overflow-hidden bg-gray-50 dark:bg-gray-950">

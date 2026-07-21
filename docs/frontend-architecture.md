@@ -16,6 +16,7 @@ OpenFleet.Web is a single-page application (SPA) that provides a fleet operation
 | Forms | React Hook Form + Zod |
 | Styling | Tailwind CSS 3, `clsx` |
 | Icons | Lucide React |
+| Real-time | `@microsoft/signalr` (notifications hub) |
 | Unit / component tests | Vitest, Testing Library, MSW |
 | E2E tests | Playwright |
 
@@ -108,6 +109,8 @@ Providers (QueryClient, Auth, DarkMode, Toast, ErrorBoundary)
 ```
 
 `ProtectedRoute` redirects unauthenticated users to `/login`. `RoleProtectedRoute` wraps individual routes and sends under-privileged users to `/unauthorized`.
+
+`AppLayout` mounts `useRealtimeNotifications()`, which connects to `/hubs/notifications` while authenticated (JWT via `accessTokenFactory`), shows toasts for hub events, and invalidates related TanStack Query keys.
 
 ---
 

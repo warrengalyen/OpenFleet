@@ -36,6 +36,23 @@ Used by `GET /api/integrations` and `GET /api/audit`. Query params: `page` (defa
 
 All endpoints except `POST /api/auth/login` require a Bearer token.
 
+### Real-time notifications (SignalR)
+
+```http
+/hubs/notifications
+```
+
+**Auth:** Same roles as JSON detail reads (`Viewer` through `Administrator`). Pass JWT via `Authorization: Bearer` on negotiate, or `?access_token=` on WebSocket / SSE upgrade (required when the browser cannot set the Authorization header).
+
+**Events (server → client):**
+
+| Event | When | Payload (camelCase) |
+|-------|------|---------------------|
+| `WorkOrderStatusChanged` | After a successful work order status transition | `workOrderId`, `title`, `oldStatus`, `newStatus`, `occurredAtUtc` |
+| `MaintenanceOverdue` | Hourly due checker finds a schedule newly overdue (deduped per process) | `scheduleId`, `scheduleName`, `targetLabel`, `daysOverdue`, `milesOverdue`, `occurredAtUtc` |
+
+Unauthenticated negotiate returns `401`. Events are broadcast to all authenticated hub connections.
+
 ### Login
 
 ```http

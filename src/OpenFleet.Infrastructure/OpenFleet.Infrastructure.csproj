@@ -23,4 +23,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="OpenFleet.Tests" />
+  </ItemGroup>
+
 </Project>

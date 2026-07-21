@@ -99,6 +99,14 @@ Shared helpers live in `src/lib/download.ts`:
 
 When the API and SPA are on different origins, the API must expose `Content-Disposition` via CORS so the filename is visible to JavaScript.
 
+### Real-time notifications (SignalR)
+
+Authenticated sessions connect to `/hubs/notifications` via `@microsoft/signalr` (`lib/signalr.ts`, `hooks/useRealtimeNotifications.ts`).
+
+- Token: `accessTokenFactory` reads `tokenStorage.get()`
+- Local Vite proxies `/hubs` with `ws: true` when using a relative API origin
+- Events: `WorkOrderStatusChanged` (info toast + work-order/dashboard invalidation), `MaintenanceOverdue` (warning toast + maintenance/vehicles-due invalidation)
+
 ### TanStack Query retry policy
 
 Queries do not retry on 401, 403, or 404. Other errors retry up to twice.

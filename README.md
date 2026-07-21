@@ -10,16 +10,13 @@ OpenFleet is an open source application for managing vehicles, maintenance, insp
 
 Try the hosted demo: [http://openfleet.mechanikadesign.com/](http://openfleet.mechanikadesign.com/)
 
-
 | Email                                             | Password    | Role             |
 | ------------------------------------------------- | ----------- | ---------------- |
 | [viewer@openfleet.io](mailto:viewer@openfleet.io) | Viewer@1234 | Read-only Viewer |
 
-
 The demo runs on Render’s free tier:
 
 - **Cold start:** The API spins down after about 15 minutes of inactivity. The first request after idle can take around **30–60 seconds** to wake up.
-
 
 ![Dashboard overview](docs/images/dashboard-overview.png)
 
@@ -35,14 +32,9 @@ OpenFleet models those workflows while keeping the codebase approachable for dev
 
 ---
 
-
-
 ## Features
 
-
-
 ### Backend
-
 
 | Area                   | What's Included                                                                    |
 | ---------------------- | ---------------------------------------------------------------------------------- |
@@ -55,12 +47,10 @@ OpenFleet models those workflows while keeping the codebase approachable for dev
 | Integrations           | Mock external integrations                                                         |
 | Reporting              | Dashboard and operational reporting endpoints                                      |
 | PDF export             | Work order detail and vehicle maintenance history via QuestPDF (Community license) |
+| Real-time notifications| SignalR hub for work order status changes and overdue maintenance alerts           |
 | Observability          | Structured logging, health checks, correlation IDs                                 |
 | Testing                | Unit, integration, and middleware tests                                            |
 | CI                     | GitHub Actions                                                                     |
-
-
-
 
 ### Frontend
 
@@ -69,17 +59,14 @@ OpenFleet models those workflows while keeping the codebase approachable for dev
 | -------------- | ----------------------------------------------- |
 | Dashboard      | KPIs, charts, alerts, and operational summaries |
 | Fleet          | Vehicle and asset management                    |
-| Operations     | Work orders, inspections, maintenance, PDF export   |
+| Operations     | Work orders, inspections, maintenance, PDF export, live toasts |
 | Inventory      | Parts and vendor management                     |
 | Reports        | Operational reporting with filtering and export |
 | Administration | Users, departments, settings, audit logs        |
 | UX             | Responsive layout, dark mode, loading states    |
 | Testing        | Vitest, MSW, Playwright                         |
 
-
 ---
-
-
 
 ## Core Workflows
 
@@ -93,15 +80,13 @@ Rather than focusing on individual CRUD screens, OpenFleet models the workflows 
 
 ---
 
-
-
 ## Tech Stack
-
 
 | Layer            | Technology                                |
 | ---------------- | ----------------------------------------- |
 | API              | .NET 8, ASP.NET Core, EF Core, PostgreSQL |
 | PDF generation   | QuestPDF (Community license; see docs/architecture.md) |
+| Real-time        | ASP.NET Core SignalR + `@microsoft/signalr` |
 | Frontend         | React, TypeScript, Vite                   |
 | State Management | TanStack Query                            |
 | Styling          | Tailwind CSS                              |
@@ -110,10 +95,7 @@ Rather than focusing on individual CRUD screens, OpenFleet models the workflows 
 | Containers       | Docker                                    |
 | CI               | GitHub Actions                            |
 
-
 ---
-
-
 
 ## Architecture
 
@@ -141,8 +123,6 @@ PostgreSQL
 ```
 
 ---
-
-
 
 ## Quick Start
 
@@ -174,22 +154,17 @@ Open:
 
 Default administrator account (local development):
 
-
 | Email                                           | Password   |
 | ----------------------------------------------- | ---------- |
 | [admin@openfleet.io](mailto:admin@openfleet.io) | Admin@1234 |
-
 
 For the hosted demo, use the Viewer account in [Live Demo](#live-demo) above.
 
 ---
 
-
-
 ## Documentation
 
 The repository includes additional documentation for the application's architecture, workflows, and development.
-
 
 | Document                           | Description                                   |
 | ---------------------------------- | --------------------------------------------- |
@@ -206,10 +181,7 @@ The repository includes additional documentation for the application's architect
 | roadmap.md                         | Planned features                              |
 |                                    |                                               |
 
-
 ---
-
-
 
 ## Roadmap
 
@@ -217,35 +189,11 @@ See [docs/roadmap.md](docs/roadmap.md).
 
 ---
 
-
-
-## Project Layout
-
-```text
-src/
-    OpenFleet.Api
-    OpenFleet.Application
-    OpenFleet.Domain
-    OpenFleet.Infrastructure
-    OpenFleet.Web
-
-tests/
-    OpenFleet.Tests
-
-docs/
-```
-
----
-
-
-
 ## Contributing
 
 Contributions are welcome. Please read [CONTRIBUTING.md](CONTRIBUTING.md) before opening a pull request.
 
 ---
-
-
 
 ## License
 

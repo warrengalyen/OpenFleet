@@ -9,7 +9,7 @@ OpenFleet is structured as a Clean Architecture monolith with clear layer bounda
 ```
 ┌──────────────────────────────────────────────────────────┐
 │  OpenFleet.Api                                           │
-│  Controllers · Middleware · Extensions · Program.cs      │
+│  Controllers · Hubs · Middleware · Extensions · Program.cs│
 │                                                          │
 │  Depends on: Application, Infrastructure                 │
 └──────────────────────────┬───────────────────────────────┘
@@ -18,6 +18,7 @@ OpenFleet is structured as a Clean Architecture monolith with clear layer bounda
 │  OpenFleet.Application                                   │
 │  Services · DTOs · Validators · Interfaces · Common      │
 │  Reports (IPdfExportService, PdfExportResult, models)    │
+│  INotificationPublisher + notification DTOs              │
 │                                                          │
 │  Depends on: Domain only                                 │
 └──────────────────────────┬───────────────────────────────┘
@@ -46,6 +47,8 @@ QuestPDF.Settings.License = LicenseType.Community;
 ```
 
 OpenFleet is an open-source portfolio demo and is configured for the QuestPDF Community license. Re-verify [QuestPDF licensing](https://www.questpdf.com/license/) before commercial redistribution; use a commercial license if the project no longer qualifies.
+
+Real-time notifications use SignalR. Application owns `INotificationPublisher` and payload DTOs. The Api hosts `NotificationsHub` (`/hubs/notifications`) and `SignalRNotificationPublisher`. `WorkOrderService.TransitionStatusAsync` publishes status changes; `MaintenanceDueCheckerService` publishes newly overdue schedules (in-memory dedupe per process). JWT for hub connections accepts `access_token` on `/hubs` paths.
 
 ---
 
@@ -143,7 +146,7 @@ Two hosted services run on fixed intervals:
 
 | Service | Interval | Purpose |
 |---------|----------|---------|
-| `MaintenanceDueCheckerService` | Every hour | Logs warnings for overdue maintenance schedules |
+| `MaintenanceDueCheckerService` | Every hour | Logs overdue schedules and publishes SignalR `MaintenanceOverdue` for newly overdue IDs |
 | `IntegrationSyncService` | Every 5 minutes | Runs all registered `IExternalIntegrationConnector` implementations |
 
 Both services use scoped DI lifetime (create a scope per run) to safely access `OpenFleetDbContext`.

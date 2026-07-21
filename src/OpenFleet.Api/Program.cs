@@ -6,7 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using OpenFleet.Api.Extensions;
+using OpenFleet.Api.Hubs;
 using OpenFleet.Api.Middleware;
+using OpenFleet.Api.Services;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -84,8 +86,24 @@ try
                 ValidAudience = builder.Configuration["Jwt:Audience"],
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret))
             };
+            // SignalR WebSockets/SSE cannot always send Authorization headers; accept access_token query.
+            options.Events = new JwtBearerEvents
+            {
+                OnMessageReceived = context =>
+                {
+                    var accessToken = context.Request.Query["access_token"];
+                    var path = context.HttpContext.Request.Path;
+                    if (!string.IsNullOrEmpty(accessToken) &&
+                        path.StartsWithSegments("/hubs"))
+                    {
+                        context.Token = accessToken;
+                    }
+                    return Task.CompletedTask;
+                }
+            };
         });
     builder.Services.AddAuthorization();
+    builder.Services.AddSignalR();
 
     builder.Services.AddScoped<ApplicationSettingsService>();
     builder.Services.AddScoped<IApplicationSettingsProvider>(sp =>
@@ -98,6 +116,7 @@ try
     builder.Services.AddScoped<IntegrationLogService>();
     builder.Services.AddScoped<UserManagementService>();
     builder.Services.AddScoped<AuthService>();
+    builder.Services.AddSingleton<INotificationPublisher, SignalRNotificationPublisher>();
     builder.Services.AddScoped<IExternalIntegrationConnector, FuelUsageConnector>();
     builder.Services.AddScoped<IExternalIntegrationConnector, VendorRepairConnector>();
     builder.Services.AddScoped<IExternalIntegrationConnector, PartsSupplierConnector>();
@@ -172,6 +191,7 @@ try
     app.UseAuthentication();
     app.UseAuthorization();
     app.MapControllers();
+    app.MapHub<NotificationsHub>("/hubs/notifications");
 
     static Task WriteHealthResponse(HttpContext context,
         Microsoft.Extensions.Diagnostics.HealthChecks.HealthReport report)

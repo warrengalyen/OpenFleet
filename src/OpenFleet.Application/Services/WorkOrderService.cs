@@ -13,15 +13,18 @@ public class WorkOrderService
     private readonly IOpenFleetDbContext _context;
     private readonly AuditService _auditService;
     private readonly IApplicationSettingsProvider _settingsProvider;
+    private readonly INotificationPublisher _notificationPublisher;
 
     public WorkOrderService(
         IOpenFleetDbContext context,
         AuditService auditService,
-        IApplicationSettingsProvider settingsProvider)
+        IApplicationSettingsProvider settingsProvider,
+        INotificationPublisher notificationPublisher)
     {
         _context = context;
         _auditService = auditService;
         _settingsProvider = settingsProvider;
+        _notificationPublisher = notificationPublisher;
     }
 
     public async Task<Result<WorkOrderResponse>> CreateAsync(
@@ -153,6 +156,15 @@ public class WorkOrderService
             oldValue: oldStatus.ToString(),
             newValue: newStatus.ToString(),
             cancellationToken: cancellationToken);
+
+        await _notificationPublisher.PublishWorkOrderStatusChangedAsync(
+            new WorkOrderStatusChangedNotification(
+                workOrder.Id,
+                workOrder.Title,
+                oldStatus.ToString(),
+                newStatus.ToString(),
+                DateTimeOffset.UtcNow),
+            cancellationToken);
 
         return Result<WorkOrderResponse>.Success(
             (await LoadResponseAsync(id, cancellationToken))!);
