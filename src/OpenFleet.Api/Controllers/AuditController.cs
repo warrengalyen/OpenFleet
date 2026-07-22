@@ -10,7 +10,7 @@ namespace OpenFleet.Api.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Produces("application/json")]
-[Authorize(Roles = AuthorizationPolicies.FleetManagerOrAbove)]
+[Authorize(Policy = AuthorizationPolicies.FleetManagerOrAbove)]
 public class AuditController : ControllerBase
 {
     private readonly AuditService _auditService;

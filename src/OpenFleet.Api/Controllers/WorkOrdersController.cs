@@ -14,7 +14,7 @@ namespace OpenFleet.Api.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Produces("application/json")]
-[Authorize(Roles = AuthorizationPolicies.AnyAuthenticated)]
+[Authorize(Policy = AuthorizationPolicies.AnyAuthenticated)]
 public class WorkOrdersController : ControllerBase
 {
     private readonly WorkOrderService _service;
@@ -116,7 +116,7 @@ public class WorkOrdersController : ControllerBase
 
     /// <summary>Creates a new work order.</summary>
     [HttpPost]
-    [Authorize(Roles = AuthorizationPolicies.TechnicianOrAbove)]
+    [Authorize(Policy = AuthorizationPolicies.TechnicianOrAbove)]
     [ProducesResponseType(typeof(WorkOrderResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Create(
@@ -133,7 +133,7 @@ public class WorkOrdersController : ControllerBase
 
     /// <summary>Updates a work order's fields.</summary>
     [HttpPut("{id:guid}")]
-    [Authorize(Roles = AuthorizationPolicies.TechnicianOrAbove)]
+    [Authorize(Policy = AuthorizationPolicies.TechnicianOrAbove)]
     [ProducesResponseType(typeof(WorkOrderResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
@@ -151,7 +151,7 @@ public class WorkOrdersController : ControllerBase
 
     /// <summary>Soft-cancels a work order by transitioning it to Cancelled.</summary>
     [HttpDelete("{id:guid}")]
-    [Authorize(Roles = AuthorizationPolicies.TechnicianOrAbove)]
+    [Authorize(Policy = AuthorizationPolicies.TechnicianOrAbove)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
@@ -167,7 +167,7 @@ public class WorkOrdersController : ControllerBase
 
     /// <summary>Transitions a work order to a new status. Returns 409 if the transition is not allowed.</summary>
     [HttpPatch("{id:guid}/status")]
-    [Authorize(Roles = AuthorizationPolicies.TechnicianOrAbove)]
+    [Authorize(Policy = AuthorizationPolicies.TechnicianOrAbove)]
     [ProducesResponseType(typeof(WorkOrderResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
@@ -222,7 +222,7 @@ public class WorkOrdersController : ControllerBase
 
     /// <summary>Records additional labor hours against a work order.</summary>
     [HttpPut("{id:guid}/labor")]
-    [Authorize(Roles = AuthorizationPolicies.TechnicianOrAbove)]
+    [Authorize(Policy = AuthorizationPolicies.TechnicianOrAbove)]
     [ProducesResponseType(typeof(WorkOrderResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

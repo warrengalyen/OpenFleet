@@ -11,7 +11,7 @@ namespace OpenFleet.Api.Controllers;
 [ApiController]
 [Route("api/integrations")]
 [Produces("application/json")]
-[Authorize(Roles = AuthorizationPolicies.AnyAuthenticated)]
+[Authorize(Policy = AuthorizationPolicies.AnyAuthenticated)]
 public class IntegrationsController : ControllerBase
 {
     private readonly IntegrationLogService _logService;
@@ -60,7 +60,7 @@ public class IntegrationsController : ControllerBase
     /// Creates a log entry and runs the connector immediately.
     /// </summary>
     [HttpPost("sync/{source}")]
-    [Authorize(Roles = AuthorizationPolicies.FleetManagerOrAbove)]
+    [Authorize(Policy = AuthorizationPolicies.FleetManagerOrAbove)]
     [ProducesResponseType(typeof(IntegrationLogResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -97,7 +97,7 @@ public class IntegrationsController : ControllerBase
     /// Force-retry a failed integration log entry immediately, regardless of the scheduled retry time.
     /// </summary>
     [HttpPost("retry/{id:guid}")]
-    [Authorize(Roles = AuthorizationPolicies.FleetManagerOrAbove)]
+    [Authorize(Policy = AuthorizationPolicies.FleetManagerOrAbove)]
     [ProducesResponseType(typeof(IntegrationLogResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]

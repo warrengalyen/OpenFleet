@@ -75,7 +75,7 @@ Swagger UI (Development only)
 UseAuthentication               - validates JWT Bearer token
     │
     ▼
-UseAuthorization                - enforces [Authorize(Roles = "...")] attributes
+UseAuthorization                - enforces [Authorize(Policy = "...")] attributes
     │
     ▼
 Controllers
@@ -124,19 +124,28 @@ All request DTOs have corresponding validators in `OpenFleet.Application.Validat
 
 `AuditService` is injected into services that perform auditable operations. It writes `AuditLog` records with old/new values and the identity of the actor. Audited actions include vehicle updates, work order status changes, inspection failures, sync failures, and user management.
 
-### Role-Based Authorization
+### Policy-Based Authorization
 
-Five roles are defined in `UserRole` enum:
+Five roles are defined in the `UserRole` enum (ordered by privilege):
 
 | Role | Level |
 |------|-------|
 | Viewer | Read-only access |
 | Technician | Read + work order / inspection write |
 | Supervisor | Technician + wider read access |
-| FleetManager | Supervisor + schedule and user management |
+| FleetManager | Supervisor + schedule and inventory management |
 | Administrator | Full access including user administration |
 
-`AuthorizationPolicies` static class provides role-string constants used in `[Authorize(Roles = "...")]` attributes across all controllers.
+Named policies in `AuthorizationPolicies` map to a minimum role via `MinimumRoleRequirement` / `MinimumRoleHandler`:
+
+| Policy | Minimum role |
+|--------|--------------|
+| `AnyAuthenticated` | Viewer |
+| `TechnicianOrAbove` | Technician |
+| `FleetManagerOrAbove` | FleetManager |
+| `AdminOnly` | Administrator |
+
+Controllers and the SignalR hub use `[Authorize(Policy = AuthorizationPolicies....)]`. Policy names align with frontend `AuthPolicy` values in `lib/auth.ts`.
 
 ---
 

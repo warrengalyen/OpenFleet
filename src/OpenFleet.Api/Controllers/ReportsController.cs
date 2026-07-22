@@ -13,7 +13,7 @@ namespace OpenFleet.Api.Controllers;
 [ApiController]
 [Route("api/reports")]
 [Produces("application/json")]
-[Authorize(Roles = AuthorizationPolicies.AnyAuthenticated)]
+[Authorize(Policy = AuthorizationPolicies.AnyAuthenticated)]
 public class ReportsController : ControllerBase
 {
     private readonly ReportingService _reportingService;

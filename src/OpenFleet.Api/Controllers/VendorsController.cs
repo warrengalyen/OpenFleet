@@ -14,7 +14,7 @@ namespace OpenFleet.Api.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Produces("application/json")]
-[Authorize(Roles = AuthorizationPolicies.AnyAuthenticated)]
+[Authorize(Policy = AuthorizationPolicies.AnyAuthenticated)]
 public class VendorsController : ControllerBase
 {
     private readonly IOpenFleetDbContext _context;
@@ -84,7 +84,7 @@ public class VendorsController : ControllerBase
 
     /// <summary>Creates a new vendor.</summary>
     [HttpPost]
-    [Authorize(Roles = AuthorizationPolicies.FleetManagerOrAbove)]
+    [Authorize(Policy = AuthorizationPolicies.FleetManagerOrAbove)]
     [ProducesResponseType(typeof(VendorResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Create(
@@ -123,7 +123,7 @@ public class VendorsController : ControllerBase
 
     /// <summary>Updates an existing vendor.</summary>
     [HttpPut("{id:guid}")]
-    [Authorize(Roles = AuthorizationPolicies.FleetManagerOrAbove)]
+    [Authorize(Policy = AuthorizationPolicies.FleetManagerOrAbove)]
     [ProducesResponseType(typeof(VendorResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Update(
@@ -164,7 +164,7 @@ public class VendorsController : ControllerBase
 
     /// <summary>Deletes a vendor. Fails if parts are still assigned.</summary>
     [HttpDelete("{id:guid}")]
-    [Authorize(Roles = AuthorizationPolicies.FleetManagerOrAbove)]
+    [Authorize(Policy = AuthorizationPolicies.FleetManagerOrAbove)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]

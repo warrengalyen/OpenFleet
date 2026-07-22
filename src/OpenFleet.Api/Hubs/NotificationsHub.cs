@@ -4,7 +4,7 @@ using OpenFleet.Application.Common;
 
 namespace OpenFleet.Api.Hubs;
 
-[Authorize(Roles = AuthorizationPolicies.AnyAuthenticated)]
+[Authorize(Policy = AuthorizationPolicies.AnyAuthenticated)]
 public class NotificationsHub : Hub
 {
 }

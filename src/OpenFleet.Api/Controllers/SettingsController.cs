@@ -10,7 +10,7 @@ namespace OpenFleet.Api.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Produces("application/json")]
-[Authorize(Roles = AuthorizationPolicies.AnyAuthenticated)]
+[Authorize(Policy = AuthorizationPolicies.AnyAuthenticated)]
 public class SettingsController : ControllerBase
 {
     private readonly ApplicationSettingsService _settingsService;
@@ -31,7 +31,7 @@ public class SettingsController : ControllerBase
 
     /// <summary>Updates application settings.</summary>
     [HttpPut]
-    [Authorize(Roles = AuthorizationPolicies.AdminOnly)]
+    [Authorize(Policy = AuthorizationPolicies.AdminOnly)]
     [ProducesResponseType(typeof(ApplicationSettingsResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Update(

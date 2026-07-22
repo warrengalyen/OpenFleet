@@ -15,7 +15,7 @@ namespace OpenFleet.Api.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Produces("application/json")]
-[Authorize(Roles = AuthorizationPolicies.AnyAuthenticated)]
+[Authorize(Policy = AuthorizationPolicies.AnyAuthenticated)]
 public class VehiclesController : ControllerBase
 {
     private readonly IOpenFleetDbContext _context;
@@ -125,7 +125,7 @@ public class VehiclesController : ControllerBase
 
     /// <summary>Creates a new vehicle.</summary>
     [HttpPost]
-    [Authorize(Roles = AuthorizationPolicies.TechnicianOrAbove)]
+    [Authorize(Policy = AuthorizationPolicies.TechnicianOrAbove)]
     [ProducesResponseType(typeof(VehicleResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Create(
@@ -171,7 +171,7 @@ public class VehiclesController : ControllerBase
 
     /// <summary>Updates an existing vehicle.</summary>
     [HttpPut("{id:guid}")]
-    [Authorize(Roles = AuthorizationPolicies.TechnicianOrAbove)]
+    [Authorize(Policy = AuthorizationPolicies.TechnicianOrAbove)]
     [ProducesResponseType(typeof(VehicleResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -235,7 +235,7 @@ public class VehiclesController : ControllerBase
 
     /// <summary>Soft-deletes a vehicle by setting IsDeleted and status to Retired.</summary>
     [HttpDelete("{id:guid}")]
-    [Authorize(Roles = AuthorizationPolicies.TechnicianOrAbove)]
+    [Authorize(Policy = AuthorizationPolicies.TechnicianOrAbove)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)

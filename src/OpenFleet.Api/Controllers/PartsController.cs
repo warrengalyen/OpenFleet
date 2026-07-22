@@ -15,7 +15,7 @@ namespace OpenFleet.Api.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Produces("application/json")]
-[Authorize(Roles = AuthorizationPolicies.AnyAuthenticated)]
+[Authorize(Policy = AuthorizationPolicies.AnyAuthenticated)]
 public class PartsController : ControllerBase
 {
     private readonly IOpenFleetDbContext _context;
@@ -175,7 +175,7 @@ public class PartsController : ControllerBase
 
     /// <summary>Creates a new part.</summary>
     [HttpPost]
-    [Authorize(Roles = AuthorizationPolicies.FleetManagerOrAbove)]
+    [Authorize(Policy = AuthorizationPolicies.FleetManagerOrAbove)]
     [ProducesResponseType(typeof(PartResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Create(
@@ -229,7 +229,7 @@ public class PartsController : ControllerBase
 
     /// <summary>Updates an existing part.</summary>
     [HttpPut("{id:guid}")]
-    [Authorize(Roles = AuthorizationPolicies.FleetManagerOrAbove)]
+    [Authorize(Policy = AuthorizationPolicies.FleetManagerOrAbove)]
     [ProducesResponseType(typeof(PartResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Update(
@@ -291,7 +291,7 @@ public class PartsController : ControllerBase
 
     /// <summary>Deletes a part from inventory.</summary>
     [HttpDelete("{id:guid}")]
-    [Authorize(Roles = AuthorizationPolicies.FleetManagerOrAbove)]
+    [Authorize(Policy = AuthorizationPolicies.FleetManagerOrAbove)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)

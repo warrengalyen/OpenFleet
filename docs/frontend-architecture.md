@@ -120,7 +120,7 @@ Providers (QueryClient, Auth, DarkMode, Toast, ErrorBoundary)
 |-------|----------|
 | JWT storage | `localStorage` via `tokenStorage` in `lib/api.ts` |
 | Current user | `AuthContext` + `useAuth` hook |
-| Role policies | `lib/auth.ts` - mirrors `AuthorizationPolicies` on the API |
+| Role policies | `lib/auth.ts` - mirrors named API policies (`AuthorizationPolicies` / `MinimumRoleRequirement`) |
 | Route guards | `routes/ProtectedRoute.tsx`, `routes/RoleProtectedRoute.tsx` |
 | Nav visibility | `Sidebar.tsx` filters items with `hasPolicy()` |
 

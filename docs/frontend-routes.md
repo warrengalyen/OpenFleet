@@ -119,14 +119,14 @@ Base URL in development: `http://localhost:5173`
 
 ## Role Policy Reference
 
-Policies are defined in `lib/auth.ts` and align with backend `AuthorizationPolicies`:
+Policies are defined in `lib/auth.ts` and align with backend named policies (`AuthorizationPolicies` + `MinimumRoleRequirement`):
 
 | Policy | Roles |
 |--------|-------|
-| Any authenticated | Viewer, Technician, Supervisor, FleetManager, Administrator |
-| Technician+ | Technician, Supervisor, FleetManager, Administrator |
-| FleetManager+ | FleetManager, Administrator |
-| Administrator | Administrator |
+| `AnyAuthenticated` | Viewer, Technician, Supervisor, FleetManager, Administrator |
+| `TechnicianOrAbove` | Technician, Supervisor, FleetManager, Administrator |
+| `FleetManagerOrAbove` | FleetManager, Administrator |
+| `AdminOnly` | Administrator |
 
 **Viewer** users can browse fleet data and reports but cannot create or edit records on protected routes.
 

@@ -10,7 +10,7 @@ namespace OpenFleet.Api.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Produces("application/json")]
-[Authorize(Roles = AuthorizationPolicies.AdminOnly)]
+[Authorize(Policy = AuthorizationPolicies.AdminOnly)]
 public class UsersController : ControllerBase
 {
     private readonly UserManagementService _service;

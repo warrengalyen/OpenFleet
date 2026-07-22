@@ -16,7 +16,7 @@ This roadmap lists potential improvements for OpenFleet. The project is a portfo
 
 ## Architecture Improvements
 
-- [ ] **Policy-based authorization** - replace role-string constants with `IAuthorizationRequirement` policies for finer-grained access control
+- [x] **Policy-based authorization** - replace role-string constants with `IAuthorizationRequirement` policies for finer-grained access control
 - [ ] **Outbox pattern** - reliable integration event publishing using a database-backed outbox (e.g., MassTransit or a simple EF Core outbox table)
 - [ ] **CQRS separation** - split read/write operations with separate query models for reporting endpoints
 - [ ] **OpenTelemetry** - distributed traces with Jaeger or Zipkin exporter; spans across controller → service → EF Core

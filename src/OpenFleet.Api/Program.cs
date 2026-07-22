@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using OpenFleet.Api.Authorization;
 using OpenFleet.Api.Extensions;
 using OpenFleet.Api.Hubs;
 using OpenFleet.Api.Middleware;
@@ -102,7 +103,7 @@ try
                 }
             };
         });
-    builder.Services.AddAuthorization();
+    builder.Services.AddOpenFleetAuthorization();
     builder.Services.AddSignalR();
 
     builder.Services.AddScoped<ApplicationSettingsService>();

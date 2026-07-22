@@ -14,7 +14,7 @@ namespace OpenFleet.Api.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Produces("application/json")]
-[Authorize(Roles = AuthorizationPolicies.AnyAuthenticated)]
+[Authorize(Policy = AuthorizationPolicies.AnyAuthenticated)]
 public class DepartmentsController : ControllerBase
 {
     private readonly IOpenFleetDbContext _context;
@@ -75,7 +75,7 @@ public class DepartmentsController : ControllerBase
 
     /// <summary>Creates a new department.</summary>
     [HttpPost]
-    [Authorize(Roles = AuthorizationPolicies.AdminOnly)]
+    [Authorize(Policy = AuthorizationPolicies.AdminOnly)]
     [ProducesResponseType(typeof(DepartmentResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
@@ -131,7 +131,7 @@ public class DepartmentsController : ControllerBase
 
     /// <summary>Updates an existing department.</summary>
     [HttpPut("{id:guid}")]
-    [Authorize(Roles = AuthorizationPolicies.AdminOnly)]
+    [Authorize(Policy = AuthorizationPolicies.AdminOnly)]
     [ProducesResponseType(typeof(DepartmentResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
@@ -197,7 +197,7 @@ public class DepartmentsController : ControllerBase
 
     /// <summary>Deletes a department. Fails if vehicles, users, or assets are still assigned.</summary>
     [HttpDelete("{id:guid}")]
-    [Authorize(Roles = AuthorizationPolicies.AdminOnly)]
+    [Authorize(Policy = AuthorizationPolicies.AdminOnly)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
