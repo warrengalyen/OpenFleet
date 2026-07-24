@@ -1,6 +1,6 @@
 using OpenFleet.Domain.Enums;
 
-namespace OpenFleet.Application.DTOs;
+namespace OpenFleet.Application.Queries.Reports.Models;
 
 // ── Open work orders ──────────────────────────────────────────────────────────
 
@@ -22,11 +22,30 @@ public record WorkOrderSummaryItem(
 );
 
 // ── Vehicles due for service ──────────────────────────────────────────────────
-// Reuses VehicleDueForServiceResponse from MaintenanceScheduleDto.cs
 
 public record VehiclesDueForServiceReport(
     int TotalDue,
-    IReadOnlyList<VehicleDueForServiceResponse> Vehicles
+    IReadOnlyList<VehicleDueForServiceItem> Vehicles
+);
+
+public record VehicleDueForServiceItem(
+    Guid? VehicleId,
+    string? VehicleDescription,
+    Guid? AssetId,
+    string? AssetDescription,
+    int? CurrentMileage,
+    DueScheduleItem[] DueSchedules
+);
+
+public record DueScheduleItem(
+    Guid ScheduleId,
+    string ScheduleName,
+    bool? IsDueByDate,
+    bool? IsDueByMileage,
+    DateTime? NextDueDate,
+    int? NextDueMileage,
+    double? DaysOverdue,
+    int? MilesOverdue
 );
 
 // ── Maintenance cost by vehicle ────────────────────────────────────────────────

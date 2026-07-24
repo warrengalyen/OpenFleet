@@ -1,21 +1,21 @@
 using Microsoft.EntityFrameworkCore;
-using OpenFleet.Application.DTOs;
 using OpenFleet.Application.Interfaces;
+using OpenFleet.Application.Queries.Reports.Models;
 using OpenFleet.Domain.Enums;
 using OpenFleet.Domain.Services;
 
-namespace OpenFleet.Application.Services;
+namespace OpenFleet.Application.Queries.Reports;
 
 /// <summary>
 /// Provides efficient EF Core queries for all dashboard and operational report endpoints.
 /// All methods are read-only (AsNoTracking) and should not modify any data.
 /// </summary>
-public class ReportingService
+public class ReportQueryService : IReportQueries
 {
     private readonly IOpenFleetDbContext _context;
     private readonly IApplicationSettingsProvider _settingsProvider;
 
-    public ReportingService(IOpenFleetDbContext context, IApplicationSettingsProvider settingsProvider)
+    public ReportQueryService(IOpenFleetDbContext context, IApplicationSettingsProvider settingsProvider)
     {
         _context = context;
         _settingsProvider = settingsProvider;
@@ -78,7 +78,7 @@ public class ReportingService
                 var vehicle = first.Vehicle;
                 var asset = first.Asset;
 
-                var dueSchedules = g.Select(s => new DueScheduleEntry(
+                var dueSchedules = g.Select(s => new DueScheduleItem(
                     s.Id,
                     s.Name,
                     s.DayInterval.HasValue ? MaintenanceDueCalculator.IsDue(s, now, null) : null,
@@ -89,7 +89,7 @@ public class ReportingService
                     MaintenanceDueCalculator.MilesOverdue(s, vehicle?.Mileage)
                 )).ToArray();
 
-                return new VehicleDueForServiceResponse(
+                return new VehicleDueForServiceItem(
                     g.Key.VehicleId,
                     vehicle != null ? $"{vehicle.Year} {vehicle.Make} {vehicle.Model}" : null,
                     g.Key.AssetId,

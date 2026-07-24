@@ -23,7 +23,7 @@ tests/OpenFleet.Tests/
 ├── Application/
 │   ├── AuthServiceTests.cs                   - login, JWT generation, inactive users
 │   ├── AuditServiceTests.cs                  - audit log persistence and filtering
-│   ├── ReportingServiceTests.cs              - report aggregation math
+│   ├── ReportQueryServiceTests.cs            - report aggregation math
 │   ├── IntegrationLogServiceTests.cs         - sync log create/update, retry tracking
 │   ├── VehicleValidatorTests.cs              - FluentValidation: VIN, plate, year, mileage
 │   ├── AssetValidatorTests.cs                - FluentValidation: asset tag, type

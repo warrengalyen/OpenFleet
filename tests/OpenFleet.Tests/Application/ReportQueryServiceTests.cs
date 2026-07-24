@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using OpenFleet.Application.Services;
+using OpenFleet.Application.Queries.Reports;
 using OpenFleet.Domain.Entities;
 using OpenFleet.Domain.Enums;
 using OpenFleet.Infrastructure.Persistence;
@@ -7,10 +7,10 @@ using OpenFleet.Tests.Helpers;
 
 namespace OpenFleet.Tests.Application;
 
-public class ReportingServiceTests : IDisposable
+public class ReportQueryServiceTests : IDisposable
 {
     private readonly OpenFleetDbContext _context;
-    private readonly ReportingService _service;
+    private readonly ReportQueryService _service;
 
     private static readonly Guid DeptId = Guid.NewGuid();
     private static readonly Guid UserId = Guid.NewGuid();
@@ -18,14 +18,14 @@ public class ReportingServiceTests : IDisposable
     private static readonly Guid VehicleBId = Guid.NewGuid();
     private static readonly Guid VendorId = Guid.NewGuid();
 
-    public ReportingServiceTests()
+    public ReportQueryServiceTests()
     {
         var options = new DbContextOptionsBuilder<OpenFleetDbContext>()
             .UseInMemoryDatabase(Guid.NewGuid().ToString())
             .Options;
         _context = new OpenFleetDbContext(options);
         var settingsProvider = ApplicationSettingsTestHelper.CreateProviderAsync(_context).GetAwaiter().GetResult();
-        _service = new ReportingService(_context, settingsProvider);
+        _service = new ReportQueryService(_context, settingsProvider);
         SeedTestData();
     }
 
@@ -188,7 +188,7 @@ public class ReportingServiceTests : IDisposable
             .Options;
         using var ctx = new OpenFleetDbContext(options);
         var settingsProvider = await ApplicationSettingsTestHelper.CreateProviderAsync(ctx);
-        var svc = new ReportingService(ctx, settingsProvider);
+        var svc = new ReportQueryService(ctx, settingsProvider);
 
         var deptId = Guid.NewGuid();
         var userId = Guid.NewGuid();

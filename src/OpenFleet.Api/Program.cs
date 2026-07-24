@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using OpenFleet.Application.Common;
 using OpenFleet.Application.Interfaces;
+using OpenFleet.Application.Queries.Reports;
 using OpenFleet.Application.Reports;
 using OpenFleet.Application.Services;
 using OpenFleet.Application.Validators;
@@ -110,7 +111,7 @@ try
     builder.Services.AddScoped<IApplicationSettingsProvider>(sp =>
         sp.GetRequiredService<ApplicationSettingsService>());
     builder.Services.AddScoped<AuditService>();
-    builder.Services.AddScoped<ReportingService>();
+    builder.Services.AddScoped<IReportQueries, ReportQueryService>();
     builder.Services.AddScoped<WorkOrderService>();
     builder.Services.AddScoped<InspectionService>();
     builder.Services.AddScoped<MaintenanceScheduleService>();

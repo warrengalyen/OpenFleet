@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OpenFleet.Application.Common;
-using OpenFleet.Application.DTOs;
-using OpenFleet.Application.Services;
+using OpenFleet.Application.Queries.Reports;
+using OpenFleet.Application.Queries.Reports.Models;
 
 namespace OpenFleet.Api.Controllers;
 
@@ -16,11 +16,11 @@ namespace OpenFleet.Api.Controllers;
 [Authorize(Policy = AuthorizationPolicies.AnyAuthenticated)]
 public class ReportsController : ControllerBase
 {
-    private readonly ReportingService _reportingService;
+    private readonly IReportQueries _reportQueries;
 
-    public ReportsController(ReportingService reportingService)
+    public ReportsController(IReportQueries reportQueries)
     {
-        _reportingService = reportingService;
+        _reportQueries = reportQueries;
     }
 
     /// <summary>
@@ -30,7 +30,7 @@ public class ReportsController : ControllerBase
     [HttpGet("open-work-orders")]
     [ProducesResponseType(typeof(OpenWorkOrdersReport), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetOpenWorkOrders(CancellationToken cancellationToken)
-        => Ok(await _reportingService.GetOpenWorkOrdersAsync(cancellationToken));
+        => Ok(await _reportQueries.GetOpenWorkOrdersAsync(cancellationToken));
 
     /// <summary>
     /// Returns vehicles and assets whose maintenance schedules are currently overdue.
@@ -39,7 +39,7 @@ public class ReportsController : ControllerBase
     [HttpGet("vehicles-due")]
     [ProducesResponseType(typeof(VehiclesDueForServiceReport), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetVehiclesDueForService(CancellationToken cancellationToken)
-        => Ok(await _reportingService.GetVehiclesDueForServiceAsync(cancellationToken));
+        => Ok(await _reportQueries.GetVehiclesDueForServiceAsync(cancellationToken));
 
     /// <summary>
     /// Summarizes total labor hours and completed work order count per vehicle.
@@ -48,7 +48,7 @@ public class ReportsController : ControllerBase
     [HttpGet("maintenance-cost")]
     [ProducesResponseType(typeof(MaintenanceCostReport), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetMaintenanceCost(CancellationToken cancellationToken)
-        => Ok(await _reportingService.GetMaintenanceCostByVehicleAsync(cancellationToken));
+        => Ok(await _reportQueries.GetMaintenanceCostByVehicleAsync(cancellationToken));
 
     /// <summary>
     /// Lists all parts with current stock levels and total inventory value.
@@ -57,7 +57,7 @@ public class ReportsController : ControllerBase
     [HttpGet("parts-usage")]
     [ProducesResponseType(typeof(PartUsageReport), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetPartsUsage(CancellationToken cancellationToken)
-        => Ok(await _reportingService.GetPartUsageSummaryAsync(cancellationToken));
+        => Ok(await _reportQueries.GetPartUsageSummaryAsync(cancellationToken));
 
     /// <summary>
     /// Lists vehicles currently in maintenance or with open work orders.
@@ -66,7 +66,7 @@ public class ReportsController : ControllerBase
     [HttpGet("vehicle-downtime")]
     [ProducesResponseType(typeof(VehicleDowntimeReport), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetVehicleDowntime(CancellationToken cancellationToken)
-        => Ok(await _reportingService.GetVehicleDowntimeAsync(cancellationToken));
+        => Ok(await _reportQueries.GetVehicleDowntimeAsync(cancellationToken));
 
     /// <summary>
     /// Returns inspection outcome counts and overall failure rate percentage.
@@ -75,7 +75,7 @@ public class ReportsController : ControllerBase
     [HttpGet("inspection-failure-rate")]
     [ProducesResponseType(typeof(InspectionFailureRateReport), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetInspectionFailureRate(CancellationToken cancellationToken)
-        => Ok(await _reportingService.GetInspectionFailureRateAsync(cancellationToken));
+        => Ok(await _reportQueries.GetInspectionFailureRateAsync(cancellationToken));
 
     /// <summary>
     /// Returns total work order counts broken down by status.
@@ -84,7 +84,7 @@ public class ReportsController : ControllerBase
     [HttpGet("work-orders-by-status")]
     [ProducesResponseType(typeof(WorkOrdersByStatusReport), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetWorkOrdersByStatus(CancellationToken cancellationToken)
-        => Ok(await _reportingService.GetWorkOrdersByStatusAsync(cancellationToken));
+        => Ok(await _reportQueries.GetWorkOrdersByStatusAsync(cancellationToken));
 
     /// <summary>
     /// Returns total work order counts broken down by priority level.
@@ -93,5 +93,5 @@ public class ReportsController : ControllerBase
     [HttpGet("work-orders-by-priority")]
     [ProducesResponseType(typeof(WorkOrdersByPriorityReport), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetWorkOrdersByPriority(CancellationToken cancellationToken)
-        => Ok(await _reportingService.GetWorkOrdersByPriorityAsync(cancellationToken));
+        => Ok(await _reportQueries.GetWorkOrdersByPriorityAsync(cancellationToken));
 }

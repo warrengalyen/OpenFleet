@@ -17,6 +17,7 @@ OpenFleet is structured as a Clean Architecture monolith with clear layer bounda
 ┌──────────────────────────▼───────────────────────────────┐
 │  OpenFleet.Application                                   │
 │  Services · DTOs · Validators · Interfaces · Common      │
+│  Queries/Reports (IReportQueries + query models)         │
 │  Reports (IPdfExportService, PdfExportResult, models)    │
 │  INotificationPublisher + notification DTOs              │
 │                                                          │
@@ -101,6 +102,18 @@ public async Task<Result<WorkOrderResponse>> CreateAsync(CreateWorkOrderRequest 
 ```
 
 Controllers map `Result<T>` to appropriate HTTP responses.
+
+### CQRS (reporting)
+
+Write operations use Application **Services** and CRUD **DTOs**. Dashboard/report reads use a dedicated query side:
+
+| Concern | Location |
+|---------|----------|
+| Query contract | `IReportQueries` under `Application/Queries/Reports` |
+| Implementation | `ReportQueryService` (EF Core `AsNoTracking` only) |
+| Response models | `Application/Queries/Reports/Models` (not shared with write DTOs) |
+
+`ReportsController` depends on `IReportQueries`. Report models such as vehicles-due are owned by the query side and do not reuse maintenance schedule DTOs, even when JSON shapes match for API compatibility.
 
 ### Domain Services
 

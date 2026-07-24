@@ -1,6 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
-using OpenFleet.Application.DTOs;
+using OpenFleet.Application.Queries.Reports.Models;
 using OpenFleet.Tests.Helpers;
 
 namespace OpenFleet.Tests.Integration;
