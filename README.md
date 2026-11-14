@@ -8,15 +8,7 @@ OpenFleet is an open source application for managing vehicles, maintenance, insp
 
 ## Live Demo
 
-Try the hosted demo: [http://openfleet.mechanikadesign.com/](http://openfleet.mechanikadesign.com/)
-
-| Email                                             | Password    | Role             |
-| ------------------------------------------------- | ----------- | ---------------- |
-| [viewer@openfleet.io](mailto:viewer@openfleet.io) | Viewer@1234 | Read-only Viewer |
-
-The demo runs on Render’s free tier:
-
-- **Cold start:** The API spins down after about 15 minutes of inactivity. The first request after idle can take around **30–60 seconds** to wake up.
+**NOTE**: Hosted demo is no longer available due to database costs.
 
 ![Dashboard overview](docs/images/dashboard-overview.png)
 
